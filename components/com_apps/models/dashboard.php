@@ -214,8 +214,9 @@ class AppsModelDashboard extends JModelList
 
 	public function getExtensions()
 	{
-		// TODO: get catid from somewhere
-		$catid = 2045;
+		// Get catid
+		$input = new JInput;
+		$catid = $input->get('id', null, 'int');
 		
 		// Get remote database
 		$db = $this->getRemoteDB();
@@ -234,21 +235,35 @@ class AppsModelDashboard extends JModelList
 				'CONCAT("{", GROUP_CONCAT("\"", t5.caption, "\":\"", t4.value, "\""), "\"}") AS options',
 			)
 		);
-		$query->from('jos_mt_cl AS t1');
-		$query->join('LEFT', 'jos_mt_links AS t2 ON t1.link_id = t2.link_id');
+
+
+		if (is_null($catid) or !$catid) {
+			$query->from('jos_mt_links AS t2');
+			$query->join('LEFT', 'jos_mt_cl AS t1 ON t1.link_id = t2.link_id');
+		}
+		else {
+			$query->from('jos_mt_cl AS t1');
+			$query->join('LEFT', 'jos_mt_links AS t2 ON t1.link_id = t2.link_id');
+		}
 		$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
 		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
 		$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
-		$query->where(
-			array(
-				't1.cat_id = ' . (int)$catid,
-				't2.link_published = 1',
-				't2.link_approved = 1',
-				'(t2.publish_up <= NOW() OR t2.publish_up = "0000-00-00 00:00:00")',
-				'(t2.publish_down >= NOW() OR t2.publish_down = "0000-00-00 00:00:00")',
-			)
+
+		$where = array(
+			't2.link_published = 1',
+			't2.link_approved = 1',
+			'(t2.publish_up <= NOW() OR t2.publish_up = "0000-00-00 00:00:00")',
+			'(t2.publish_down >= NOW() OR t2.publish_down = "0000-00-00 00:00:00")',
 		);
-		$query->order('t2.link_name ASC');
+		$order = 't2.link_name ASC';
+		if (is_null($catid) or !$catid) {
+			
+		}
+		else {
+			$where[] = 't1.cat_id = ' . (int)$catid;
+		}
+		$query->where($where);
+		$query->order($order);
 		$query->group('t2.link_id');
 		$db->setQuery($query);
 		$items = $db->loadObjectList();
