@@ -8,11 +8,11 @@
  */
 
 //@TODO: MOve the single extension grid into a reusable JLayout
-
 defined('JPATH_BASE') or die;
 $i = 0;
 $extensions_perrow = $displayData['params']->get('extensions_perrow');
 $spanclass = 'span' . (12 / $extensions_perrow);
+$data	= array();
 ?>
 
 <div class="row-fluid">
@@ -23,19 +23,55 @@ $spanclass = 'span' . (12 / $extensions_perrow);
 	?>
 </div>
 <hr />
-<div class="row-fluid">
-	<?php } ?>
-	<div class="<?php echo $spanclass; ?>">
-		<h4 class="center muted">
-			<a class="transcode" href="index.php?option=com_apps&view=extension&id=<?php echo $extension->id; ?>"><?php echo $extension->name; ?></a>
-		</h4>
-		<p class="center">
-			<a class="transcode" href="index.php?option=com_apps&view=extension&id=<?php echo $extension->id; ?>">
-			<img src="<?php echo $extension->image; ?>" class="img-polaroid" />
-			</a>
-		</p>
-		<p class="rating center"><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></p>
-		<p class="center"><a class="btn btn-primary" href="#" onclick="Joomla.installfromweb('<?php echo $extension->downloadurl; ?>', '<?php echo $extension->name; ?>')">Install »</a> <a class="btn" href="#">Details »</a></p>
+<?php 
+}
+echo '<div class="item-view">';
+
+	$data	= array('spanclass' => $spanclass,'extension' => $extension);
+	$extensions_singlegrid = new JLayoutFile('joomla.apps.extensions_singlegrid');
+
+	echo "<div class='grid-container'>";
+
+	echo '<div class="grid-header">
+		<div class="breadcrumbs">
+			<a href="#">EXTENSIONS</a> / <a href="#">ADMIN NAVIGATION</a> / <span class="active-extension">B2JCONTACT</span>
+		</div>
+		<div class="sort-by">
+			<select class="sort-by-select" style="display: none;">
+			  <option value="84">Name</option>
+			  <option value="87">Size</option>
+			</select>
+		</div>
+	</div>';
+
+		echo "<div class='row-fluid'>";
+			echo $extensions_singlegrid->render($data);
+			echo $extensions_singlegrid->render($data);
+			echo $extensions_singlegrid->render($data);
+			echo $extensions_singlegrid->render($data);
+		echo "</div>";
+		echo "<div class='row-fluid'>";
+			echo $extensions_singlegrid->render($data);
+			echo $extensions_singlegrid->render($data);
+			echo $extensions_singlegrid->render($data);
+			echo $extensions_singlegrid->render($data);
+		echo "</div>";
+	echo "</div>";
+?>
+	<hr class="pagination-top" />
+	<div class="pagination-container">
+		<ul class="grid-pagination">
+			<li><a href="#">1</a></li>
+			<li><a href="#">2</a></li>
+			<li class="current"><a href="#">3</a></li>
+			<li>...</li>
+			<li><a href="#">5</a></li>
+		</ul>
 	</div>
-	<?php $i++; endforeach; ?>
 </div>
+
+<?php $i++; endforeach; ?>
+<?php 
+	$extensions_full = new JLayoutFile('joomla.apps.extensions_full');
+	echo $extensions_full->render();
+?>
