@@ -28,10 +28,10 @@ class AppsViewExtension extends JViewLegacy
 
 	public function display($tpl = null)
 	{
-		$dashboardModel = JModelLegacy::getInstance('Extension', 'AppsModel', array('ignore_request' => true));
+		$dashboardModel = JModelLegacy::getInstance('Dashboard', 'AppsModel', array('ignore_request' => true));
 
 		$this->categories	= $dashboardModel->getCategories();
-		$this->extensions	= $dashboardModel->getExtension();
+		$this->extensions	= $dashboardModel->getExtensions();
 		$this->params 		= new JRegistry();
 		
 		// Temporary params @DELETE
