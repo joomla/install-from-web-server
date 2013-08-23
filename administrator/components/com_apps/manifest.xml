@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension type="component" version="1.6" method="upgrade">
+	<name>com_apps</name>
+	<author></author>
+	<authorEmail></authorEmail>
+	<authorUrl></authorUrl>
+	<copyright></copyright>
+	<license>License Info</license>
+	<version>1.0</version>
+	<creationDate>March 2006</creationDate>
+	<description></description>
+
+
+	<files folder="site">
+		<filename>apps.php</filename>
+	</files>
+
+	<administration>
+	</administration>
+</extension>
