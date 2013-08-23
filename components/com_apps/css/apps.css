@@ -1,0 +1,11 @@
+.row-fluid .sidebar, .row-fluid .extensions {
+    float: left;
+}
+
+.row-fluid .sidebar {
+    width: 25%;
+}
+
+.row-fluid .extensions {
+    width: 75%;
+}
