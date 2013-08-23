@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_apps
  * @since       1.5
  */
-class AppsViewExtension extends JViewLegacy
+class AppsViewCategory extends JViewLegacy
 {
 	protected $state;
 
@@ -28,10 +28,10 @@ class AppsViewExtension extends JViewLegacy
 
 	public function display($tpl = null)
 	{
-		$dashboardModel = JModelLegacy::getInstance('Extension', 'AppsModel', array('ignore_request' => true));
+		$dashboardModel = JModelLegacy::getInstance('Category', 'AppsModel', array('ignore_request' => true));
 
 		$this->categories	= $dashboardModel->getCategories();
-		$this->extensions	= $dashboardModel->getExtension();
+		$this->extensions	= $dashboardModel->getExtensions();
 		$this->params 		= new JRegistry();
 		
 		// Temporary params @DELETE
