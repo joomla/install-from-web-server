@@ -37,6 +37,8 @@ class AppsModelDashboard extends JModelList
 	private $_items = null;
 	
 	private $_remotedb = null;
+	
+	public $_extensionstitle = null;
 
 	/**
 	 * Method to auto-populate the model state.
@@ -214,12 +216,29 @@ class AppsModelDashboard extends JModelList
 
 	public function getExtensions()
 	{
-		// Get catid
+		// Get catid, search filter, order column, order direction
 		$input = new JInput;
 		$catid = $input->get('id', null, 'int');
+		$search = $input->get('filter_search', null, 'string');
+		$orderCol = $this->state->get('list.ordering', 't2.link_rating');
+		$orderDirn = $this->state->get('list.direction', 'DESC');
+		$order = $orderCol.' '.$orderDirn;
 		
 		// Get remote database
 		$db = $this->getRemoteDB();
+		
+		// Get category name
+		if ($catid) {
+			$query = $db->getQuery(true);
+			$query->select('cat_name');
+			$query->from('jos_mt_cats');
+			$query->where('cat_id = ' . (int)$catid);
+			$db->setQuery($query);
+			$catname = $db->loadResult();
+			if ($catname) {
+				$this->_extensionstitle = $catname;
+			}
+		}
 		
 		// Form query
 		$query = $db->getQuery(true);
@@ -237,37 +256,65 @@ class AppsModelDashboard extends JModelList
 		);
 
 
-		if (is_null($catid) or !$catid) {
-			$query->from('jos_mt_links AS t2');
-			$query->join('LEFT', 'jos_mt_cl AS t1 ON t1.link_id = t2.link_id');
-		}
-		else {
+		$where = array();
+		if ($catid or $search)
+		{
+			// Select by specific category id or search filter
 			$query->from('jos_mt_cl AS t1');
 			$query->join('LEFT', 'jos_mt_links AS t2 ON t1.link_id = t2.link_id');
+			if (!$order) {
+				$order = 't2.link_rating DESC';
+			}
+		}
+		else {
+			//Randomly select field to order by
+			$field = array('rating', 'hits', 'featured');
+			list($usec, $sec) = explode(' ', microtime());
+			srand((float) $sec + ((float) $usec * 100000));
+			$randval = rand(0, count($field) - 1);
+			
+			$this->_extensionstitle = JText::_('COM_APPS_EXTENSIONS_TITLE_' . strtoupper($field[$randval]));
+			
+			// Featured extensions are selected randomly from the whole array
+			// When selection method is based on rating or hits, extensions are selected from the top 100
+			if ($field[$randval] == 'link_featured')
+			{
+				$query->from('jos_mt_links AS t2');
+				$where[] = 't2.link_featured = 1';
+			}
+			else
+			{
+				$query->from('(SELECT * FROM jos_mt_links ORDER BY link_' . $field[$randval] . ' DESC LIMIT 100) AS t2');
+			}
+			$query->join('LEFT', 'jos_mt_cl AS t1 ON t1.link_id = t2.link_id');
+			$order = 'RAND()';
 		}
 		$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
 		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
 		$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
 
-		$where = array(
+		if ($catid) {
+			$where[] = 't1.cat_id = ' . (int)$catid;
+		}
+
+		if ($search) {
+			$where[] = '(t2.link_name LIKE(' . $db->quote('%'.$search.'%') . ') OR t2.link_desc LIKE(' . $db->quote('%'.$search.'%') . '))';
+		}
+		
+		$where = array_merge($where, array(
 			't2.link_published = 1',
 			't2.link_approved = 1',
 			'(t2.publish_up <= NOW() OR t2.publish_up = "0000-00-00 00:00:00")',
 			'(t2.publish_down >= NOW() OR t2.publish_down = "0000-00-00 00:00:00")',
-		);
-		$order = 't2.link_name ASC';
-		if (is_null($catid) or !$catid) {
-			
-		}
-		else {
-			$where[] = 't1.cat_id = ' . (int)$catid;
-		}
+		));
+
 		$query->where($where);
 		$query->order($order);
 		$query->group('t2.link_id');
 		$db->setQuery($query);
 		$items = $db->loadObjectList();
 		
+		// Get CDN URL
 		$componentParams = JComponentHelper::getParams('com_apps');
 		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
 		
