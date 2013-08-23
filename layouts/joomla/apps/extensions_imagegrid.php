@@ -27,10 +27,10 @@ $spanclass = 'span' . (12 / $extensions_perrow);
 	<?php } ?>
 	<div class="<?php echo $spanclass; ?>">
 		<h4 class="center muted">
-			<a class="transcode" href="index.php?option=com_apps&view=extension&format=raw&catid=<?php echo $extension->cat_id; ?>&id=<?php echo $extension->id; ?>"><?php echo $extension->name; ?></a>
+			<a class="transcode" href="index.php?option=com_apps&view=extension&id=<?php echo $extension->id; ?>"><?php echo $extension->name; ?></a>
 		</h4>
 		<p class="center">
-			<a class="transcode" href="index.php?option=com_apps&view=extension&format=raw&catid=<?php echo $extension->cat_id; ?>&id=<?php echo $extension->id; ?>">
+			<a class="transcode" href="index.php?option=com_apps&view=extension&id=<?php echo $extension->id; ?>">
 			<img src="<?php echo $extension->image; ?>" class="img-polaroid" />
 			</a>
 		</p>
