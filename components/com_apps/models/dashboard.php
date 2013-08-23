@@ -35,6 +35,8 @@ class AppsModelDashboard extends JModelList
 	private $_parent = null;
 
 	private $_items = null;
+	
+	private $_remotedb = null;
 
 	/**
 	 * Method to auto-populate the model state.
@@ -121,175 +123,158 @@ class AppsModelDashboard extends JModelList
 		}
 		return $this->_parent;
 	}
+
+	private function getRemoteDB() {
+		if (!is_object($this->_remotedb)) {
+			jimport('joomla.application.component.helper');
+			$componentParams = JComponentHelper::getParams('com_apps');
+
+			$fields = array('driver', 'host', 'user', 'password', 'database', 'port');
+			$options = array();
+		
+			foreach ($fields as $field) {
+				$options[$field] = $componentParams->get($field);
+			}
+		
+			$this->_remotedb = & JDatabaseDriver::getInstance( $options );
+		}
+		return $this->_remotedb;
+	}
 	
-	public function getCategories() {
+	public function getCategories()
+	{
+		// Get remote database
+		$db = $this->getRemoteDB();
 		
+		// Form query
+		$query = $db->getQuery(true);
+		$query->select(
+			array(
+				'cat_id AS id',
+				'cat_name AS name',
+				'alias',
+				'cat_desc AS description',
+				'cat_parent AS parent',
+			)
+		);
+		$query->from('jos_mt_cats');
+		$query->where(
+			array(
+				'cat_published = 1',
+				'cat_approved = 1',
+			)
+		);
+		$query->order('cat_parent, cat_name ASC');
+		$db->setQuery($query);
+		$items = $db->loadObjectList();
 		
-		$categories[0] = new stdclass;
-		$categories[0]->id = 1;
-		$categories[0]->name = 'Access & Security';
-		$children[0] = new stdclass;
-		$children[0]->id = 2;
-		$children[0]->name = 'Site Access';
-		$children[1] = new stdclass;
-		$children[1]->id = 3;
-		$children[1]->name = 'Site Security';
-		$categories[0]->children = $children;
+		// Properties to be populated
+		$properties = array('id', 'name', 'alias', 'description', 'parent');
 		
-		$categories[1] = new stdclass;
-		$categories[1]->id = 4;
-		$categories[1]->name = 'Administration';
-		$children[0]->id = 5;
-		$children[0]->name = 'Admin Desk';
-		$children[1]->id = 6;
-		$children[1]->name = 'Admin Navigation';
-		$children[1]->id = 7;
-		$children[1]->name = 'Admin Performance';
-		$children[1]->id = 8;
-		$children[1]->name = 'Admin Reports';
-		$children[1]->id = 9;
-		$children[1]->name = 'Admin Templates';
-		$children[1]->id = 10;
-		$children[1]->name = 'Extensions Quick Icons';
-		$categories[1]->children = $children;
+		// Array to collect children categories
+		$children = array();
 		
+		// Array to be returned
+		$categories = array();
+		foreach ($items as $item)
+		{
+			// Skip root category
+			if (trim(strtolower($item->name)) == 'root') {
+				continue;
+			}
+			
+			// Base array is default parent for all categories
+			$parent =& $categories;
+			
+			// Create empty array to populate with parent category's children
+			if ($item->parent and !array_key_exists($item->parent, $children)) {
+				$children[$item->parent] = array();
+			}
+			
+			// Change value of parent linking to children array
+			if ($item->parent) {
+				$parent =& $children[$item->parent];
+			}
+			
+			// Populate category with values
+			$parent[$item->id] = new stdclass;
+			foreach ($properties as $p) {
+				$parent[$item->id]->{$p} = $item->{$p};
+			}
+			
+			// Create empty array for current category's own children
+			if (!array_key_exists($item->id, $children)) {
+				$children[$item->id] = array();
+			}
+			$parent[$item->id]->children =& $children[$item->id];
+		}
+
 		return $categories;
 	}
 
-	public function getExtensions() {
-		$extension[0] = new stdclass;
-		$extension[0]->id = 1;
-		$extension[0]->name = 'JBolo!';
-		$extension[0]->user = 'techjoomla';
-		$extension[0]->rating = 4.5;
-		$extension[0]->tags = array('C','P','M','S');
-		$extension[0]->image = 'http://extensions.joomla.org/components/com_mtree/img/listings/s/51430.png';
-		$extension[0]->compatibility = array('2.5', '3.0');
-		$extension[0]->version = 3.8;
-		$extension[0]->downloadurl = '';
+	public function getExtensions()
+	{
+		// TODO: get catid from somewhere
+		$catid = 2045;
 		
-		$extension[1] = new stdclass;
-		$extension[1]->id = 2;
-		$extension[1]->name = 'Akeeba Backup';
-		$extension[1]->user = 'nikosdion';
-		$extension[1]->rating = 4.5;
-		$extension[1]->tags = array('C','P','M','S');
-		$extension[1]->image = 'http://extensions.joomla.org/components/com_mtree/img/listings/s/13048.png';
-		$extension[1]->compatibility = array('2.5', '3.0');
-		$extension[1]->version = '3.7.10';
-		$extension[1]->downloadurl = 'https://www.akeebabackup.com/download/akeeba-backup/3-7-10/com_akeeba-3-7-10-core-zip.raw';
+		// Get remote database
+		$db = $this->getRemoteDB();
 		
-		$extension[2] = new stdclass;
-		$extension[2]->id = 3;
-		$extension[2]->name = 'Advanced Module Manager';
-		$extension[2]->user = 'nikosdion';
-		$extension[2]->rating = 5;
-		$extension[2]->tags = array('C','P','M','S');
-		$extension[2]->image = 'http://extensions.joomla.org/components/com_mtree/img/listings/s/48195.png';
-		$extension[2]->compatibility = array('2.5', '3.0');
-		$extension[2]->version = '4.7.1';
-		$extension[2]->downloadurl = 'http://download.nonumber.nl/?ext=advancedmodulemanager';
+		// Form query
+		$query = $db->getQuery(true);
+		$query->select(
+			array(
+				't2.link_id AS id',
+				't2.link_name AS name',
+				't2.alias AS alias',
+				't2.link_desc AS description',
+				't2.link_rating AS rating',
+				't2.user_id AS user_id',
+				't3.filename AS image',
+				'CONCAT("{", GROUP_CONCAT("\"", t5.caption, "\":\"", t4.value, "\""), "\"}") AS options',
+			)
+		);
+		$query->from('jos_mt_cl AS t1');
+		$query->join('LEFT', 'jos_mt_links AS t2 ON t1.link_id = t2.link_id');
+		$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
+		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
+		$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
+		$query->where(
+			array(
+				't1.cat_id = ' . (int)$catid,
+				't2.link_published = 1',
+				't2.link_approved = 1',
+				'(t2.publish_up <= NOW() OR t2.publish_up = "0000-00-00 00:00:00")',
+				'(t2.publish_down >= NOW() OR t2.publish_down = "0000-00-00 00:00:00")',
+			)
+		);
+		$query->order('t2.link_name ASC');
+		$query->group('t2.link_id');
+		$db->setQuery($query);
+		$items = $db->loadObjectList();
 		
-		$extension[3] = new stdclass;
-		$extension[3]->id = 2;
-		$extension[3]->name = 'Admin Tools';
-		$extension[3]->user = 'nikosdion';
-		$extension[3]->rating = 4.5;
-		$extension[3]->tags = array('C','P','M','S');
-		$extension[3]->image = 'http://extensions.joomla.org/components/com_mtree/img/listings/s/19229.png';
-		$extension[3]->compatibility = array('2.5', '3.0');
-		$extension[3]->version = '2.5.6';
-		$extension[3]->downloadurl = 'https://www.akeebabackup.com/download/admintools/2-5-6/comadmintools-2-5-6-core-zip.raw';
+		$componentParams = JComponentHelper::getParams('com_apps');
+		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
 		
-		$extension[4] = new stdclass;
-		$extension[4]->id = 2;
-		$extension[4]->name = 'Akeeba Backup';
-		$extension[4]->user = 'nikosdion';
-		$extension[4]->rating = 4.5;
-		$extension[4]->tags = array('C','P','M','S');
-		$extension[4]->image = 'http://extensions.joomla.org/components/com_mtree/img/listings/s/13048.png';
-		$extension[4]->compatibility = array('2.5', '3.0');
-		$extension[4]->version = array('2.5', '3.0');
-		$extension[4]->downloadurl = '';
-
-		$extension[5] = new stdclass;
-		$extension[5]->id = 3;
-		$extension[5]->name = 'Advanced Module Manager';
-		$extension[5]->user = 'nikosdion';
-		$extension[5]->rating = 5;
-		$extension[5]->tags = array('C','P','M','S');
-		$extension[5]->image = 'http://extensions.joomla.org/components/com_mtree/img/listings/s/48195.png';
-		$extension[5]->compatibility = array('2.5', '3.0');
-		$extension[5]->version = '4.7.1';
-		$extension[5]->downloadurl = 'http://download.nonumber.nl/?ext=advancedmodulemanager';
+		// Populate array
+		$extensions = array();
+		foreach ($items as $item) {
+			$options = new JRegistry($item->options);
+			$data = new stdclass;
+			$data->id = $item->id;
+			$data->name = $item->name;
+			$data->rating = $item->rating;
+			$data->image = $cdn . $item->image;
+			$data->user = $options->get('Developer Name');
+			$data->tags = $options->get('Extension Includes');
+			$data->compatibility = $options->get('Compatibility');
+			$data->version = $options->get('Version');
+			$data->downloadurl = $options->get('Link for download/registration/purchase: URL');
+			$data->type = $options->get('Extension Apps* download type');
+			$extensions[] = $data;
+		}
 		
-		$extension[6] = new stdclass;
-		$extension[6]->id = 2;
-		$extension[6]->name = 'Admin Tools';
-		$extension[6]->user = 'nikosdion';
-		$extension[6]->rating = 4.5;
-		$extension[6]->tags = array('C','P','M','S');
-		$extension[6]->image = 'http://extensions.joomla.org/components/com_mtree/img/listings/s/19229.png';
-		$extension[6]->compatibility = array('2.5', '3.0');
-		$extension[6]->version = '2.5.6';
-		$extension[6]->downloadurl = 'https://www.akeebabackup.com/download/admintools/2-5-6/comadmintools-2-5-6-core-zip.raw';
-		
-		$extension[7] = new stdclass;
-		$extension[7]->id = 2;
-		$extension[7]->name = 'Akeeba Backup';
-		$extension[7]->user = 'nikosdion';
-		$extension[7]->rating = 4.5;
-		$extension[7]->tags = array('C','P','M','S');
-		$extension[7]->image = 'http://extensions.joomla.org/components/com_mtree/img/listings/s/13048.png';
-		$extension[7]->compatibility = array('2.5', '3.0');
-		$extension[7]->version = array('2.5', '3.0');
-		$extension[7]->downloadurl = '';
-		
-		$extension[8] = new stdclass;
-		$extension[8]->id = 2;
-		$extension[8]->name = 'Akeeba Backup';
-		$extension[8]->user = 'nikosdion';
-		$extension[8]->rating = 4.5;
-		$extension[8]->tags = array('C','P','M','S');
-		$extension[8]->image = 'http://extensions.joomla.org/components/com_mtree/img/listings/s/13048.png';
-		$extension[8]->compatibility = array('2.5', '3.0');
-		$extension[8]->version = array('2.5', '3.0');
-		$extension[8]->downloadurl = '';
-
-		$extension[9] = new stdclass;
-		$extension[9]->id = 3;
-		$extension[9]->name = 'Advanced Module Manager';
-		$extension[9]->user = 'nikosdion';
-		$extension[9]->rating = 5;
-		$extension[9]->tags = array('C','P','M','S');
-		$extension[9]->image = 'http://extensions.joomla.org/components/com_mtree/img/listings/s/48195.png';
-		$extension[9]->compatibility = array('2.5', '3.0');
-		$extension[9]->version = '4.7.1';
-		$extension[9]->downloadurl = 'http://download.nonumber.nl/?ext=advancedmodulemanager';
-		
-		$extension[10] = new stdclass;
-		$extension[10]->id = 2;
-		$extension[10]->name = 'Admin Tools';
-		$extension[10]->user = 'nikosdion';
-		$extension[10]->rating = 4.5;
-		$extension[10]->tags = array('C','P','M','S');
-		$extension[10]->image = 'http://extensions.joomla.org/components/com_mtree/img/listings/s/19229.png';
-		$extension[10]->compatibility = array('2.5', '3.0');
-		$extension[10]->version = '2.5.6';
-		$extension[10]->downloadurl = 'https://www.akeebabackup.com/download/admintools/2-5-6/comadmintools-2-5-6-core-zip.raw';
-		
-		$extension[11] = new stdclass;
-		$extension[11]->id = 2;
-		$extension[11]->name = 'Akeeba Backup';
-		$extension[11]->user = 'nikosdion';
-		$extension[11]->rating = 4.5;
-		$extension[11]->tags = array('C','P','M','S');
-		$extension[11]->image = 'http://extensions.joomla.org/components/com_mtree/img/listings/s/13048.png';
-		$extension[11]->compatibility = array('2.5', '3.0');
-		$extension[11]->version = array('2.5', '3.0');
-		$extension[11]->downloadurl = '';
-		
-		return $extension;
+		return $extensions;
 		
 	}
 
