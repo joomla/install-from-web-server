@@ -138,7 +138,7 @@ class AppsModelExtension extends JModelList
 				$options[$field] = $componentParams->get($field);
 			}
 		
-			$this->_remotedb = & JDatabaseDriver::getInstance( $options );
+			$this->_remotedb = JDatabaseDriver::getInstance( $options );
 		}
 		return $this->_remotedb;
 	}
