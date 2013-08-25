@@ -9,11 +9,10 @@
 
 defined('JPATH_BASE') or die;
 ?>
-<div class="grid-item <?php echo $displayData['spanclass']; ?>">
-	
+<div class="item <?php echo $displayData['spanclass']; ?>">
 	<p class="rating center"><i class="icon-star rated"></i><i class="icon-star rated"></i><i class="icon-star"></i><i class="icon-star"></i><i class="icon-star"></i></p>
 	<div class="item-image">
-		<a class="transcode ajaxloaded" href="index.php?option=com_apps&view=extension&id=<?php echo $displayData['extension']->id; ?>">
+		<a class="transcode ajaxloaded" href="index.php?option=com_apps&view=extension&id=<?php echo $displayData['extension']->id; ?>&format=raw">
 			<img src="<?php echo $displayData['extension']->image; ?>" class="" />
 		</a>
 	</div>
@@ -26,6 +25,9 @@ defined('JPATH_BASE') or die;
 		<li class="c">C</li>
 	</ul>
 	<h4 class="center muted">
-		<a class="transcode ajaxloaded" href="index.php?option=com_apps&view=extension&id=<?php echo $displayData['extension']->id; ?>"><?php echo $displayData['extension']->name; ?></a>
+		<a class="transcode ajaxloaded" href="index.php?option=com_apps&view=extension&id=<?php echo $displayData['extension']->id; ?>&format=raw"><?php echo $displayData['extension']->name; ?></a>
 	</h4>
+	<p class="item-description">
+		Speed-up Joomla  administration with AJAX support! lorem ispum dolor sit amet
+	</p>
 </div>
