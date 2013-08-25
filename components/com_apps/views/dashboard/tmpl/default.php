@@ -10,8 +10,7 @@
 defined('_JEXEC') or die;
 
 jimport('joomla.html.html.bootstrap');
-
-JHtml::_('formbehavior.chosen', 'select'); 
+ 
 $category_sidebar 		= new JLayoutFile('joomla.apps.category_sidebar');
 $extensions_imagegrid 	= new JLayoutFile('joomla.apps.extensions_imagegrid');
 $extensions_singlegrid 	= new JLayoutFile('joomla.apps.extensions_singlegrid');
@@ -93,8 +92,13 @@ $extension_data			= array('extensions' => $this->extensions, 'params' => $this->
 						</div>
 					</div>
 				</div>
+				<div class="view-toggle">
+					<span class="grid-view"></span>
+					<span class="list-view"></span>
+				</div>
 			</div>
 		</div>
+
 		<?php echo $extensions_imagegrid->render($extension_data); ?>
 	</div>
 </div>
