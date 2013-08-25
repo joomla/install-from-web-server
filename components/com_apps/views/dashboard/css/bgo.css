@@ -136,7 +136,8 @@ border-bottom-left-radius: 6px;
 	background: #fdfdfd;
 	border: solid 2px #185186;
 	background: #fdfdfd;
-	border: solid 2px #185186;	
+	border: solid 2px #185186;
+	z-index: 5;	
 }
 .com-apps-advanced-search.active > div > div .inp-row3 > label,
 .com-apps-advanced-search.active > div > div .inp-row2 > label{
