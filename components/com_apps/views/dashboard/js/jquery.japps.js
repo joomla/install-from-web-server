@@ -24,6 +24,17 @@ jQuery(document).ready(function(){
 		jQuery(this).closest(".com-apps-advanced-search").toggleClass("active");
 		return false;
 	})
+	jQuery(".com-apps-advanced-search .cancel").click(function(){
+		jQuery( ".com-apps-advanced-search" ).removeClass("active");	
+	})
+	jQuery(document).mouseup(function (e)
+	{
+	    var container = jQuery(".com-apps-advanced-search");
+	    if (container.has(e.target).length == 0)
+	    {
+			jQuery( ".com-apps-advanced-search" ).removeClass("active");
+    	}
+	});
 })
 
 
@@ -32,11 +43,24 @@ jQuery(document).ready(function(){
 	
 	jQuery( ".grid-view" ).live("click",function() {
 		jQuery( ".items" ).removeClass("list-view-container");	
-		jQuery( ".items" ).addClass("grid-view-container");	
+		jQuery( ".items" ).addClass("grid-view-container");
+		jQuery( ".grid-view" ).addClass("act");	
+		jQuery( ".grid-view" ).removeClass("pas");	
+		jQuery( ".list-view" ).removeClass("act");	
+		jQuery( ".list-view" ).addClass("pas");	
+        
+        jQuery(".grid-view-container .row-fluid .item").each(function(){
+            jQuery(this).find("h4").insertAfter(jQuery(this).find('.item-type'));
+            jQuery(this).find("p.rating").insertBefore(jQuery(this).find('.item-image'));
+        })
 	});
 	jQuery( ".list-view" ).live("click",function() {
 		jQuery( ".items" ).removeClass("grid-view-container");	
 		jQuery( ".items" ).addClass("list-view-container");	
+        jQuery( ".grid-view" ).addClass("pas");	
+		jQuery( ".grid-view" ).removeClass("act");	
+		jQuery( ".list-view" ).removeClass("pas");	
+		jQuery( ".list-view" ).addClass("act");	
         
         jQuery(".list-view-container .row-fluid .item").each(function(){
             jQuery(this).find("p.rating").insertAfter(jQuery(this).find('h4'));
@@ -145,7 +169,7 @@ jQuery(document).ready(function(){
 		var newCountRadio = jQuery("input[type=radio]").length;
 		
 		var newCountCheck = jQuery("input[type=checkbox]").length;
-		
+			
 		if( newCountRadio != countRadio){
 
 			var newCountRadio = jQuery("input[type=radio]:not('.parsed-radio')").length;
@@ -165,5 +189,5 @@ jQuery(document).ready(function(){
 		}
 		
 		return false;
-	})		
+	})	
 });

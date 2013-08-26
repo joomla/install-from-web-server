@@ -17,16 +17,16 @@ $data	= array();
 ?>
 
 <div class="row-fluid">
-	<div class="item-view">
+	<div class="item-view span12">
 		<div class='grid-container'>
 			<div class="grid-header">
 			<div class="breadcrumbs">
 				<a href="#">EXTENSIONS</a> / <a href="#">ADMIN NAVIGATION</a> / <span class="active-extension">B2JCONTACT</span>
 			</div>
 			<div class="sort-by pull-right">
-				<select>
-				  <option value="84">Name</option>
-				  <option value="87">Size</option>
+				<select title="asdasd">
+				  <option value="84"><?php echo JText::_('COM_APPS_SORT_BY_NAME'); ?></option>
+				  <option value="87"><?php echo JText::_('COM_APPS_SORT_BY_SIZE'); ?></option>
 				</select>
 			</div>
 		</div>
