@@ -72,5 +72,5 @@ $data	= array();
 </div>
 <?php 
 	$extensions_full = new JLayoutFile('joomla.apps.extensions_full');
-	echo $extensions_full->render();
+	echo $extensions_full->render(array());
 ?>
