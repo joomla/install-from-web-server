@@ -138,7 +138,7 @@ class AppsModelDashboard extends JModelList
 				$options[$field] = $componentParams->get($field);
 			}
 		
-			$this->_remotedb = & JDatabaseDriver::getInstance( $options );
+			$this->_remotedb = JDatabaseDriver::getInstance( $options );
 		}
 		return $this->_remotedb;
 	}
@@ -200,6 +200,7 @@ class AppsModelDashboard extends JModelList
 			
 			// Populate category with values
 			$parent[$item->id] = new stdclass;
+			$parent[$item->id]->active = false;
 			foreach ($properties as $p) {
 				$parent[$item->id]->{$p} = $item->{$p};
 			}
@@ -216,29 +217,8 @@ class AppsModelDashboard extends JModelList
 
 	public function getExtensions()
 	{
-		// Get catid, search filter, order column, order direction
-		$input = new JInput;
-		$catid = $input->get('id', null, 'int');
-		$search = $input->get('filter_search', null, 'string');
-		$orderCol = $this->state->get('list.ordering', 't2.link_rating');
-		$orderDirn = $this->state->get('list.direction', 'DESC');
-		$order = $orderCol.' '.$orderDirn;
-		
 		// Get remote database
 		$db = $this->getRemoteDB();
-		
-		// Get category name
-		if ($catid) {
-			$query = $db->getQuery(true);
-			$query->select('cat_name');
-			$query->from('jos_mt_cats');
-			$query->where('cat_id = ' . (int)$catid);
-			$db->setQuery($query);
-			$catname = $db->loadResult();
-			if ($catname) {
-				$this->_extensionstitle = $catname;
-			}
-		}
 		
 		// Form query
 		$query = $db->getQuery(true);
@@ -251,56 +231,40 @@ class AppsModelDashboard extends JModelList
 				't2.link_rating AS rating',
 				't2.user_id AS user_id',
 				't3.filename AS image',
+				't1.cat_id AS cat_id',
 				'CONCAT("{", GROUP_CONCAT("\"", t5.caption, "\":\"", t4.value, "\""), "\"}") AS options',
 			)
 		);
 
 
 		$where = array();
-		if ($catid or $search)
+
+		//Randomly select field to order by
+		$field = array('rating', 'hits', 'featured');
+		list($usec, $sec) = explode(' ', microtime());
+		srand((float) $sec + ((float) $usec * 100000));
+		$randval = rand(0, count($field) - 1);
+		
+		$this->_extensionstitle = JText::_('COM_APPS_EXTENSIONS_TITLE_' . strtoupper($field[$randval]));
+		
+		// Featured extensions are selected randomly from the whole array
+		// When selection method is based on rating or hits, extensions are selected from the top 100
+		if ($field[$randval] == 'link_featured')
 		{
-			// Select by specific category id or search filter
-			$query->from('jos_mt_cl AS t1');
-			$query->join('LEFT', 'jos_mt_links AS t2 ON t1.link_id = t2.link_id');
-			if (!$order) {
-				$order = 't2.link_rating DESC';
-			}
+			$query->from('jos_mt_links AS t2');
+			$where[] = 't2.link_featured = 1';
 		}
-		else {
-			//Randomly select field to order by
-			$field = array('rating', 'hits', 'featured');
-			list($usec, $sec) = explode(' ', microtime());
-			srand((float) $sec + ((float) $usec * 100000));
-			$randval = rand(0, count($field) - 1);
-			
-			$this->_extensionstitle = JText::_('COM_APPS_EXTENSIONS_TITLE_' . strtoupper($field[$randval]));
-			
-			// Featured extensions are selected randomly from the whole array
-			// When selection method is based on rating or hits, extensions are selected from the top 100
-			if ($field[$randval] == 'link_featured')
-			{
-				$query->from('jos_mt_links AS t2');
-				$where[] = 't2.link_featured = 1';
-			}
-			else
-			{
-				$query->from('(SELECT * FROM jos_mt_links ORDER BY link_' . $field[$randval] . ' DESC LIMIT 100) AS t2');
-			}
-			$query->join('LEFT', 'jos_mt_cl AS t1 ON t1.link_id = t2.link_id');
-			$order = 'RAND()';
+		else
+		{
+			$query->from('(SELECT * FROM jos_mt_links ORDER BY link_' . $field[$randval] . ' DESC LIMIT 100) AS t2');
 		}
+		$query->join('LEFT', 'jos_mt_cl AS t1 ON t1.link_id = t2.link_id');
+		$order = 'RAND()';
+
 		$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
 		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
 		$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
 
-		if ($catid) {
-			$where[] = 't1.cat_id = ' . (int)$catid;
-		}
-
-		if ($search) {
-			$where[] = '(t2.link_name LIKE(' . $db->quote('%'.$search.'%') . ') OR t2.link_desc LIKE(' . $db->quote('%'.$search.'%') . '))';
-		}
-		
 		$where = array_merge($where, array(
 			't2.link_published = 1',
 			't2.link_approved = 1',
@@ -311,7 +275,9 @@ class AppsModelDashboard extends JModelList
 		$query->where($where);
 		$query->order($order);
 		$query->group('t2.link_id');
-		$db->setQuery($query);
+		$limitstart = 0;
+		$limit = 15;
+		$db->setQuery($query, $limitstart, $limit);
 		$items = $db->loadObjectList();
 		
 		// Get CDN URL
@@ -324,6 +290,7 @@ class AppsModelDashboard extends JModelList
 			$options = new JRegistry($item->options);
 			$data = new stdclass;
 			$data->id = $item->id;
+			$data->cat_id = $item->cat_id;
 			$data->name = $item->name;
 			$data->rating = $item->rating;
 			$data->image = $cdn . $item->image;
