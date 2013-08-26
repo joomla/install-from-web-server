@@ -29,6 +29,7 @@ class AppsViewExtension extends JViewLegacy
 	public function display($tpl = null)
 	{
 		$dashboardModel = JModelLegacy::getInstance('Extension', 'AppsModel', array('ignore_request' => true));
+		$app = JFactory::getApplication();
 
 		$this->categories	= $dashboardModel->getCategories();
 		$this->extensions	= $dashboardModel->getExtension();
@@ -37,7 +38,19 @@ class AppsViewExtension extends JViewLegacy
 		// Temporary params @DELETE
 		$this->params->set('extensions_perrow', 4);
 		
-		parent::display($tpl);
+		$response = array();
+		$response['body'] = $this->loadTemplate($tpl);
+		$response['error'] = false;
+		$response['message'] = '';
+		$json = new JResponseJson($response['body'], $response['message'], $response['error']);
+		
+		if ($app->input->get('callback', '', 'cmd')) {
+			echo $app->input->get('callback') . '(' . $json . ')';
+		} else {
+			echo $json;
+		}
+		
+		jexit();
 	}
 
 }
