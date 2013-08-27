@@ -9,7 +9,9 @@
 
 defined('JPATH_BASE') or die;
 ?>
-<img  class="com-apps-logo" src="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/logo.png" alt="Joomla Apps"/>
+<a class="transcode" href="index.php?option=com_apps&view=dashboard&format=json">
+	<img  class="com-apps-logo" src="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/logo.png" alt="Joomla Apps"/>
+</a>
 <div class="com-apps-sidebar sidebar-nav">
 	<h3><?php echo JText::_('COM_APPS_CATEGORIES'); ?></h3>
 	<div class="scroll-pane">

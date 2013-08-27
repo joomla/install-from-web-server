@@ -43,7 +43,7 @@ class AppsViewExtension extends JViewLegacy
 		$response['error'] = false;
 		$response['message'] = '';
 		$json = new JResponseJson($response['body'], $response['message'], $response['error']);
-		
+
 		if ($app->input->get('callback', '', 'cmd')) {
 			echo $app->input->get('callback') . '(' . $json . ')';
 		} else {
