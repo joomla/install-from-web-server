@@ -151,7 +151,7 @@ class AppsModelCategory extends JModelList
 	
 	private function getBaseModel()
 	{
-		$base_model =& JModelLegacy::getInstance('Base', 'AppsModel');
+		$base_model = JModelLegacy::getInstance('Base', 'AppsModel');
 		return $base_model;
 	}
 	
@@ -291,5 +291,20 @@ class AppsModelCategory extends JModelList
 	public function getCount()
 	{
 		return $this->_total;
+	}
+	
+	public function getPagination() {
+		$componentParams 	= JComponentHelper::getParams('com_apps');
+		$default_limit		= $componentParams->get('default_limit', 8);
+		$input 				= new JInput;
+
+		$pagination = new stdClass;
+		$pagination->limit 		= $input->get('limit', $default_limit, 'int');
+		$pagination->limitstart = $input->get('limitstart', 0, 'int');
+		$pagination->total		= $this->getCount();
+		$pagination->next		= $pagination->limitstart + $pagination->limit;
+		
+		return $pagination;
+
 	}
 }

@@ -9,7 +9,7 @@
 
 defined('JPATH_BASE') or die;
 ?>
-<a class="transcode" href="index.php?option=com_apps&view=dashboard&format=json">
+<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl('view=dashboard'); ?>">
 	<img  class="com-apps-logo" src="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/logo.png" alt="Joomla Apps"/>
 </a>
 <div class="com-apps-sidebar sidebar-nav">
@@ -17,11 +17,11 @@ defined('JPATH_BASE') or die;
 	<div class="scroll-pane">
 	<ul class="nav com-apps-list">
 		<?php foreach ($displayData as $category) : ?>
-			<li><a class="transcode" href="index.php?format=json&option=com_apps&view=category&id=<?php echo $category->id; ?>"><?php echo $category->name; ?></a>
+			<li><a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$category->id}"); ?>"><?php echo $category->name; ?></a>
 			<?php if (count($category->children)) : ?>
 				<ul class="dummy-submenu">
 					<?php foreach ($category->children as $child): ?>
-					<li><a class="transcode" href="index.php?format=json&option=com_apps&view=category&id=<?php echo $child->id; ?>"><?php echo $child->name; ?></a>
+					<li><a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$child->id}"); ?>"><?php echo $child->name; ?></a>
 					<?php endforeach; ?>
 				</ul>
 			<?php endif; ?>

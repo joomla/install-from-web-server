@@ -31,9 +31,9 @@ $data	= array();
 		<div class='grid-container'>
 			<div class="grid-header">
 			<div class="breadcrumbs">
-				<a class="transcode" href="index.php?format=json&option=com_apps&view=dashboard"><?php echo JText::_('COM_APPS_EXTENSIONS'); ?></a>&nbsp;/&nbsp;
+				<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl('view=dashboard'); ?>"><?php echo JText::_('COM_APPS_EXTENSIONS'); ?></a>&nbsp;/&nbsp;
 				<?php foreach ($breadcrumbs as $bc) : ?>
-				<a class="transcode" href="index.php?format=json&option=com_apps&view=category&id=<?php echo $bc->id; ?>"><?php echo $bc->name; ?></a>&nbsp;/&nbsp;
+				<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$bc->id}"); ?>"><?php echo $bc->name; ?></a>&nbsp;/&nbsp;
 				<?php endforeach; ?>
 			</div>
 			<div class="sort-by pull-right">
@@ -63,7 +63,7 @@ $data	= array();
     
     if ($count%4 == 0)
     {
-        echo "</div>";
+        echo '</div><hr />';
     }
     $count++;
 ?>
@@ -71,15 +71,6 @@ $data	= array();
 <?php $i++; endforeach; ?>
 <?php if ($count%4 != 1) echo "</div>";?>
 		</div>
-		<hr class="pagination-top" />
-		<div class="pagination-container">
-			<ul class="grid-pagination">
-				<li><a href="#">1</a></li>
-				<li><a href="#">2</a></li>
-				<li class="current"><a href="#">3</a></li>
-				<li>...</li>
-				<li><a href="#">5</a></li>
-			</ul>
-		</div>
+
 	</div>
 </div>
