@@ -8,9 +8,8 @@
  */
 
 defined('JPATH_BASE') or die;
-//print_r($displayData);
 ?>
-<img  class="com-apps-logo" src="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/logo.png" alt=""/>
+<img  class="com-apps-logo" src="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/logo.png" alt="Joomla Apps"/>
 <div class="com-apps-sidebar sidebar-nav">
 	<h3><?php echo JText::_('COM_APPS_CATEGORIES'); ?></h3>
 	<div class="scroll-pane">
@@ -20,7 +19,6 @@ defined('JPATH_BASE') or die;
 			<?php if (count($category->children)) : ?>
 				<ul class="dummy-submenu">
 					<?php foreach ($category->children as $child): ?>
-					<!--<li><a class="transcode" href="index.php?option=com_apps&view=category&id=<?php echo $child->id; ?>"><?php echo $child->name; ?><span>1234</span></a>-->
 					<li><a class="transcode" href="index.php?option=com_apps&view=category&id=<?php echo $child->id; ?>"><?php echo $child->name; ?></a>
 					<?php endforeach; ?>
 				</ul>

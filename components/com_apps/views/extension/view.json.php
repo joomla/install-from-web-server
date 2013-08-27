@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_apps
  * @since       1.5
  */
-class AppsViewDashboard extends JViewLegacy
+class AppsViewExtension extends JViewLegacy
 {
 	protected $state;
 
@@ -28,16 +28,29 @@ class AppsViewDashboard extends JViewLegacy
 
 	public function display($tpl = null)
 	{
-		$dashboardModel = JModelLegacy::getInstance('Dashboard', 'AppsModel', array('ignore_request' => true));
+		$dashboardModel = JModelLegacy::getInstance('Extension', 'AppsModel', array('ignore_request' => true));
+		$app = JFactory::getApplication();
 
 		$this->categories	= $dashboardModel->getCategories();
-		$this->extensions	= $dashboardModel->getExtensions();
+		$this->extensions	= $dashboardModel->getExtension();
 		$this->params 		= new JRegistry();
 		
 		// Temporary params @DELETE
 		$this->params->set('extensions_perrow', 4);
 		
-		parent::display($tpl);
+		$response = array();
+		$response['body'] = $this->loadTemplate($tpl);
+		$response['error'] = false;
+		$response['message'] = '';
+		$json = new JResponseJson($response['body'], $response['message'], $response['error']);
+		
+		if ($app->input->get('callback', '', 'cmd')) {
+			echo $app->input->get('callback') . '(' . $json . ')';
+		} else {
+			echo $json;
+		}
+		
+		jexit();
 	}
 
 }

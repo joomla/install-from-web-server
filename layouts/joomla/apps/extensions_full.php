@@ -21,11 +21,11 @@ defined('JPATH_BASE') or die;
 			<div class="item-title">Session Keeper</div>
 			<div>
 				<ul class="item-type">
-					<li class="m">M</li>
-					<li class="p">P</li>
-					<li class="s">S</li>
-					<li class="t">T</li>
-					<li class="c">C</li>
+					<li title="<?php echo JText::_('COM_APPS_MODULE'); ?>" class="m">M</li>
+					<li title="<?php echo JText::_('COM_APPS_PLUGIN'); ?>" class="p">P</li>
+					<li title="<?php echo JText::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?>" class="s">S</li>
+					<li title="<?php echo JText::_('COM_APPS_TOOL'); ?>" class="t">T</li>
+					<li title="<?php echo JText::_('COM_APPS_COMPONENT'); ?>" class="c">C</li>
 				</ul>
 			</div>
 		
@@ -42,9 +42,9 @@ defined('JPATH_BASE') or die;
 		</div>
 		<div style="clear:both;"></div>
 		<div class="item-buttons">
-			<a href="">Directory Listing</a>
-			<a href="">Developer Website</a>
-			<a class="install" href="">Install</a>
+			<a href=""><?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
+			<a href=""><?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
+			<a class="install" href=""><?php echo JText::_('COM_APPS_INSTALL'); ?></a>
 		</div>
 		<div class="item-desc">
 			<p class="item-desc-title">
