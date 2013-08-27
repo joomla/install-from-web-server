@@ -9,13 +9,11 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.html.html.bootstrap');
- 
 $category_sidebar 		= new JLayoutFile('joomla.apps.category_sidebar');
 $extensions_imagegrid 	= new JLayoutFile('joomla.apps.extensions_imagegrid');
 $extensions_singlegrid 	= new JLayoutFile('joomla.apps.extensions_singlegrid');
 $extensions_full	 	= new JLayoutFile('joomla.apps.extensions_full');
-$extension_data			= array('extensions' => $this->extensions, 'params' => $this->params);
+$extension_data			= array('extensions' => $this->extensions, 'breadcrumbs' => $this->breadcrumbs, 'params' => $this->params);
 ?>
 <link rel="stylesheet" href="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/japps.css"/>
 <link rel="stylesheet" href="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/jquery.jscrollpane.css"/>
