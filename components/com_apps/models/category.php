@@ -272,7 +272,7 @@ class AppsModelCategory extends JModelList
 			$data->id = $item->id;
 			$data->cat_id = $item->cat_id;
 			$data->name = $item->name;
-			$data->description = $item->description;
+			$data->description = preg_replace('/\n/', '<br />', $item->description);
 			$data->rating = $item->rating;
 			$data->image = $cdn . $item->image;
 			$data->user = $options->get('Developer Name');
