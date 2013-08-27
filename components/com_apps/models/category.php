@@ -151,7 +151,7 @@ class AppsModelCategory extends JModelList
 	
 	private function getBaseModel()
 	{
-		$base_model =& JModelLegacy::getInstance('Base', 'AppsModel');
+		$base_model = JModelLegacy::getInstance('Base', 'AppsModel');
 		return $base_model;
 	}
 	
@@ -176,12 +176,16 @@ class AppsModelCategory extends JModelList
 	public function getExtensions()
 	{
 		// Get catid, search filter, order column, order direction
-		$input = new JInput;
-		$catid = $input->get('id', null, 'int');
-		$search = $input->get('filter_search', null, 'string');
-		$orderCol = $this->state->get('list.ordering', 't2.link_rating');
-		$orderDirn = $this->state->get('list.direction', 'DESC');
-		$order = $orderCol.' '.$orderDirn;
+		$componentParams 	= JComponentHelper::getParams('com_apps');
+		$default_limit		= $componentParams->get('default_limit', 8);
+		$input 				= new JInput;
+		$catid 				= $input->get('id', null, 'int');
+		$limitstart 		= $input->get('limitstart', 0, 'int');
+		$limit 				= $input->get('limit', $default_limit, 'int');
+		$search 			= $input->get('filter_search', null, 'string');
+		$orderCol 			= $this->state->get('list.ordering', 't2.link_rating');
+		$orderDirn 			= $this->state->get('list.direction', 'DESC');
+		$order 				= $orderCol.' '.$orderDirn;
 		
 		// Get remote database
 		$db = $this->getRemoteDB();
@@ -251,14 +255,13 @@ class AppsModelCategory extends JModelList
 		$query->where($where);
 		$query->order($order);
 		$query->group('t2.link_id');
-		$db->setQuery($query);
+		$db->setQuery($query, $limitstart, $limit);
 		$items = $db->loadObjectList();
 		
 		$db->setQuery('SELECT FOUND_ROWS()');
 		$this->_total = $db->loadResult();
 
 		// Get CDN URL
-		$componentParams = JComponentHelper::getParams('com_apps');
 		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
 		
 		// Populate array
@@ -288,5 +291,20 @@ class AppsModelCategory extends JModelList
 	public function getCount()
 	{
 		return $this->_total;
+	}
+	
+	public function getPagination() {
+		$componentParams 	= JComponentHelper::getParams('com_apps');
+		$default_limit		= $componentParams->get('default_limit', 8);
+		$input 				= new JInput;
+
+		$pagination = new stdClass;
+		$pagination->limit 		= $input->get('limit', $default_limit, 'int');
+		$pagination->limitstart = $input->get('limitstart', 0, 'int');
+		$pagination->total		= $this->getCount();
+		$pagination->next		= $pagination->limitstart + $pagination->limit;
+		
+		return $pagination;
+
 	}
 }
