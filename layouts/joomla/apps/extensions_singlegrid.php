@@ -21,7 +21,7 @@ $extension_data = $displayData['extension'];
 		<?php endfor; ?>
 	</p>
 	<div class="item-image">
-		<a class="transcode ajaxloaded" href="index.php?option=com_apps&view=extension&id=<?php echo $extension_data->id; ?>&format=json">
+		<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>">
 			<img src="<?php echo $extension_data->image; ?>" class="" />
 		</a>
 	</div>
@@ -46,7 +46,7 @@ $extension_data = $displayData['extension'];
 		<?php endif; ?>
 	</ul>
 	<h4 class="center muted">
-		<a class="transcode ajaxloaded" href="index.php?option=com_apps&view=extension&id=<?php echo $extension_data->id; ?>&format=json"><?php echo $displayData['extension']->name; ?></a>
+		<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>"><?php echo $displayData['extension']->name; ?></a>
 	</h4>
 	<p class="item-description">
 		<?php echo $extension_data->description; ?>

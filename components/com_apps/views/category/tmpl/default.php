@@ -12,7 +12,10 @@ defined('_JEXEC') or die;
 $category_sidebar 		= new JLayoutFile('joomla.apps.category_sidebar');
 $extensions_imagegrid 	= new JLayoutFile('joomla.apps.extensions_imagegrid');
 $extensions_singlegrid 	= new JLayoutFile('joomla.apps.extensions_singlegrid');
-$extension_data			= array('extensions' => $this->extensions, 'breadcrumbs' => $this->breadcrumbs, 'params' => $this->params);
+$extension_data			= array('extensions' => $this->extensions, 'breadcrumbs' => $this->breadcrumbs, 'params' => $this->params, 'total' => $this->total);
+$app					= JFactory::getApplication();
+$current 				= ($this->pagination->limitstart / $this->pagination->limit) + count($this->extensions);
+$catid					= $app->input->get('id');
 ?>
 <link rel="stylesheet" href="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/japps.css"/>
 <link rel="stylesheet" href="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/jquery.jscrollpane.css"/>
@@ -95,6 +98,11 @@ $extension_data			= array('extensions' => $this->extensions, 'breadcrumbs' => $t
 		</div>
 
 		<?php echo $extensions_imagegrid->render($extension_data); ?>
+		<?php if ($this->total > $current): ?>
+		<div align="center">
+			<a class="transcode btn btn-primary" href="index.php?option=com_apps&format=json&view=category&id=<?php echo $catid; ?>&limitstart=<?php echo $this->pagination->next; ?>">Load More</a>
+		</div>
+		<?php endif; ?>
 	</div>
 </div>
 </div>

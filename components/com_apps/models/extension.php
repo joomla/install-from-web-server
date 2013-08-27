@@ -137,7 +137,7 @@ class AppsModelExtension extends JModelList
 	
 	private function getBaseModel()
 	{
-		$base_model =& JModelLegacy::getInstance('Base', 'AppsModel');
+		$base_model = JModelLegacy::getInstance('Base', 'AppsModel');
 		return $base_model;
 	}
 	
