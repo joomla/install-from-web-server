@@ -15,6 +15,15 @@ $extensions_perrow = $displayData['params']->get('extensions_perrow');
 $spanclass = 'span' . (12 / $extensions_perrow);
 $data	= array();
 ?>
+<?php if (!count($displayData['extensions'])) : ?>
+<div class="row-fluid">
+	<div class="item-view span12">
+		<div class='grid-container'>
+			<?php echo JText::_('No Extensions'); ?>
+		</div>
+	</div>
+</div>
+<?php return; endif; ?>
 
 <div class="row-fluid">
 	<div class="item-view span12">
@@ -70,7 +79,3 @@ $data	= array();
 		</div>
 	</div>
 </div>
-<?php 
-	$extensions_full = new JLayoutFile('joomla.apps.extensions_full');
-	echo $extensions_full->render(array());
-?>
