@@ -163,6 +163,18 @@ class AppsModelDashboard extends JModelList
 	
 	public function getExtensions()
 	{
+		// Get catid, search filter, order column, order direction
+		$componentParams 	= JComponentHelper::getParams('com_apps');
+		$default_limit		= $componentParams->get('default_limit', 8);
+		$input 				= new JInput;
+		$catid 				= $input->get('id', null, 'int');
+		$limitstart 		= $input->get('limitstart', 0, 'int');
+		$limit 				= $input->get('limit', $default_limit, 'int');
+		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
+		$orderCol 			= $this->state->get('list.ordering', 't2.link_rating');
+		$orderDirn 			= $this->state->get('list.direction', 'DESC');
+		$order 				= $orderCol.' '.$orderDirn;
+
 		// Get remote database
 		$db = $this->getRemoteDB();
 		
@@ -215,6 +227,10 @@ class AppsModelDashboard extends JModelList
 		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
 		$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
 
+		if ($search) {
+			$where[] = '(t2.link_name LIKE(' . $db->quote('%'.$search.'%') . ') OR t2.link_desc LIKE(' . $db->quote('%'.$search.'%') . '))';
+		}
+		
 		$where = array_merge($where, array(
 			't2.link_published = 1',
 			't2.link_approved = 1',
@@ -234,7 +250,6 @@ class AppsModelDashboard extends JModelList
 		$this->_total = $db->loadResult();
 
 		// Get CDN URL
-		$componentParams = JComponentHelper::getParams('com_apps');
 		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
 		
 		// Populate array
@@ -245,7 +260,7 @@ class AppsModelDashboard extends JModelList
 			$data->id = $item->id;
 			$data->cat_id = $item->cat_id;
 			$data->name = $item->name;
-			$data->description = $item->description;
+			$data->description = preg_replace('/\n/', '<br />', $item->description);
 			$data->rating = $item->rating;
 			$data->image = $cdn . $item->image;
 			$data->user = $options->get('Developer Name');
