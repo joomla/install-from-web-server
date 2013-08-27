@@ -39,6 +39,12 @@ class AppsModelCategory extends JModelList
 	private $_remotedb = null;
 	
 	public $_extensionstitle = null;
+	
+	private $_categories = null;
+	
+	private $_breadcrumbs = array();
+	
+	private $_total = null;
 
 	/**
 	 * Method to auto-populate the model state.
@@ -143,114 +149,30 @@ class AppsModelCategory extends JModelList
 		return $this->_remotedb;
 	}
 	
+	private function getBaseModel()
+	{
+		$base_model =& JModelLegacy::getInstance('Base', 'AppsModel');
+		return $base_model;
+	}
+	
+	private function getCatID()
+	{
+		$input = new JInput;
+		return $input->get('id', null, 'int');
+	}
+	
 	public function getCategories()
 	{
-		// Get catid
-		$input = new JInput;
-		$catid = $input->get('id', null, 'int');
-
-		// Get remote database
-		$db = $this->getRemoteDB();
-		
-		// Form query
-		$query = $db->getQuery(true);
-		$query->select(
-			array(
-				'cat_id AS id',
-				'cat_name AS name',
-				'alias',
-				'cat_desc AS description',
-				'cat_parent AS parent',
-			)
-		);
-		$query->from('jos_mt_cats');
-		$query->where(
-			array(
-				'cat_published = 1',
-				'cat_approved = 1',
-			)
-		);
-		$query->order('cat_parent, cat_name ASC');
-		$db->setQuery($query);
-		$items = $db->loadObjectList();
-		
-		// Properties to be populated
-		$properties = array('id', 'name', 'alias', 'description', 'parent');
-		
-		// Array to collect children categories
-		$children = array();
-		
-		// References to category objects
-		$refs = array();
-		
-		// Array to collect active categories
-		$active = array($catid);
-		
-		// Array to be returned
-		$categories = array();
-		foreach ($items as $item)
-		{
-			// Skip root category
-			if (trim(strtolower($item->name)) == 'root')
-			{
-				continue;
-			}
-			
-			// Base array is default parent for all categories
-			$parent =& $categories;
-			
-			// Create empty array to populate with parent category's children
-			if ($item->parent and !array_key_exists($item->parent, $children))
-			{
-				$children[$item->parent] = array();
-			}
-			
-			// Change value of parent linking to children array
-			if ($item->parent)
-			{
-				$parent =& $children[$item->parent];
-			}
-			
-			// Populate category with values
-			$parent[$item->id] = new stdclass;
-			$parent[$item->id]->active = false;
-			foreach ($properties as $p)
-			{
-				$parent[$item->id]->{$p} = $item->{$p};
-			}
-			
-			// Create empty array for current category's own children
-			if (!array_key_exists($item->id, $children))
-			{
-				$children[$item->id] = array();
-			}
-			$parent[$item->id]->children =& $children[$item->id];
-			$refs[$item->id] =& $parent[$item->id];
-			if (in_array($item->id, $active))
-			{
-				$parent[$item->id]->active = true;
-				$id = $item->id;
-				do
-				{
-					if (!array_key_exists($id, $refs)) {
-						break;
-					}
-					$par = $refs[$id]->parent;
-					$active[] = $par;
-					if (array_key_exists($par, $refs)) {
-						$refs[$par]->active = true;
-						$id = $par;
-					}
-					else {
-						break;
-					}
-				} while ($id);
-			}
-		}
-
-		return $categories;
+		$base_model = $this->getBaseModel();
+		return $base_model->getCategories($this->getCatID());
 	}
 
+	public function getBreadcrumbs()
+	{
+		$base_model = $this->getBaseModel();
+		return $base_model->getBreadcrumbs($this->getCatID());
+	}
+	
 	public function getExtensions()
 	{
 		// Get catid, search filter, order column, order direction
@@ -263,6 +185,10 @@ class AppsModelCategory extends JModelList
 		
 		// Get remote database
 		$db = $this->getRemoteDB();
+		
+		$query = 'SET SESSION group_concat_max_len=15000';
+		$db->setQuery($query);
+		$db->execute();
 		
 		// Get category name
 		if ($catid) {
@@ -281,7 +207,7 @@ class AppsModelCategory extends JModelList
 		$query = $db->getQuery(true);
 		$query->select(
 			array(
-				't2.link_id AS id',
+				'SQL_CALC_FOUND_ROWS t2.link_id AS id',
 				't2.link_name AS name',
 				't2.alias AS alias',
 				't2.link_desc AS description',
@@ -328,6 +254,9 @@ class AppsModelCategory extends JModelList
 		$db->setQuery($query);
 		$items = $db->loadObjectList();
 		
+		$db->setQuery('SELECT FOUND_ROWS()');
+		$this->_total = $db->loadResult();
+
 		// Get CDN URL
 		$componentParams = JComponentHelper::getParams('com_apps');
 		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
@@ -340,10 +269,11 @@ class AppsModelCategory extends JModelList
 			$data->id = $item->id;
 			$data->cat_id = $item->cat_id;
 			$data->name = $item->name;
+			$data->description = $item->description;
 			$data->rating = $item->rating;
 			$data->image = $cdn . $item->image;
 			$data->user = $options->get('Developer Name');
-			$data->tags = $options->get('Extension Includes');
+			$data->tags = explode('|', trim($options->get('Extension Includes')));
 			$data->compatibility = $options->get('Compatibility');
 			$data->version = $options->get('Version');
 			$data->downloadurl = $options->get('Link for download/registration/purchase: URL');
@@ -354,5 +284,9 @@ class AppsModelCategory extends JModelList
 		return $extensions;
 		
 	}
-
+	
+	public function getCount()
+	{
+		return $this->_total;
+	}
 }
