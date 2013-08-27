@@ -13,7 +13,7 @@ $extension_data = $displayData['extension'];
 <div class="item <?php echo $displayData['spanclass']; ?>">
 	<p class="rating center">
 		<?php for ($i = 1; $i < 6; $i++) : ?>
-			<?php if ($extension_data->rating >= $i) : ?>
+			<?php if ($extension_data->rating + 0.5 >= $i) : ?>
 		<i class="icon-star rated"></i>
 			<?php else : ?>
 		<i class="icon-star"></i>
