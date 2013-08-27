@@ -16,13 +16,10 @@ $extensions_imagegrid 	= new JLayoutFile('joomla.apps.extensions_imagegrid');
 $extensions_singlegrid 	= new JLayoutFile('joomla.apps.extensions_singlegrid');
 $extension_data			= array('extensions' => $this->extensions, 'params' => $this->params);
 ?>
-<link rel="stylesheet" href="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/bgo.css"/>
-<link rel="stylesheet" href="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/zach.css"/>
-<link rel="stylesheet" href="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/onyx.css"/>
+<link rel="stylesheet" href="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/japps.css"/>
 <link rel="stylesheet" href="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/jquery.jscrollpane.css"/>
-<link rel="stylesheet" href="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/custom_select.css"/>
 <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
-<script type="text/javascript" src="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/js/jquery.jscrollpane.js"></script>
+<script type="text/javascript" src="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/js/jquery.jscrollpane.min.js"></script>
 <script type="text/javascript" src="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/js/jquery.mousewheel.js"></script>
 <script type="text/javascript" src="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/js/jquery.japps.js"></script>
 <div class="com-apps-container">
@@ -34,17 +31,17 @@ $extension_data			= array('extensions' => $this->extensions, 'params' => $this->
 		<div class="row-fluid">
 			<div class="span6">
 				<div class="com-apps-search">
-					<input type="text" placeholder="Search..."/>
+					<input type="text" placeholder="<?php echo JText::_('COM_APPS_SEARCH'); ?>"/>
 					<i class="icon-search"></i>
 				</div>
 			</div>
 			<div class="span6">
 				<div class="com-apps-advanced-search">
-					<a href="#"><i class="icon-cog"></i><span>Advanced Search</span></a>
+					<a href="#"><i class="icon-cog"></i><span><?php echo JText::_('COM_APPS_ADVANCED_SEARCH'); ?></span></a>
 					<div>
 						<div>
-							<div class="inp-row1"><input type="text"/></div>
-							<div class="inp-row1"><input type="text"/></div>
+							<div class="inp-row1"><input placeholder="<?php echo JText::_('COM_APPS_EXTENSION_NAME'); ?>" type="text"/></div>
+							<div class="inp-row1"><input placeholder="<?php echo JText::_('COM_APPS_DESCRIPTION'); ?>" type="text"/></div>
 							<div class="inp-row1">
 								<select name="" id="">
 									<option value="01">value 1</option>
@@ -63,38 +60,38 @@ $extension_data			= array('extensions' => $this->extensions, 'params' => $this->
 						</div>
 						<div>
 							<div class="inp-row2">
-								<input type="checkbox"/><label for="">JOOMLA</label>
+								<input id="j25" type="checkbox"/><label for="j25"><span class="j25">JOOMLA 2.5</span></label>
 							</div>
 							<div class="inp-row2">
-								<input type="checkbox"/><label for="">JOOMLA</label>
+								<input id="j2x" type="checkbox"/><label for="j2x"><span class="j2x">JOOMLA 2.X</span></label>
 							</div>
 						</div>
 						<div>
 							<div class="inp-row3">
-								<input type="checkbox"/><label for=""><span class="m">M</span> component</label>
+								<input id="ex_c" type="checkbox"/><label for="ex_c"><span class="c">C</span> <?php echo JText::_('COM_APPS_COMPONENT'); ?></label>
 							</div>
 							<div class="inp-row3">
-								<input type="checkbox"/><label for=""><span class="s">S</span> module</label>
+								<input id="ex_m" type="checkbox"/><label for="ex_m"><span class="m">M</span> <?php echo JText::_('COM_APPS_MODULE'); ?></label>
 							</div>
 							<div class="inp-row3">
-								<input type="checkbox"/><label for=""><span class="c">C</span> component</label>
+								<input id="ex_p" type="checkbox"/><label for="ex_p"><span class="p">P</span> <?php echo JText::_('COM_APPS_PLUGIN'); ?></label>
 							</div>
 							<div class="inp-row3">
-								<input type="checkbox"/><label for=""><span class="t">T</span> module</label>
+								<input id="ex_t" type="checkbox"/><label for="ex_t"><span class="t">T</span> <?php echo JText::_('COM_APPS_TOOL'); ?></label>
 							</div>
 							<div class="inp-row3">
-								<input type="checkbox"/><label for=""><span class="p">P</span> module</label>
+								<input id="ex_s" type="checkbox"/><label for="ex_s"><span class="s">S</span> <?php echo JText::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?></label>
 							</div>
 						</div>
 						<div class="clearfix">
-							<a href="" class="cancel">CANCEL</a>
-							<a href="" class="search">SEARCH</a>
+							<a href="JavaScript:void(0);" class="cancel"><?php echo JText::_('COM_APPS_CANCEL_BTN'); ?></a>
+							<a href="" class="search"><?php echo JText::_('COM_APPS_SEARCH_BTN'); ?></a>
 						</div>
 					</div>
 				</div>
 				<div class="view-toggle">
-					<span class="grid-view"></span>
-					<span class="list-view"></span>
+					<span class="grid-view act" title="<?php echo JText::_('COM_APPS_GRID_VIEW'); ?>"></span>
+					<span class="list-view pas" title="<?php echo JText::_('COM_APPS_LIST_VIEW'); ?>"></span>
 				</div>
 			</div>
 		</div>
