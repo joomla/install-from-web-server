@@ -182,7 +182,7 @@ class AppsModelCategory extends JModelList
 		$catid 				= $input->get('id', null, 'int');
 		$limitstart 		= $input->get('limitstart', 0, 'int');
 		$limit 				= $input->get('limit', $default_limit, 'int');
-		$search 			= $input->get('filter_search', null, 'string');
+		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
 		$orderCol 			= $this->state->get('list.ordering', 't2.link_rating');
 		$orderDirn 			= $this->state->get('list.direction', 'DESC');
 		$order 				= $orderCol.' '.$orderDirn;
