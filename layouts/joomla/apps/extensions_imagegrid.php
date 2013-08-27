@@ -11,6 +11,7 @@
 defined('JPATH_BASE') or die;
 $i = 0;
 $count = 1;
+$breadcrumbs = $displayData['breadcrumbs'];
 $extensions_perrow = $displayData['params']->get('extensions_perrow');
 $spanclass = 'span' . (12 / $extensions_perrow);
 $data	= array();
@@ -30,7 +31,10 @@ $data	= array();
 		<div class='grid-container'>
 			<div class="grid-header">
 			<div class="breadcrumbs">
-				<a href="#">EXTENSIONS</a> / <a href="#">ADMIN NAVIGATION</a> / <span class="active-extension">B2JCONTACT</span>
+				<a class="transcode" href="index.php?format=json&option=com_apps&view=dashboard"><?php echo JText::_('COM_APPS_EXTENSIONS'); ?></a>&nbsp;/&nbsp;
+				<?php foreach ($breadcrumbs as $bc) : ?>
+				<a class="transcode" href="index.php?format=json&option=com_apps&view=category&id=<?php echo $bc->id; ?>"><?php echo $bc->name; ?></a>&nbsp;/&nbsp;
+				<?php endforeach; ?>
 			</div>
 			<div class="sort-by pull-right">
 				<select title="asdasd">
