@@ -226,7 +226,7 @@ class AppsModelExtension extends JModelList
 		$extension->id = $item->link_id;
 		$extension->cat_id = $item->cat_id;
 		$extension->name = $item->link_name;
-		$extension->description = $item->link_desc;
+		$extension->description = preg_replace('/\n/', '<br />', $item->link_desc);
 		$extension->rating = $item->link_rating;
 		$extension->image = $cdn . $item->image;
 		$extension->user = $options->get('Developer Name');

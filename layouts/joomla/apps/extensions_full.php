@@ -51,7 +51,7 @@ $breadcrumbs = $displayData['breadcrumbs'];
 		
 			<div class="rating">
 				<?php for ($i = 1; $i < 6; $i++) : ?>
-					<?php if ($extension_data->rating >= $i) : ?>
+					<?php if ($extension_data->rating + 0.5 >= $i) : ?>
 				<i class="icon-star rated"></i>
 					<?php else : ?>
 				<i class="icon-star"></i>
