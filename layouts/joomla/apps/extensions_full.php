@@ -8,6 +8,8 @@
  */
 
 defined('JPATH_BASE') or die;
+$extension_data = $displayData['extensions'][0];
+print_r($extension_data);
 ?>
 <div class="item-view">
 	<div class="grid-header">
@@ -16,9 +18,9 @@ defined('JPATH_BASE') or die;
 		</div>
 	</div>
 	<div class="full-item-container">
-		<img class="item-logo" src="http://extensions.joomla.org/components/com_mtree/img/listings/s/52965.jpg" />
+		<img class="item-logo" src="<?php echo $extension_data->image; ?>" />
 		<div class="item-info-container">
-			<div class="item-title">Session Keeper</div>
+			<div class="item-title"><?php echo $extension_data->name; ?></div>
 			<div>
 				<ul class="item-type">
 					<li title="<?php echo JText::_('COM_APPS_MODULE'); ?>" class="m">M</li>
