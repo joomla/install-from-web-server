@@ -30,7 +30,7 @@ $extension_data			= array('extensions' => $this->extensions, 'breadcrumbs' => $t
 		<div class="row-fluid">
 			<div class="span6">
 				<div class="com-apps-search">
-					<input type="text" placeholder="<?php echo JText::_('COM_APPS_SEARCH'); ?>"/>
+					<input id="com-apps-searchbox" type="text" placeholder="<?php echo JText::_('COM_APPS_SEARCH'); ?>"/>
 					<i class="icon-search"></i>
 				</div>
 			</div>
