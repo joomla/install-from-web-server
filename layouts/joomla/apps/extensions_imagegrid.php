@@ -12,7 +12,7 @@ defined('JPATH_BASE') or die;
 $componentParams = JComponentHelper::getParams('com_apps');
 
 $breadcrumbs = $displayData['breadcrumbs'];
-$extensions_perrow = $componentParams->get('extensions_perrow');
+$extensions_perrow = $componentParams->get('extensions_perrow', 4);
 $spanclass = 'span' . (12 / $extensions_perrow);
 $data	= array();
 $ordering_options[] = JHtml::_('select.option', 't2.link_name', JText::_('COM_APPS_SORT_BY_NAME'));

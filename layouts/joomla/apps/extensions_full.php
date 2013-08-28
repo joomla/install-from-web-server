@@ -69,7 +69,16 @@ $breadcrumbs = $displayData['breadcrumbs'];
 		<div class="item-buttons">
 			<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
 			<a target="_blank" href="<?php echo $extension_data->website; ?>"><?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
-			<a class="install" href="#" onclick="Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>')"><?php echo JText::_('COM_APPS_INSTALL'); ?></a>
+			<?php if (!$extension_data->type || $extension_data->type == 0): ?>
+			
+			<?php elseif ($extension_data->type == 1): ?>
+			<a class="install" href="#" onclick="Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>', '<?php echo $extension_data->link_name; ?>')"><?php echo JText::_('COM_APPS_INSTALL'); ?></a>
+			<?php elseif ($extension_data->type == 2): ?>
+			<a target="_blank" class="install" href="<?php echo $extension_data->downloadurl; ?>"><?php echo JText::_('COM_APPS_INSTALL_REGISTER'); ?></a>
+			<?php elseif ($extension_data->type == 3): ?>
+			<a target="_blank" class="install" href="<?php echo $extension_data->downloadurl; ?>"><?php echo JText::_('COM_APPS_INSTALL_PURCHASE'); ?></a>
+			<?php endif; ?>
+
 		</div>
 		<div class="item-desc">
 			<p class="item-desc-title">

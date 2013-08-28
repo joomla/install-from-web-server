@@ -9,7 +9,7 @@
 
 defined('JPATH_BASE') or die;
 ?>
-<div class="com-apps-advanced-search">
+<div class="com-apps-advanced-search hidden">
 	<a href="#"><i class="icon-cog"></i><span><?php echo JText::_('COM_APPS_ADVANCED_SEARCH'); ?></span></a>
 	<div>
 		<div>
