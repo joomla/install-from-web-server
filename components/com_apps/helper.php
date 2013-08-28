@@ -17,4 +17,10 @@ class AppsHelper {
 		
 		return $url;
 	}
+	
+	static function getJEDUrl($item) {
+		$url = 'http://extensions.joomla.org/';
+		
+		return $url;
+	}
 }

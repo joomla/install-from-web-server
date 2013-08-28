@@ -10,14 +10,14 @@
 defined('JPATH_BASE') or die;
 $extension_data = $displayData['extensions'][0];
 $breadcrumbs = $displayData['breadcrumbs'];
-
+//print_r($extension_data);
 ?>
 <div class="item-view">
 	<div class="grid-header">
 		<div class="breadcrumbs">
-			<a class="transcode" href="index.php?format=json&option=com_apps&view=dashboard"><?php echo JText::_('COM_APPS_EXTENSIONS'); ?></a>&nbsp;/&nbsp;
+			<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl('view=dashboard'); ?>"><?php echo JText::_('COM_APPS_EXTENSIONS'); ?></a>&nbsp;/&nbsp;
 			<?php foreach ($breadcrumbs as $bc) : ?>
-			<a class="transcode" href="index.php?format=json&option=com_apps&view=category&id=<?php echo $bc->id; ?>"><?php echo $bc->name; ?></a>&nbsp;/&nbsp;
+			<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$bc->id}"); ?>"><?php echo $bc->name; ?></a>&nbsp;/&nbsp;
 			<?php endforeach; ?>
 			<?php echo $extension_data->name; ?>
 		</div>
@@ -64,9 +64,9 @@ $breadcrumbs = $displayData['breadcrumbs'];
 		</div>
 		<div style="clear:both;"></div>
 		<div class="item-buttons">
-			<a href=""><?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
-			<a href=""><?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
-			<a class="install" href=""><?php echo JText::_('COM_APPS_INSTALL'); ?></a>
+			<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
+			<a target="_blank" href="<?php echo $extension_data->website; ?>"><?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
+			<a class="install" href="#" onclick="Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>')"><?php echo JText::_('COM_APPS_INSTALL'); ?></a>
 		</div>
 		<div class="item-desc">
 			<p class="item-desc-title">
