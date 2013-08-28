@@ -42,6 +42,25 @@ Joomla.installfromwebcancel = function() {
 	jQuery('#jed-container').slideDown(300);
 }
 
+Joomla.installfromwebajaxsubmit = function() {
+	if (apps_view == 'extension') {
+		apps_view = 'category';
+		apps_id = jQuery('div.breadcrumbs a.transcode').slice(-1).attr('href').replace(/^.+[&\?]id=(\d+).*$/, '$1');
+	}
+	var tail = '&view='+apps_view;
+	if (apps_id) {
+		tail += '&id='+apps_id;
+	}
+	
+	if (jQuery('#com-apps-searchbox').val()) {
+		var value = encodeURI(jQuery('#com-apps-searchbox').val().toLowerCase().replace(/ +/g,'_').replace(/[0-9]/g,'').replace(/[^a-z0-9-_]/g,'').trim());
+		tail += '&filter_search='+value;
+	}
+
+	tail += '&ordering='+jQuery('#com-apps-ordering').val();
+	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps'+tail);
+}
+
 jQuery(document).ready(function() {
 	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps&view=dashboard');
 	
@@ -55,17 +74,12 @@ jQuery(document).ready(function() {
 
 	jQuery('#com-apps-searchbox').live('keypress', function(event){
 		if(event.which == 13) {
-			if (apps_view == 'extension') {
-				apps_view = 'category';
-				apps_id = jQuery('div.breadcrumbs a.transcode').slice(-1).attr('href').replace(/^.+[&\?]id=(\d+).*$/, '$1');
-			}
-			var tail = '&view='+apps_view;
-			if (apps_id) {
-				tail += '&id='+apps_id;
-			}
-			var value = encodeURI($(this).value.toLowerCase().replace(/ +/g,'_').replace(/[0-9]/g,'').replace(/[^a-z0-9-_]/g,'').trim());
-			tail += '&filter_search='+value;
-			Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps'+tail);
+			Joomla.installfromwebajaxsubmit();
 		}
 	});
+
+	jQuery('#com-apps-ordering').live('change', function(event){
+		Joomla.installfromwebajaxsubmit();
+	});
+
 });
