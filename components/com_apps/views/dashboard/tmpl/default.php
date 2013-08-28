@@ -13,6 +13,7 @@ $category_sidebar 		= new JLayoutFile('joomla.apps.category_sidebar');
 $extensions_imagegrid 	= new JLayoutFile('joomla.apps.extensions_imagegrid');
 $extensions_singlegrid 	= new JLayoutFile('joomla.apps.extensions_singlegrid');
 $advanced_search	 	= new JLayoutFile('joomla.apps.advanced_search');
+$simple_search			= new JLayoutFile('joomla.apps.simple_search');
 $extension_data			= array('extensions' => $this->extensions, 'breadcrumbs' => $this->breadcrumbs, 'params' => $this->params);
 ?>
 <link rel="stylesheet" href="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/japps.css"/>
@@ -29,10 +30,7 @@ $extension_data			= array('extensions' => $this->extensions, 'breadcrumbs' => $t
 	<div class="span9">
 		<div class="row-fluid">
 			<div class="span6">
-				<div class="com-apps-search">
-					<input id="com-apps-searchbox" type="text" placeholder="<?php echo JText::_('COM_APPS_SEARCH'); ?>"/>
-					<i class="icon-search"></i>
-				</div>
+				<?php echo $simple_search->render(array()); ?>
 			</div>
 			<div class="span6">
 				<?php //echo $advanced_search->render(array()); ?>

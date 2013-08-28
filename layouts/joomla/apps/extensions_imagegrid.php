@@ -20,7 +20,14 @@ $data	= array();
 <div class="row-fluid">
 	<div class="item-view span12">
 		<div class='grid-container'>
-			<?php echo JText::_('No Extensions'); ?>
+			<div class="grid-header">
+				<div class="breadcrumbs">
+					<?php echo JText::_('COM_APPS_NO_RESULTS'); ?>
+				</div>
+			</div>
+			<div class="row-fluid">
+				<h4><?php echo JText::_('COM_APPS_NO_RESULTS_DESCRIPTION'); ?></h4>
+			</div>
 		</div>
 	</div>
 </div>
