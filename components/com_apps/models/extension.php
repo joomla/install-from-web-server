@@ -228,12 +228,21 @@ class AppsModelExtension extends JModelList
 		$item->compatibility = $options->get('Compatibility');
 		$item->version = $options->get('Version');
 		$item->downloadurl = $options->get('Link for download/registration/purchase: URL');
-		$item->type = $options->get('Extension Apps* download type');
+		$item->type = $this->getTypeEnum($options->get('Extension Apps* download type'));
 		$item->license = $options->get('License');
-		$item->type = $options->get('Extension Apps* download type');
 		
 		return array($item);
 		
+	}
+	
+	private function getTypeEnum($text) {
+		$options = array();
+		$options[0] = 'None';
+		$options[1] = 'Free Direct Download link:';
+		$options[2] = 'Free but Registration required at link:';
+		$options[3] = 'Commercial purchase required at link:';
+		
+		return array_search($text, $options);
 	}
 
 }
