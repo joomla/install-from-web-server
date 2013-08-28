@@ -47,5 +47,11 @@
 			label="COM_APPS_CONFIG_CDN_LABEL"
 			description="COM_APPS_CONFIG_CDN_DESC">
 		</field>
+		<field name="route_prefix"
+			type="text"
+			default=""
+			label="COM_APPS_CONFIG_ROUTING_PREFIX_LABEL"
+			description="COM_APPS_CONFIG_ROUTING_PREFIX_DESC">
+		</field>
         </fieldset>
 </config>

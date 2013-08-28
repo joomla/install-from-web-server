@@ -34,7 +34,7 @@ $extension_data			= array('extensions' => $this->extensions, 'breadcrumbs' => $t
 				</div>
 			</div>
 			<div class="span6">
-				<div class="com-apps-advanced-search">
+				<div class="com-apps-advanced-search hidden">
 					<a href="#"><i class="icon-cog"></i><span><?php echo JText::_('COM_APPS_ADVANCED_SEARCH'); ?></span></a>
 					<div>
 						<div>
@@ -87,7 +87,7 @@ $extension_data			= array('extensions' => $this->extensions, 'breadcrumbs' => $t
 						</div>
 					</div>
 				</div>
-				<div class="view-toggle">
+				<div class="view-toggle hidden">
 					<span class="grid-view act" title="<?php echo JText::_('COM_APPS_GRID_VIEW'); ?>"></span>
 					<span class="list-view pas" title="<?php echo JText::_('COM_APPS_LIST_VIEW'); ?>"></span>
 				</div>
