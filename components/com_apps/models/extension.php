@@ -222,22 +222,27 @@ class AppsModelExtension extends JModelList
 		
 		// Create item
 		$options = new JRegistry($item->options);
-		$extension = new stdclass;
-		$extension->id = $item->link_id;
-		$extension->cat_id = $item->cat_id;
-		$extension->name = $item->link_name;
-		$extension->description = preg_replace('/\n/', '<br />', $item->link_desc);
-		$extension->website = $item->website;
-		$extension->rating = $item->link_rating;
-		$extension->image = $cdn . $item->image;
-		$extension->user = $options->get('Developer Name');
-		$extension->tags = explode('|', trim($options->get('Extension Includes')));
-		$extension->compatibility = $options->get('Compatibility');
-		$extension->version = $options->get('Version');
-		$extension->downloadurl = $options->get('Link for download/registration/purchase: URL');
-		$extension->type = $options->get('Extension Apps* download type');
+		//$extension = new stdclass;
+		//$extension->id = $item->link_id;
+		//$extension->created = $item->link_created;
+		//$extension->modified = $item->link_modified;
+		//$extension->votes = $item->link_votes;
+		//$extension->cat_id = $item->cat_id;
+		//$extension->name = $item->link_name;
+		//$extension->description = preg_replace('/\n/', '<br />', $item->link_desc);
+		//$extension->website = $item->website;
+		//$extension->rating = $item->link_rating;
+		$item->image = $cdn . $item->image;
+		$item->user = $options->get('Developer Name');
+		$item->tags = explode('|', trim($options->get('Extension Includes')));
+		$item->compatibility = $options->get('Compatibility');
+		$item->version = $options->get('Version');
+		$item->downloadurl = $options->get('Link for download/registration/purchase: URL');
+		$item->type = $options->get('Extension Apps* download type');
+		$item->license = $options->get('License');
+		$item->type = $options->get('Extension Apps* download type');
 		
-		return array($extension);
+		return array($item);
 		
 	}
 

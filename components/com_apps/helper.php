@@ -21,6 +21,9 @@ class AppsHelper {
 	static function getJEDUrl($item) {
 		$url = 'http://extensions.joomla.org/';
 		
+		if (!$item->id) { return $url; }
+
+		$url .= 'index.php?option=com_mtree&task=viewlink&link_id=' . $item->id;
 		return $url;
 	}
 }

@@ -62,3 +62,7 @@ defined('JPATH_BASE') or die;
 		</div>
 	</div>
 </div>
+<div class="view-toggle">
+	<span class="grid-view act" title="<?php echo JText::_('COM_APPS_GRID_VIEW'); ?>"></span>
+	<span class="list-view pas" title="<?php echo JText::_('COM_APPS_LIST_VIEW'); ?>"></span>
+</div>
