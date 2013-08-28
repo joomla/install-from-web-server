@@ -10,22 +10,23 @@
 defined('JPATH_BASE') or die;
 $extension_data = $displayData['extensions'][0];
 $breadcrumbs = $displayData['breadcrumbs'];
-
+//print_r($extension_data);
 ?>
 <div class="item-view">
 	<div class="grid-header">
 		<div class="breadcrumbs">
-			<a class="transcode" href="index.php?format=json&option=com_apps&view=dashboard"><?php echo JText::_('COM_APPS_EXTENSIONS'); ?></a>&nbsp;/&nbsp;
+			<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl('view=dashboard'); ?>"><?php echo JText::_('COM_APPS_EXTENSIONS'); ?></a>
 			<?php foreach ($breadcrumbs as $bc) : ?>
-			<a class="transcode" href="index.php?format=json&option=com_apps&view=category&id=<?php echo $bc->id; ?>"><?php echo $bc->name; ?></a>&nbsp;/&nbsp;
+			&nbsp;/&nbsp;<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$bc->id}"); ?>"><?php echo $bc->name; ?></a>
 			<?php endforeach; ?>
-			<?php echo $extension_data->name; ?>
+			&nbsp;/&nbsp;
+			<?php echo $extension_data->link_name; ?>
 		</div>
 	</div>
 	<div class="full-item-container">
 		<img class="item-logo" src="<?php echo $extension_data->image; ?>" />
 		<div class="item-info-container">
-			<div class="item-title"><?php echo $extension_data->name; ?></div>
+			<div class="item-title"><?php echo $extension_data->link_name; ?></div>
 			<div>
 				<ul class="item-type">
 					<?php if (in_array('mod', $extension_data->tags)) : ?>
@@ -51,29 +52,31 @@ $breadcrumbs = $displayData['breadcrumbs'];
 		
 			<div class="rating">
 				<?php for ($i = 1; $i < 6; $i++) : ?>
-					<?php if ($extension_data->rating + 0.5 >= $i) : ?>
+					<?php if ($extension_data->link_rating + 0.5 >= $i) : ?>
 				<i class="icon-star rated"></i>
 					<?php else : ?>
 				<i class="icon-star"></i>
 					<?php endif; ?>
 				<?php endfor; ?>
+				 <?php echo JText::sprintf('COM_APPS_EXTENSION_VOTES', $extension_data->link_votes); ?>
 			</div>
 			<div class="item-version">
-				<?php echo $extension_data->version; ?>
+				<?php echo JText::sprintf('COM_APPS_EXTENSION_VERSION', $extension_data->version, JHTML::date($extension_data->link_modified)); ?>
+				
 			</div>
 		</div>
 		<div style="clear:both;"></div>
 		<div class="item-buttons">
-			<a href=""><?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
-			<a href=""><?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
-			<a class="install" href=""><?php echo JText::_('COM_APPS_INSTALL'); ?></a>
+			<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
+			<a target="_blank" href="<?php echo $extension_data->website; ?>"><?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
+			<a class="install" href="#" onclick="Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>')"><?php echo JText::_('COM_APPS_INSTALL'); ?></a>
 		</div>
 		<div class="item-desc">
 			<p class="item-desc-title">
-				<?php echo $extension_data->name; ?>
+				<?php echo $extension_data->link_name; ?> <small><?php echo JText::sprintf('COM_APPS_EXTENSION_AUTHOR', $extension_data->user); ?></small>
 			</p>
-			<p class="item-desc-text">
-				<?php echo $extension_data->description; ?>
+			<p class="item-desc-text" align="justify">
+				<?php echo nl2br($extension_data->link_desc); ?>
 			</p>
 		</div>
 		<div style="clear:both;"></div>

@@ -9,18 +9,31 @@
 
 //@TODO: MOve the single extension grid into a reusable JLayout
 defined('JPATH_BASE') or die;
-$i = 0;
-$count = 1;
+$componentParams = JComponentHelper::getParams('com_apps');
+
 $breadcrumbs = $displayData['breadcrumbs'];
-$extensions_perrow = $displayData['params']->get('extensions_perrow');
+$extensions_perrow = $componentParams->get('extensions_perrow');
 $spanclass = 'span' . (12 / $extensions_perrow);
 $data	= array();
+$ordering_options[] = JHtml::_('select.option', 't2.link_name', JText::_('COM_APPS_SORT_BY_NAME'));
+$ordering_options[] = JHtml::_('select.option', 't2.link_rating', JText::_('COM_APPS_SORT_BY_RATING'));
+$ordering_options[] = JHtml::_('select.option', 't2.link_created', JText::_('COM_APPS_SORT_BY_CREATED'));
+$app = JFactory::getApplication();
+$selected_ordering = $app->input->get('ordering', 't2.link_rating');
+
 ?>
 <?php if (!count($displayData['extensions'])) : ?>
 <div class="row-fluid">
 	<div class="item-view span12">
 		<div class='grid-container'>
-			<?php echo JText::_('No Extensions'); ?>
+			<div class="grid-header">
+				<div class="breadcrumbs">
+					<?php echo JText::_('COM_APPS_NO_RESULTS'); ?>
+				</div>
+			</div>
+			<div class="row-fluid">
+				<h4><?php echo JText::_('COM_APPS_NO_RESULTS_DESCRIPTION'); ?></h4>
+			</div>
 		</div>
 	</div>
 </div>
@@ -31,46 +44,39 @@ $data	= array();
 		<div class='grid-container'>
 			<div class="grid-header">
 			<div class="breadcrumbs">
-				<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl('view=dashboard'); ?>"><?php echo JText::_('COM_APPS_EXTENSIONS'); ?></a>&nbsp;/&nbsp;
+				<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl('view=dashboard'); ?>"><?php echo JText::_('COM_APPS_EXTENSIONS'); ?></a>
 				<?php foreach ($breadcrumbs as $bc) : ?>
-				<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$bc->id}"); ?>"><?php echo $bc->name; ?></a>&nbsp;/&nbsp;
+				&nbsp;/&nbsp;<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$bc->id}"); ?>"><?php echo $bc->name; ?></a>
 				<?php endforeach; ?>
 			</div>
 			<div class="sort-by pull-right">
-				<select title="asdasd">
-				  <option value="84"><?php echo JText::_('COM_APPS_SORT_BY_NAME'); ?></option>
-				  <option value="87"><?php echo JText::_('COM_APPS_SORT_BY_SIZE'); ?></option>
-				</select>
+				<?php echo JHTML::_('select.genericlist', $ordering_options, 'ordering', null, 'value', 'text', $selected_ordering, 'com-apps-ordering'); ?>
 			</div>
 		</div>
 		<div class="items grid-view-container">
-	<?php 
-		foreach ($displayData['extensions'] as $extension) :
-			$ratingwidth = round(70 * ($extension->rating / 5));
-			if ($i != 0 && $i%$extensions_perrow == 0) {
-	?>
-<?php 
-}
-	$data	= array('spanclass' => $spanclass,'extension' => $extension);
-	$extensions_singlegrid = new JLayoutFile('joomla.apps.extensions_singlegrid');
+			<div class="row-fluid">
+			<?php
+				// Looping thru all the extensions, closing and starting a new row after every $extensions_perrow items
+				// The single extension box is loaded using the JLayout
+				$i = 0;
+				foreach ($displayData['extensions'] as $extension) :
+					$ratingwidth = round(70 * ($extension->rating / 5));
+					if ($i != 0 && $i%$extensions_perrow == 0) { 
+			?>
+				</div>
+				<hr />
+				<div class="row-fluid">
+			<?php 
+					}
 
-	if ($count%4 == 1)
-    {  
-         echo "<div class='row-fluid'>";
-    }
-    
-    echo $extensions_singlegrid->render($data);
-    
-    if ($count%4 == 0)
-    {
-        echo '</div><hr />';
-    }
-    $count++;
-?>
-
-<?php $i++; endforeach; ?>
-<?php if ($count%4 != 1) echo "</div>";?>
+					$data	= array('spanclass' => $spanclass,'extension' => $extension);
+					$extensions_singlegrid = new JLayoutFile('joomla.apps.extensions_singlegrid');
+					echo $extensions_singlegrid->render($data);
+					
+					$i++;
+				endforeach;
+			?>
+			</div>
 		</div>
-
 	</div>
 </div>
