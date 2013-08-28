@@ -10,18 +10,20 @@
 //@TODO: MOve the single extension grid into a reusable JLayout
 defined('JPATH_BASE') or die;
 $componentParams = JComponentHelper::getParams('com_apps');
-
-$breadcrumbs = $displayData['breadcrumbs'];
-$extensions_perrow = $componentParams->get('extensions_perrow');
-$spanclass = 'span' . (12 / $extensions_perrow);
+$app = JFactory::getApplication();
 $data	= array();
+$breadcrumbs = $displayData['breadcrumbs'];
+$extensions_perrow = $componentParams->get('extensions_perrow', 4);
+$spanclass = 'span' . (12 / $extensions_perrow);
+
 $ordering_options[] = JHtml::_('select.option', 't2.link_name', JText::_('COM_APPS_SORT_BY_NAME'));
 $ordering_options[] = JHtml::_('select.option', 't2.link_rating', JText::_('COM_APPS_SORT_BY_RATING'));
 $ordering_options[] = JHtml::_('select.option', 't2.link_created', JText::_('COM_APPS_SORT_BY_CREATED'));
-$app = JFactory::getApplication();
-$selected_ordering = $app->input->get('ordering', 't2.link_rating');
 
+$selected_ordering = $app->input->get('ordering', 't2.link_rating');
+$view = $app->input->getCmd('view');
 ?>
+
 <?php if (!count($displayData['extensions'])) : ?>
 <div class="row-fluid">
 	<div class="item-view span12">
@@ -50,7 +52,10 @@ $selected_ordering = $app->input->get('ordering', 't2.link_rating');
 				<?php endforeach; ?>
 			</div>
 			<div class="sort-by pull-right">
-				<?php echo JHTML::_('select.genericlist', $ordering_options, 'ordering', null, 'value', 'text', $selected_ordering, 'com-apps-ordering'); ?>
+				<?php 
+					if ($view != 'dashboard')
+						echo JHTML::_('select.genericlist', $ordering_options, 'ordering', null, 'value', 'text', $selected_ordering, 'com-apps-ordering'); 
+				?>
 			</div>
 		</div>
 		<div class="items grid-view-container">
