@@ -222,16 +222,6 @@ class AppsModelExtension extends JModelList
 		
 		// Create item
 		$options = new JRegistry($item->options);
-		//$extension = new stdclass;
-		//$extension->id = $item->link_id;
-		//$extension->created = $item->link_created;
-		//$extension->modified = $item->link_modified;
-		//$extension->votes = $item->link_votes;
-		//$extension->cat_id = $item->cat_id;
-		//$extension->name = $item->link_name;
-		//$extension->description = preg_replace('/\n/', '<br />', $item->link_desc);
-		//$extension->website = $item->website;
-		//$extension->rating = $item->link_rating;
 		$item->image = $cdn . $item->image;
 		$item->user = $options->get('Developer Name');
 		$item->tags = explode('|', trim($options->get('Extension Includes')));

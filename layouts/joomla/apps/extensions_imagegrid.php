@@ -9,10 +9,10 @@
 
 //@TODO: MOve the single extension grid into a reusable JLayout
 defined('JPATH_BASE') or die;
-$i = 0;
-$count = 1;
+$componentParams = JComponentHelper::getParams('com_apps');
+
 $breadcrumbs = $displayData['breadcrumbs'];
-$extensions_perrow = $displayData['params']->get('extensions_perrow');
+$extensions_perrow = $componentParams->get('extensions_perrow');
 $spanclass = 'span' . (12 / $extensions_perrow);
 $data	= array();
 ?>
@@ -44,40 +44,37 @@ $data	= array();
 				<?php endforeach; ?>
 			</div>
 			<div class="sort-by pull-right">
-				<select title="asdasd">
-				  <option value="84"><?php echo JText::_('COM_APPS_SORT_BY_NAME'); ?></option>
-				  <option value="87"><?php echo JText::_('COM_APPS_SORT_BY_SIZE'); ?></option>
+				<select name="ordering">
+				  <option value="link_name"><?php echo JText::_('COM_APPS_SORT_BY_NAME'); ?></option>
+				  <option value="link_rating"><?php echo JText::_('COM_APPS_SORT_BY_RATING'); ?></option>
+				  <option value="link_created"><?php echo JText::_('COM_APPS_SORT_BY_CREATED'); ?></option>
 				</select>
 			</div>
 		</div>
 		<div class="items grid-view-container">
-	<?php 
-		foreach ($displayData['extensions'] as $extension) :
-			$ratingwidth = round(70 * ($extension->rating / 5));
-			if ($i != 0 && $i%$extensions_perrow == 0) {
-	?>
-<?php 
-}
-	$data	= array('spanclass' => $spanclass,'extension' => $extension);
-	$extensions_singlegrid = new JLayoutFile('joomla.apps.extensions_singlegrid');
+			<div class="row-fluid">
+			<?php
+				// Looping thru all the extensions, closing and starting a new row after every $extensions_perrow items
+				// The single extension box is loaded using the JLayout
+				$i = 0;
+				foreach ($displayData['extensions'] as $extension) :
+					$ratingwidth = round(70 * ($extension->rating / 5));
+					if ($i != 0 && $i%$extensions_perrow == 0) { 
+			?>
+				</div>
+				<hr />
+				<div class="row-fluid">
+			<?php 
+					}
 
-	if ($count%4 == 1)
-    {  
-         echo "<div class='row-fluid'>";
-    }
-    
-    echo $extensions_singlegrid->render($data);
-    
-    if ($count%4 == 0)
-    {
-        echo '</div><hr />';
-    }
-    $count++;
-?>
-
-<?php $i++; endforeach; ?>
-<?php if ($count%4 != 1) echo "</div>";?>
+					$data	= array('spanclass' => $spanclass,'extension' => $extension);
+					$extensions_singlegrid = new JLayoutFile('joomla.apps.extensions_singlegrid');
+					echo $extensions_singlegrid->render($data);
+					
+					$i++;
+				endforeach;
+			?>
+			</div>
 		</div>
-
 	</div>
 </div>

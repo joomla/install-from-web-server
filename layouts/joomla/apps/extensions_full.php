@@ -15,10 +15,11 @@ $breadcrumbs = $displayData['breadcrumbs'];
 <div class="item-view">
 	<div class="grid-header">
 		<div class="breadcrumbs">
-			<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl('view=dashboard'); ?>"><?php echo JText::_('COM_APPS_EXTENSIONS'); ?></a>&nbsp;/&nbsp;
+			<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl('view=dashboard'); ?>"><?php echo JText::_('COM_APPS_EXTENSIONS'); ?></a>
 			<?php foreach ($breadcrumbs as $bc) : ?>
-			<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$bc->id}"); ?>"><?php echo $bc->name; ?></a>&nbsp;/&nbsp;
+			&nbsp;/&nbsp;<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$bc->id}"); ?>"><?php echo $bc->name; ?></a>
 			<?php endforeach; ?>
+			&nbsp;/&nbsp;
 			<?php echo $extension_data->link_name; ?>
 		</div>
 	</div>

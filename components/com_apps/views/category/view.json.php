@@ -37,9 +37,6 @@ class AppsViewCategory extends JViewLegacy
 		$this->pagination	= $this->get('Pagination');
 		$this->params 		= new JRegistry();
 		
-		// Temporary params @DELETE
-		$this->params->set('extensions_perrow', 4);
-		
 		$response = array();
 		$response['body'] = $this->loadTemplate($tpl);
 		$response['error'] = false;
