@@ -145,8 +145,7 @@ class AppsModelDashboard extends JModelList
 	
 	private function getCatID()
 	{
-		$input = new JInput;
-		return $input->get('id', null, 'int');
+		return null;
 	}
 	
 	public function getCategories()
@@ -202,26 +201,27 @@ class AppsModelDashboard extends JModelList
 		$where = array();
 
 		//Randomly select field to order by
-		$field = array('rating', 'hits', 'featured');
+		$field = array('rating' => 't2.link_rating', 'hits' => 't2.link_hits', 'featured' => 't2.link_featured');
+		$fieldkeys = array_keys($field);
 		list($usec, $sec) = explode(' ', microtime());
 		srand((float) $sec + ((float) $usec * 100000));
 		$randval = rand(0, count($field) - 1);
 		
-		$this->_extensionstitle = JText::_('COM_APPS_EXTENSIONS_TITLE_' . strtoupper($field[$randval]));
+		$this->_extensionstitle = JText::_('COM_APPS_EXTENSIONS_TITLE_' . strtoupper($fieldkeys[$randval]));
 		
 		// Featured extensions are selected randomly from the whole array
 		// When selection method is based on rating or hits, extensions are selected from the top 100
-		if ($field[$randval] == 'link_featured')
+		if ($fieldkeys[$randval] == 'link_featured')
 		{
 			$query->from('jos_mt_links AS t2');
 			$where[] = 't2.link_featured = 1';
 		}
 		else
 		{
-			$query->from('(SELECT * FROM jos_mt_links ORDER BY link_' . $field[$randval] . ' DESC LIMIT 100) AS t2');
+			$query->from('(SELECT * FROM jos_mt_links ORDER BY link_' . $fieldkeys[$randval] . ' DESC LIMIT 100) AS t2');
 		}
 		$query->join('LEFT', 'jos_mt_cl AS t1 ON t1.link_id = t2.link_id');
-		$order = 'RAND()';
+		$order = $field[$fieldkeys[$randval]] . ' DESC';
 
 		$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
 		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
@@ -242,7 +242,7 @@ class AppsModelDashboard extends JModelList
 		$query->order($order);
 		$query->group('t2.link_id');
 		$limitstart = 0;
-		$limit = 15;
+		$limit = 30;
 		$db->setQuery($query, $limitstart, $limit);
 		$items = $db->loadObjectList();
 		

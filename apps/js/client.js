@@ -1,5 +1,7 @@
-var apps_view = "dashboard";
-var apps_id = 0;
+Joomla.apps = {};
+Joomla.apps.view = "dashboard";
+Joomla.apps.id = 0;
+Joomla.apps.ordering = "";
 
 Joomla.loadweb = function(url) {
 	if ('' == url) { return false; }
@@ -7,9 +9,15 @@ Joomla.loadweb = function(url) {
 	jQuery.get(url, function(response) {
 		jQuery('#web-loader').hide();
 		jQuery('#jed-container').html(response.data);
-	}, 'jsonp').fail(function() { 
+	}, 'jsonp')
+	.fail(function() { 
 		jQuery('#web-loader').hide();
 		jQuery('#web-loader-error').show();
+	})
+	.complete(function() { 
+		if (Joomla.apps.ordering !== "") {
+			jQuery('#com-apps-ordering').prop("selectedIndex", Joomla.apps.ordering);
+		}
 	});
 }
 
@@ -43,13 +51,13 @@ Joomla.installfromwebcancel = function() {
 }
 
 Joomla.installfromwebajaxsubmit = function() {
-	if (apps_view == 'extension') {
-		apps_view = 'category';
-		apps_id = jQuery('div.breadcrumbs a.transcode').slice(-1).attr('href').replace(/^.+[&\?]id=(\d+).*$/, '$1');
+	if (Joomla.apps.view == 'extension') {
+		Joomla.apps.view = 'category';
+		Joomla.apps.id = jQuery('div.breadcrumbs a.transcode').slice(-1).attr('href').replace(/^.+[&\?]id=(\d+).*$/, '$1');
 	}
-	var tail = '&view='+apps_view;
-	if (apps_id) {
-		tail += '&id='+apps_id;
+	var tail = '&view='+Joomla.apps.view;
+	if (Joomla.apps.id) {
+		tail += '&id='+Joomla.apps.id;
 	}
 	
 	if (jQuery('#com-apps-searchbox').val()) {
@@ -57,7 +65,11 @@ Joomla.installfromwebajaxsubmit = function() {
 		tail += '&filter_search='+value;
 	}
 
-	tail += '&ordering='+jQuery('#com-apps-ordering').val();
+	var ordering = Joomla.apps.ordering;
+	if (ordering !== "") {
+		ordering = jQuery('#com-apps-ordering').val();
+	}
+	tail += '&ordering='+ordering;
 	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps'+tail);
 }
 
@@ -66,8 +78,13 @@ jQuery(document).ready(function() {
 	
 	jQuery('a.transcode').live('click', function(event){
 		ajax_url = jQuery(this).attr('href');
-		apps_view = ajax_url.replace(/^.+[&\?]view=(\w+).*$/, '$1');
-		apps_id = ajax_url.replace(/^.+[&\?]id=(\d+).*$/, '$1');
+		Joomla.apps.view = ajax_url.replace(/^.+[&\?]view=(\w+).*$/, '$1');
+		if (Joomla.apps.view == 'dashboard') {
+			Joomla.apps.id = 0;
+		}
+		else {
+			Joomla.apps.id = ajax_url.replace(/^.+[&\?]id=(\d+).*$/, '$1');
+		}
 		event.preventDefault();
 		Joomla.loadweb(apps_base_url + ajax_url);
 	});
@@ -79,6 +96,7 @@ jQuery(document).ready(function() {
 	});
 
 	jQuery('#com-apps-ordering').live('change', function(event){
+		Joomla.apps.ordering = jQuery(this).prop("selectedIndex");
 		Joomla.installfromwebajaxsubmit();
 	});
 
