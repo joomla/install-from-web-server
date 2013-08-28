@@ -49,6 +49,6 @@ $extension_data = $displayData['extension'];
 		<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>"><?php echo $displayData['extension']->name; ?></a>
 	</h4>
 	<p class="item-description">
-		<?php echo $extension_data->description; ?>
+		<?php echo substr($extension_data->description, 0, 100); ?>
 	</p>
 </div>

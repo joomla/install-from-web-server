@@ -177,13 +177,14 @@ class AppsModelCategory extends JModelList
 	{
 		// Get catid, search filter, order column, order direction
 		$componentParams 	= JComponentHelper::getParams('com_apps');
-		$default_limit		= $componentParams->get('default_limit', 8);
+		$default_limit		= $componentParams->get('default_limit');
 		$input 				= new JInput;
 		$catid 				= $input->get('id', null, 'int');
 		$limitstart 		= $input->get('limitstart', 0, 'int');
 		$limit 				= $input->get('limit', $default_limit, 'int');
+		$order 				= $input->get('ordering', 't2.link_rating');
 		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
-		$orderCol 			= $this->state->get('list.ordering', 't2.link_rating');
+		$orderCol 			= $this->state->get('list.ordering', $order);
 		$orderDirn 			= $this->state->get('list.direction', 'DESC');
 		$order 				= $orderCol.' '.$orderDirn;
 		
@@ -219,7 +220,7 @@ class AppsModelCategory extends JModelList
 				't2.user_id AS user_id',
 				't3.filename AS image',
 				't1.cat_id AS cat_id',
-				'CONCAT("{", GROUP_CONCAT("\"", t5.caption, "\":\"", t4.value, "\""), "\"}") AS options',
+				'CONCAT("{", GROUP_CONCAT("\"", t5.caption, "\":\"", t4.value, "\""), "}") AS options',
 			)
 		);
 
@@ -268,20 +269,14 @@ class AppsModelCategory extends JModelList
 		$extensions = array();
 		foreach ($items as $item) {
 			$options = new JRegistry($item->options);
-			$data = new stdclass;
-			$data->id = $item->id;
-			$data->cat_id = $item->cat_id;
-			$data->name = $item->name;
-			$data->description = preg_replace('/\n/', '<br />', $item->description);
-			$data->rating = $item->rating;
-			$data->image = $cdn . $item->image;
-			$data->user = $options->get('Developer Name');
-			$data->tags = explode('|', trim($options->get('Extension Includes')));
-			$data->compatibility = $options->get('Compatibility');
-			$data->version = $options->get('Version');
-			$data->downloadurl = $options->get('Link for download/registration/purchase: URL');
-			$data->type = $options->get('Extension Apps* download type');
-			$extensions[] = $data;
+			$item->image = $cdn . $item->image;
+			$item->user = $options->get('Developer Name');
+			$item->tags = explode('|', trim($options->get('Extension Includes')));
+			$item->compatibility = $options->get('Compatibility');
+			$item->version = $options->get('Version');
+			$item->downloadurl = $options->get('Link for download/registration/purchase: URL');
+			$item->type = $options->get('Extension Apps* download type');
+			$extensions[] = $item;
 		}
 		
 		return $extensions;

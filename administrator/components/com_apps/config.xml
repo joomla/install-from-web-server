@@ -47,5 +47,27 @@
 			label="COM_APPS_CONFIG_CDN_LABEL"
 			description="COM_APPS_CONFIG_CDN_DESC">
 		</field>
+		<field name="route_prefix"
+			type="text"
+			default=""
+			label="COM_APPS_CONFIG_ROUTING_PREFIX_LABEL"
+			description="COM_APPS_CONFIG_ROUTING_PREFIX_DESC">
+		</field>
+        </fieldset>
+        <fieldset
+                name="data"
+                label="COM_APPS_DATA_CONFIG_LABEL"
+        >
+		<field name="default_limit"
+			type="text"
+			default="8"
+			label="COM_APPS_CONFIG_DEFAULT_LIMIT_LABEL"
+			description="COM_APPS_CONFIG_DEFAULT_LIMIT_DESC">
+		</field>
+		<field name="extensions_perrow"
+			type="text"
+			default="4"
+			label="COM_APPS_CONFIG_PERROW">
+		</field>
         </fieldset>
 </config>
