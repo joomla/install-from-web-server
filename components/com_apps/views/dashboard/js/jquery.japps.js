@@ -1,16 +1,28 @@
-jQuery(document).ready(function(){
-	jQuery(".com-apps-sidebar ul.com-apps-list li").click(function(event){
+Joomla.apps.slider = function() {
+	jQuery(".com-apps-sidebar ul.com-apps-list li a").each( function(index, value) {
+		if (jQuery.inArray(jQuery(value).attr('href').replace(/^.+[&\?]id=(\d+).*$/, '$1'), Joomla.apps.active) > -1) {
+			jQuery(value).parent().addClass("active");
+			jQuery(value).parent().find("ul").stop(true,true).slideDown(300);
+		}
+	});
+	jQuery(".com-apps-sidebar ul.com-apps-list li a").click(function(event){
 		event.preventDefault();
-		if(jQuery(this).hasClass("active")){
-			jQuery(this).removeClass("active");
-			jQuery(this).find("ul").stop(true,true).slideUp(300);		
+		if(jQuery(this).parent().hasClass("active")){
+			jQuery(this).parent().removeClass("active");
+			jQuery(this).parent().find("ul").stop(true,true).slideUp(300);
+			for (var i = 0; i < Joomla.apps.active.length; i++) {
+				if (Joomla.apps.active[i] == jQuery(this).attr('href').replace(/^.+[&\?]id=(\d+).*$/, '$1')) {
+					Joomla.apps.active.splice(i, 1);
+					break;
+				}
+			}
 		}
 		else{
-			jQuery(this).closest("ul").find(" > li.active").find("ul").stop(true,true).slideUp(300);
-			jQuery(this).closest("ul").find(" > li").removeClass("active");
-			jQuery(this).addClass("active");
-			jQuery(this).find("ul").stop(true,true).slideDown(300);
-		
+			jQuery(this).parent().closest("ul").find(" > li.active").find("ul").stop(true,true).slideUp(300);
+			jQuery(this).parent().closest("ul").find(" > li").removeClass("active");
+			jQuery(this).parent().addClass("active");
+			jQuery(this).parent().find("ul").stop(true,true).slideDown(300);
+			Joomla.apps.active.push(jQuery(this).attr('href').replace(/^.+[&\?]id=(\d+).*$/, '$1'));
 		}
 	})
 	jQuery("ul.nav-tabs li").click(function(){
@@ -35,12 +47,15 @@ jQuery(document).ready(function(){
 			jQuery( ".com-apps-advanced-search" ).removeClass("active");
     	}
 	});
+}
+jQuery(document).ready(function(){
+	Joomla.apps.slider();
 })
 
 
 
-jQuery(document).ready(function(){
 	
+Joomla.apps.clicker = function() {
 	jQuery( ".grid-view" ).live("click",function() {
 		jQuery( ".items" ).removeClass("list-view-container");	
 		jQuery( ".items" ).addClass("grid-view-container");
@@ -189,5 +204,8 @@ jQuery(document).ready(function(){
 		}
 		
 		return false;
-	})	
+	});
+}
+jQuery(document).ready(function(){
+	Joomla.apps.clicker();
 });

@@ -1,4 +1,5 @@
 Joomla.apps = {};
+Joomla.apps.active = [];
 Joomla.apps.view = "dashboard";
 Joomla.apps.id = 0;
 Joomla.apps.ordering = "";
@@ -14,7 +15,10 @@ Joomla.loadweb = function(url) {
 		jQuery('#web-loader').hide();
 		jQuery('#web-loader-error').show();
 	})
-	.complete(function() { 
+	.complete(function() {
+		Joomla.apps.slider();
+		Joomla.apps.clicker();
+		Joomla.apps.clickforlinks();
 		if (Joomla.apps.ordering !== "") {
 			jQuery('#com-apps-ordering').prop("selectedIndex", Joomla.apps.ordering);
 		}
@@ -73,9 +77,7 @@ Joomla.installfromwebajaxsubmit = function() {
 	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps'+tail);
 }
 
-jQuery(document).ready(function() {
-	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps&view=dashboard');
-	
+Joomla.apps.clickforlinks = function () {
 	jQuery('a.transcode').live('click', function(event){
 		ajax_url = jQuery(this).attr('href');
 		Joomla.apps.view = ajax_url.replace(/^.+[&\?]view=(\w+).*$/, '$1');
@@ -88,7 +90,13 @@ jQuery(document).ready(function() {
 		event.preventDefault();
 		Joomla.loadweb(apps_base_url + ajax_url);
 	});
+}
 
+jQuery(document).ready(function() {
+	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps&view=dashboard');
+	
+	Joomla.apps.clickforlinks();
+	
 	jQuery('#com-apps-searchbox').live('keypress', function(event){
 		if(event.which == 13) {
 			Joomla.installfromwebajaxsubmit();
