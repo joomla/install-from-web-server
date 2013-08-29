@@ -52,8 +52,8 @@ Joomla.webpaginate = function(url, target) {
 }
 
 Joomla.installfromwebexternal = function(redirect_url) {
-	r = confirm('You will be redirected to the following link to complete the registration/purchase - \n'+redirect_url);
-	if(true == r) {
+	var redirect_confirm = confirm('You will be redirected to the following link to complete the registration/purchase - \n'+redirect_url);
+	if(true == redirect_confirm) {
 		window.location.href=redirect_url+'&installat='+apps_installat_url;
 	}
 	
