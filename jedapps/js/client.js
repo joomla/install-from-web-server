@@ -16,12 +16,12 @@ Joomla.loadweb = function(url) {
 		jQuery('#web-loader-error').show();
 	})
 	.complete(function() {
-		Joomla.apps.slider();
-		Joomla.apps.clicker();
-		Joomla.apps.clickforlinks();
 		if (Joomla.apps.ordering !== "") {
 			jQuery('#com-apps-ordering').prop("selectedIndex", Joomla.apps.ordering);
 		}
+		Joomla.apps.slider();
+		Joomla.apps.clicker();
+		Joomla.apps.clickforlinks();
 	});
 }
 
