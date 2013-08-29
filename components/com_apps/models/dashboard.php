@@ -170,9 +170,9 @@ class AppsModelDashboard extends JModelList
 		$limitstart 		= $input->get('limitstart', 0, 'int');
 		$limit 				= $input->get('limit', $default_limit, 'int');
 		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
-		$orderCol 			= $this->state->get('list.ordering', 't2.link_rating');
-		$orderDirn 			= $this->state->get('list.direction', 'DESC');
-		$order 				= $orderCol.' '.$orderDirn;
+//		$orderCol 			= $this->state->get('list.ordering', 't2.link_rating');
+//		$orderDirn 			= $this->state->get('list.direction', 'DESC');
+//		$order 				= $orderCol.' '.$orderDirn;
 
 		// Get remote database
 		$db = $this->getRemoteDB();
@@ -201,7 +201,8 @@ class AppsModelDashboard extends JModelList
 		$where = array();
 
 		//Randomly select field to order by
-		$field = array('rating' => 't2.link_rating', 'hits' => 't2.link_hits', 'featured' => 't2.link_featured');
+		$field = array('rating' => 't2.link_rating', 'hits' => 't2.link_hits', 'featured' => 't2.link_name');
+		$fieldDirn = array('rating' => 'DESC', 'hits' => 'DESC', 'featured' => 'ASC');
 		$fieldkeys = array_keys($field);
 		list($usec, $sec) = explode(' ', microtime());
 		srand((float) $sec + ((float) $usec * 100000));
@@ -221,7 +222,7 @@ class AppsModelDashboard extends JModelList
 			$query->from('(SELECT * FROM jos_mt_links ORDER BY link_' . $fieldkeys[$randval] . ' DESC LIMIT 100) AS t2');
 		}
 		$query->join('LEFT', 'jos_mt_cl AS t1 ON t1.link_id = t2.link_id');
-		$order = $field[$fieldkeys[$randval]] . ' DESC';
+		$order = $field[$fieldkeys[$randval]] . ' ' . $fieldDirn[$fieldkeys[$randval]];
 
 		$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
 		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
