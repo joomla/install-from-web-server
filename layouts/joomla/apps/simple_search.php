@@ -9,7 +9,7 @@
 
 defined('JPATH_BASE') or die;
 $app = JFactory::getApplication();
-$filter_search = $app->input->getWord('filter_search');
+$filter_search = str_replace('_', ' ', $app->input->getWord('filter_search'));
 ?>
 <div class="com-apps-search">
 	<input id="com-apps-searchbox" type="text" placeholder="<?php echo JText::_('COM_APPS_SEARCH'); ?>" value="<?php echo $filter_search; ?>" />
