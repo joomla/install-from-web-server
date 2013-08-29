@@ -42,6 +42,8 @@ class AppsModelBase extends JModelList
 	
 	private $_categories = null;
 	
+	private $_children = array();
+	
 	private $_breadcrumbs = array();
 
 	public static function getMainUrl()
@@ -194,6 +196,8 @@ class AppsModelBase extends JModelList
 				}
 			}
 			
+			$this->_children = $children;
+			
 			// Build breadcrumbs array
 			$selected = $catid;
 			if (!is_null($selected))
@@ -217,5 +221,12 @@ class AppsModelBase extends JModelList
 		return $this->_breadcrumbs;
 	}
 	
-
+	public function getChildren($catid)
+	{
+		if (!count($this->_children))
+		{
+			$this->getCategories($catid);
+		}
+		return $this->_children;
+	}
 }

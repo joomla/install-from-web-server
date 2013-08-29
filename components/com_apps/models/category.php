@@ -173,13 +173,12 @@ class AppsModelCategory extends JModelList
 		return $base_model->getBreadcrumbs($this->getCatID());
 	}
 	
-	public function getExtensions()
+	private function loadExtensions($db, $catid)
 	{
 		// Get catid, search filter, order column, order direction
 		$componentParams 	= JComponentHelper::getParams('com_apps');
 		$default_limit		= $componentParams->get('default_limit');
 		$input 				= new JInput;
-		$catid 				= $input->get('id', null, 'int');
 		$limitstart 		= $input->get('limitstart', 0, 'int');
 		$limit 				= $input->get('limit', $default_limit, 'int');
 		$order 				= $input->get('ordering', 't2.link_rating');
@@ -187,10 +186,7 @@ class AppsModelCategory extends JModelList
 		$orderCol 			= $this->state->get('list.ordering', $order);
 		$orderDirn 			= $this->state->get('list.direction', 'DESC');
 		$order 				= $orderCol.' '.$orderDirn;
-		
-		// Get remote database
-		$db = $this->getRemoteDB();
-		
+
 		$query = 'SET SESSION group_concat_max_len=15000';
 		$db->setQuery($query);
 		$db->execute();
@@ -239,7 +235,7 @@ class AppsModelCategory extends JModelList
 		$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
 
 		if ($catid) {
-			$where[] = 't1.cat_id = ' . (int)$catid;
+			$where[] = 't1.cat_id IN (' . implode(',', $catid) . ')';
 		}
 
 		if ($search) {
@@ -257,7 +253,26 @@ class AppsModelCategory extends JModelList
 		$query->order($order);
 		$query->group('t2.link_id');
 		$db->setQuery($query, $limitstart, $limit);
-		$items = $db->loadObjectList();
+		return $db->loadObjectList();
+	}
+	
+	public function getExtensions()
+	{
+		// Get catid, search filter, order column, order direction
+		$componentParams 	= JComponentHelper::getParams('com_apps');
+		$input 				= new JInput;
+		$catid 				= $input->get('id', null, 'int');
+		
+		// Get remote database
+		$db = $this->getRemoteDB();
+		$items = $this->loadExtensions($db, array($catid));
+		
+		if (!count($items)) {
+			$base_model = $this->getBaseModel();
+			$children = $base_model->getChildren($catid);
+			$catid = $this->getAllChildren($children, $catid);
+			$items = $this->loadExtensions($db, $catid);
+		}
 		
 		$db->setQuery('SELECT FOUND_ROWS()');
 		$this->_total = $db->loadResult();
@@ -281,6 +296,18 @@ class AppsModelCategory extends JModelList
 		
 		return $extensions;
 		
+	}
+	
+	private function getAllChildren($children, $catid)
+	{
+		$allchildren = array();
+		if (is_array($children[$catid]) and count($children[$catid])) {
+			$allchildren = array_merge($allchildren, array_keys($children[$catid]));
+			foreach ($children[$catid] as $key => $value) {
+				$allchildren = array_merge($allchildren, $this->getAllChildren($children, $key));
+			}
+		}
+		return $allchildren;
 	}
 	
 	public function getCount()
