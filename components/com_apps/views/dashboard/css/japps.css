@@ -322,7 +322,6 @@ line-height: 36px;
 }
 .sort-by {
 	display: inline-block;
-	width: 136px;
 	box-sizing:border-box;
     -moz-box-sizing:border-box;
     -webkit-box-sizing: border-box;
@@ -454,7 +453,6 @@ ul.grid-pagination li a{
 }
 .full-item-container {
 	margin: 35px 25px 20px 25px;
-	background-color: #f5f5f5;
 	padding-top: 20px;
 	font-family: 'Lato', sans serif;
 }
