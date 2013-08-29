@@ -37,6 +37,15 @@ Joomla.webpaginate = function(url, target) {
 	});	
 }
 
+Joomla.installfromwebexternal = function(redirect_url) {
+	r = confirm('You will be redirected to the following link to complete the registration/purchase - \n'+redirect_url);
+	if(true == r) {
+		window.location.href=redirect_url+'&installat='+apps_installat_url;
+	}
+	
+	return false;
+}
+
 Joomla.installfromweb = function(install_url, name) {
 	if ('' == install_url) {
 		alert("This extension cannot be installed via the web. Please visit the developer's website to purchase/download.");
@@ -44,7 +53,12 @@ Joomla.installfromweb = function(install_url, name) {
 	}
 	jQuery('#install_url').val(install_url);
 	jQuery('#uploadform-web-url').text(install_url);
-	jQuery('#uploadform-web-name').text(name);
+	if (name) {
+		jQuery('#uploadform-web-name').text(name);
+		jQuery('#uploadform-web-name-label').show();
+	} else {
+		jQuery('#uploadform-web-name-label').hide();
+	}
 	jQuery('#jed-container').slideUp(300);
 	jQuery('#uploadform-web').show();
 }
@@ -107,5 +121,9 @@ jQuery(document).ready(function() {
 		Joomla.apps.ordering = jQuery(this).prop("selectedIndex");
 		Joomla.installfromwebajaxsubmit();
 	});
+	
+	if (apps_installfrom_url != '') {
+		Joomla.installfromweb(apps_installfrom_url);
+	}
 
 });
