@@ -184,7 +184,8 @@ class AppsModelCategory extends JModelList
 		$order 				= $input->get('ordering', 't2.link_rating');
 		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
 		$orderCol 			= $this->state->get('list.ordering', $order);
-		$orderDirn 			= $this->state->get('list.direction', 'DESC');
+//		$orderDirn 			= $this->state->get('list.direction', 'DESC');
+		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
 		$order 				= $orderCol.' '.$orderDirn;
 
 		$query = 'SET SESSION group_concat_max_len=15000';

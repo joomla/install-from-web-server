@@ -84,10 +84,12 @@ Joomla.installfromwebajaxsubmit = function() {
 	}
 
 	var ordering = Joomla.apps.ordering;
-	if (ordering !== "") {
+	if (ordering !== "" && jQuery('#com-apps-ordering').val()) {
 		ordering = jQuery('#com-apps-ordering').val();
 	}
-	tail += '&ordering='+ordering;
+	if (ordering) {
+		tail += '&ordering='+ordering;alert(tail);
+	}
 	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps'+tail);
 }
 
