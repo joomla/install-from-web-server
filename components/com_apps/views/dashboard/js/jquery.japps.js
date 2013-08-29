@@ -2,7 +2,7 @@ Joomla.apps.slider = function() {
 	jQuery(".com-apps-sidebar ul.com-apps-list li a").each( function(index, value) {
 		if (jQuery.inArray(jQuery(value).attr('href').replace(/^.+[&\?]id=(\d+).*$/, '$1'), Joomla.apps.active) > -1) {
 			jQuery(value).parent().addClass("active");
-			jQuery(value).parent().find("ul").stop(true,true).slideDown(300);
+			jQuery(value).parent().children("ul").show();
 		}
 	});
 	jQuery(".com-apps-sidebar ul.com-apps-list li a").click(function(event){
