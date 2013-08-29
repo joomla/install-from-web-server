@@ -7,21 +7,35 @@ Joomla.apps.ordering = "";
 Joomla.loadweb = function(url) {
 	if ('' == url) { return false; }
 
-	jQuery.get(url, function(response) {
-		jQuery('#web-loader').hide();
-		jQuery('#jed-container').html(response.data);
-	}, 'jsonp')
-	.fail(function() { 
-		jQuery('#web-loader').hide();
-		jQuery('#web-loader-error').show();
-	})
-	.complete(function() {
-		if (Joomla.apps.ordering !== "") {
-			jQuery('#com-apps-ordering').prop("selectedIndex", Joomla.apps.ordering);
+	jQuery.ajax({
+		url: url,
+		dataType: 'jsonp',
+		callbackParameter: "jsoncallback",
+		timeout: 20000,
+		success: function (response) {
+			jQuery('#web-loader').hide();
+			jQuery('#jed-container').html(response.data);
+			jQuery('html, body').animate({ scrollTop: 0 }, 0);
+		},
+		fail: function() {
+			jQuery('#web-loader').hide();
+			jQuery('#web-loader-error').show();
+		},
+		complete: function() {
+			if (Joomla.apps.ordering !== "") {
+				jQuery('#com-apps-ordering').prop("selectedIndex", Joomla.apps.ordering);
+			}
+			Joomla.apps.slider();
+			Joomla.apps.clicker();
+			Joomla.apps.clickforlinks();
+		},
+		error: function(request, status, error) {
+			if (request.responseText) {
+				jQuery('#web-loader-error').html(request.responseText);
+			}
+			jQuery('#web-loader').hide();
+			jQuery('#web-loader-error').show();
 		}
-		Joomla.apps.slider();
-		Joomla.apps.clicker();
-		Joomla.apps.clickforlinks();
 	});
 }
 
@@ -84,10 +98,12 @@ Joomla.installfromwebajaxsubmit = function() {
 	}
 
 	var ordering = Joomla.apps.ordering;
-	if (ordering !== "") {
+	if (ordering !== "" && jQuery('#com-apps-ordering').val()) {
 		ordering = jQuery('#com-apps-ordering').val();
 	}
-	tail += '&ordering='+ordering;
+	if (ordering) {
+		tail += '&ordering='+ordering;alert(tail);
+	}
 	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps'+tail);
 }
 
@@ -107,6 +123,12 @@ Joomla.apps.clickforlinks = function () {
 }
 
 jQuery(document).ready(function() {
+	jQuery(jQuery('#myTabTabs a[href="#web"]').get(0)).closest('li').click(function (event){
+		Joomla.apps.initialize();
+	});
+});
+
+Joomla.apps.initialize = function() {
 	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps&view=dashboard');
 	
 	Joomla.apps.clickforlinks();
@@ -126,4 +148,4 @@ jQuery(document).ready(function() {
 		Joomla.installfromweb(apps_installfrom_url);
 	}
 
-});
+}
