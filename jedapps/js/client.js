@@ -144,7 +144,7 @@ jQuery(document).ready(function() {
 Joomla.apps.initialize = function() {
 	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps&view=dashboard');
 	
-	Joomla.apps.clickforlinks();
+	Joomla.apps.clickforlinks(true);
 	
 	jQuery('#com-apps-searchbox').live('keypress', function(event){
 		if(event.which == 13) {
