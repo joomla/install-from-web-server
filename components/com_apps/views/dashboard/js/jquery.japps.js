@@ -89,10 +89,10 @@ Joomla.apps.clicker = function() {
             jQuery(this).find('ul.item-type').css('margin-top', (jQuery(this).height() - jQuery(this).find('ul.item-type').height())/2);
         })
 	});
-	jQuery('select').chosen({
-		disable_search_threshold : 10,
-		allow_single_deselect : true
-	});
+//	jQuery('select').chosen({
+//		disable_search_threshold : 10,
+//		allow_single_deselect : true
+//	});
 	
 	<!--radio-->
 	var repRadioCount = 0;
