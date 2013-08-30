@@ -203,7 +203,7 @@ class AppsModelDashboard extends JModelList
 
 		// Featured extensions are selected randomly from the whole array
 		// When selection method is based on rating or hits, extensions are selected from the top 100
-		$query->from('(SELECT * FROM jos_mt_links ORDER BY link_hits DESC LIMIT 100) AS t2');
+		$query->from('jos_mt_links AS t2');
 		$query->join('LEFT', 'jos_mt_cl AS t1 ON t1.link_id = t2.link_id');
 		$order = 't2.link_hits DESC';
 
@@ -213,8 +213,6 @@ class AppsModelDashboard extends JModelList
 
 		if ($search) {
 			$where[] = '(t2.link_name LIKE(' . $db->quote('%'.$search.'%') . ') OR t2.link_desc LIKE(' . $db->quote('%'.$search.'%') . '))';
-		} else {
-			$where[] = 't2.link_featured = 1';
 		}
 		
 		$where = array_merge($where, array(
