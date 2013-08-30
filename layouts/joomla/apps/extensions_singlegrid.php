@@ -8,7 +8,8 @@
  */
 
 defined('JPATH_BASE') or die;
-$extension_data = $displayData['extension'];
+$extension_data = $displayData['extension']; //print_r($extension_data);
+$tags = explode('|', trim($extension_data->fields->get('36')));
 ?>
 <div class="item <?php echo $displayData['spanclass']; ?>">
 	<p class="rating center">
@@ -26,27 +27,27 @@ $extension_data = $displayData['extension'];
 		</a>
 	</div>
 	<ul class="item-type">
-		<?php if (in_array('mod', $extension_data->tags)) : ?>
+		<?php if (in_array('mod', $tags)) : ?>
 		<li title="<?php echo JText::_('COM_APPS_MODULE'); ?>" class="m">M</li>
 		<?php endif; ?>
-		<?php if (in_array('plugin', $extension_data->tags)) : ?>
+		<?php if (in_array('plugin', $tags)) : ?>
 		<li title="<?php echo JText::_('COM_APPS_PLUGIN'); ?>" class="p">P</li>
 		<?php endif; ?>
-		<?php if (in_array('esp', $extension_data->tags)) : ?>
+		<?php if (in_array('esp', $tags)) : ?>
 		<li title="<?php echo JText::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?>" class="s">S</li>
 		<?php endif; ?>
-		<?php if (in_array('tool', $extension_data->tags)) : ?>
+		<?php if (in_array('tool', $tags)) : ?>
 		<li title="<?php echo JText::_('COM_APPS_TOOL'); ?>" class="t">T</li>
 		<?php endif; ?>
-		<?php if (in_array('com', $extension_data->tags)) : ?>
+		<?php if (in_array('com', $tags)) : ?>
 		<li title="<?php echo JText::_('COM_APPS_COMPONENT'); ?>" class="c">C</li>
 		<?php endif; ?>
-		<?php if (in_array('lang', $extension_data->tags)) : ?>
+		<?php if (in_array('lang', $tags)) : ?>
 		<li title="<?php echo JText::_('COM_APPS_LANGUAGE'); ?>" class="l">L</li>
 		<?php endif; ?>
 	</ul>
 	<h4 class="center muted">
-		<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>"><?php echo $displayData['extension']->name; ?></a>
+		<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>"><?php echo $extension_data->name; ?></a>
 	</h4>
 	<p class="item-description">
 		<?php echo substr($extension_data->description, 0, 100); ?>
