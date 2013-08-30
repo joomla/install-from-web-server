@@ -17,9 +17,6 @@ $advanced_search	 	= new JLayoutFile('joomla.apps.advanced_search');
 $simple_search			= new JLayoutFile('joomla.apps.simple_search');
 $extension_data			= array('extensions' => $this->extensions, 'breadcrumbs' => $this->breadcrumbs, 'params' => $this->params);
 ?>
-<link rel="stylesheet" href="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/japps.css"/>
-<link rel="stylesheet" href="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/css/jquery.jscrollpane.css"/>
-<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
 <script type="text/javascript" src="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/js/jquery.jscrollpane.min.js"></script>
 <script type="text/javascript" src="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/js/jquery.mousewheel.js"></script>
 <script type="text/javascript" src="<?php echo JURI::root(); ?>components/com_apps/views/dashboard/js/jquery.japps.js"></script>

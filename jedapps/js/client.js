@@ -3,6 +3,7 @@ Joomla.apps.active = [];
 Joomla.apps.view = "dashboard";
 Joomla.apps.id = 0;
 Joomla.apps.ordering = "";
+Joomla.apps.fonturl = 'http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic';
 
 Joomla.loadweb = function(url) {
 	if ('' == url) { return false; }
@@ -123,7 +124,8 @@ Joomla.apps.clickforlinks = function () {
 }
 
 jQuery(document).ready(function() {
-	jQuery(jQuery('#myTabTabs a[href="#web"]').get(0)).closest('li').click(function (event){
+	var link = jQuery('#myTabTabs a[href="#web"]').get(0);
+	jQuery(link).closest('li').click(function (event){
 		Joomla.apps.initialize();
 	});
 });
