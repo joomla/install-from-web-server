@@ -4,6 +4,15 @@ Joomla.apps.view = "dashboard";
 Joomla.apps.id = 0;
 Joomla.apps.ordering = "";
 Joomla.apps.fonturl = 'http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic';
+Joomla.apps.cssfiles = [
+	'components/com_apps/views/dashboard/css/japps.css',
+	'components/com_apps/views/dashboard/css/jquery.jscrollpane.css',
+];
+Joomla.apps.jsfiles = [
+	'components/com_apps/views/dashboard/js/jquery.jscrollpane.min.js',
+	'components/com_apps/views/dashboard/js/jquery.mousewheel.js',
+	'components/com_apps/views/dashboard/js/jquery.japps.js'
+];
 
 Joomla.loadweb = function(url) {
 	if ('' == url) { return false; }
