@@ -188,7 +188,7 @@ class AppsModelCategory extends JModelList
 		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
 		$order 				= $orderCol.' '.$orderDirn;
 
-		$query = 'SET SESSION group_concat_max_len=15000';
+		$query = 'SET SESSION group_concat_max_len=150000';
 		$db->setQuery($query);
 		$db->execute();
 		
@@ -217,7 +217,7 @@ class AppsModelCategory extends JModelList
 				't2.user_id AS user_id',
 				't3.filename AS image',
 				't1.cat_id AS cat_id',
-				'CONCAT("{", GROUP_CONCAT("\"", t5.caption, "\":\"", t4.value, "\""), "}") AS options',
+				'CONCAT("{", GROUP_CONCAT("\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
 			)
 		);
 
@@ -286,12 +286,8 @@ class AppsModelCategory extends JModelList
 		foreach ($items as $item) {
 			$options = new JRegistry($item->options);
 			$item->image = $cdn . $item->image;
-			$item->user = $options->get('Developer Name');
-			$item->tags = explode('|', trim($options->get('Extension Includes')));
-			$item->compatibility = $options->get('Compatibility');
-			$item->version = $options->get('Version');
-			$item->downloadurl = $options->get('Link for download/registration/purchase: URL');
-			$item->type = $options->get('Extension Apps* download type');
+			$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
+			$item->fields = $options;
 			$extensions[] = $item;
 		}
 		
