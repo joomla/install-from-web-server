@@ -112,7 +112,7 @@ Joomla.installfromwebajaxsubmit = function() {
 		ordering = jQuery('#com-apps-ordering').val();
 	}
 	if (ordering) {
-		tail += '&ordering='+ordering;alert(tail);
+		tail += '&ordering='+ordering;
 	}
 	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps'+tail);
 }
