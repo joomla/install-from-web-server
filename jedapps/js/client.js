@@ -35,9 +35,6 @@ Joomla.loadweb = function(url) {
 			if (Joomla.apps.ordering !== "") {
 				jQuery('#com-apps-ordering').prop("selectedIndex", Joomla.apps.ordering);
 			}
-			Joomla.apps.slider();
-			Joomla.apps.clicker();
-			Joomla.apps.clickforlinks();
 		},
 		error: function(request, status, error) {
 			if (request.responseText) {
