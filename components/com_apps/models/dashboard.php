@@ -170,6 +170,7 @@ class AppsModelDashboard extends JModelList
 		$limitstart 		= $input->get('limitstart', 0, 'int');
 		$limit 				= $input->get('limit', $default_limit, 'int');
 		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
+		$dashboard_limit	= $componentParams->get('extensions_perrow') * 6; // 6 rows of extensions
 //		$orderCol 			= $this->state->get('list.ordering', 't2.link_rating');
 //		$orderDirn 			= $this->state->get('list.direction', 'DESC');
 //		$order 				= $orderCol.' '.$orderDirn;
@@ -177,7 +178,7 @@ class AppsModelDashboard extends JModelList
 		// Get remote database
 		$db = $this->getRemoteDB();
 		
-		$query = 'SET SESSION group_concat_max_len=15000';
+		$query = 'SET SESSION group_concat_max_len=150000';
 		$db->setQuery($query);
 		$db->execute();
 		
@@ -193,36 +194,18 @@ class AppsModelDashboard extends JModelList
 				't2.user_id AS user_id',
 				't3.filename AS image',
 				't1.cat_id AS cat_id',
-				'CONCAT("{", GROUP_CONCAT("\"", t5.caption, "\":\"", t4.value, "\""), "}") AS options',
+				'CONCAT("{", GROUP_CONCAT("\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
 			)
 		);
 
 
 		$where = array();
 
-		//Randomly select field to order by
-		$field = array('rating' => 't2.link_rating', 'hits' => 't2.link_hits', 'featured' => 't2.link_name');
-		$fieldDirn = array('rating' => 'DESC', 'hits' => 'DESC', 'featured' => 'ASC');
-		$fieldkeys = array_keys($field);
-		list($usec, $sec) = explode(' ', microtime());
-		srand((float) $sec + ((float) $usec * 100000));
-		$randval = rand(0, count($field) - 1);
-		
-		$this->_extensionstitle = JText::_('COM_APPS_EXTENSIONS_TITLE_' . strtoupper($fieldkeys[$randval]));
-		
 		// Featured extensions are selected randomly from the whole array
 		// When selection method is based on rating or hits, extensions are selected from the top 100
-		if ($fieldkeys[$randval] == 'link_featured')
-		{
-			$query->from('jos_mt_links AS t2');
-			$where[] = 't2.link_featured = 1';
-		}
-		else
-		{
-			$query->from('(SELECT * FROM jos_mt_links ORDER BY link_' . $fieldkeys[$randval] . ' DESC LIMIT 100) AS t2');
-		}
+		$query->from('(SELECT * FROM jos_mt_links ORDER BY link_hits DESC LIMIT 100) AS t2');
 		$query->join('LEFT', 'jos_mt_cl AS t1 ON t1.link_id = t2.link_id');
-		$order = $field[$fieldkeys[$randval]] . ' ' . $fieldDirn[$fieldkeys[$randval]];
+		$order = 't2.link_hits DESC';
 
 		$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
 		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
@@ -230,6 +213,8 @@ class AppsModelDashboard extends JModelList
 
 		if ($search) {
 			$where[] = '(t2.link_name LIKE(' . $db->quote('%'.$search.'%') . ') OR t2.link_desc LIKE(' . $db->quote('%'.$search.'%') . '))';
+		} else {
+			$where[] = 't2.link_featured = 1';
 		}
 		
 		$where = array_merge($where, array(
@@ -243,8 +228,7 @@ class AppsModelDashboard extends JModelList
 		$query->order($order);
 		$query->group('t2.link_id');
 		$limitstart = 0;
-		$limit = 30;
-		$db->setQuery($query, $limitstart, $limit);
+		$db->setQuery($query, $limitstart, $dashboard_limit);
 		$items = $db->loadObjectList();
 		
 		$db->setQuery('SELECT FOUND_ROWS()');
@@ -257,20 +241,10 @@ class AppsModelDashboard extends JModelList
 		$extensions = array();
 		foreach ($items as $item) {
 			$options = new JRegistry($item->options);
-			$data = new stdclass;
-			$data->id = $item->id;
-			$data->cat_id = $item->cat_id;
-			$data->name = $item->name;
-			$data->description = preg_replace('/\n/', '<br />', $item->description);
-			$data->rating = $item->rating;
-			$data->image = $cdn . $item->image;
-			$data->user = $options->get('Developer Name');
-			$data->tags = explode('|', trim($options->get('Extension Includes')));
-			$data->compatibility = $options->get('Compatibility');
-			$data->version = $options->get('Version');
-			$data->downloadurl = $options->get('Link for download/registration/purchase: URL');
-			$data->type = $options->get('Extension Apps* download type');
-			$extensions[] = $data;
+			$item->image = $cdn . $item->image;
+			$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
+			$item->fields = $options;
+			$extensions[] = $item;
 		}
 		
 		return $extensions;

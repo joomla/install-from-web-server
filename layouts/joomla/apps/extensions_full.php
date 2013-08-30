@@ -10,7 +10,7 @@
 defined('JPATH_BASE') or die;
 $extension_data = $displayData['extensions'][0];
 $breadcrumbs = $displayData['breadcrumbs'];
-//print_r($extension_data);
+$tags = explode('|', trim($extension_data->fields->get('36')));
 ?>
 <div class="item-view">
 	<div class="grid-header">
@@ -29,22 +29,23 @@ $breadcrumbs = $displayData['breadcrumbs'];
 			<div class="item-title"><?php echo $extension_data->link_name; ?></div>
 			<div>
 				<ul class="item-type">
-					<?php if (in_array('mod', $extension_data->tags)) : ?>
+					
+					<?php if (in_array('mod', $tags)) : ?>
 					<li title="<?php echo JText::_('COM_APPS_MODULE'); ?>" class="m">M</li>
 					<?php endif; ?>
-					<?php if (in_array('plugin', $extension_data->tags)) : ?>
+					<?php if (in_array('plugin', $tags)) : ?>
 					<li title="<?php echo JText::_('COM_APPS_PLUGIN'); ?>" class="p">P</li>
 					<?php endif; ?>
-					<?php if (in_array('esp', $extension_data->tags)) : ?>
+					<?php if (in_array('esp', $tags)) : ?>
 					<li title="<?php echo JText::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?>" class="s">S</li>
 					<?php endif; ?>
-					<?php if (in_array('tool', $extension_data->tags)) : ?>
+					<?php if (in_array('tool', $tags)) : ?>
 					<li title="<?php echo JText::_('COM_APPS_TOOL'); ?>" class="t">T</li>
 					<?php endif; ?>
-					<?php if (in_array('com', $extension_data->tags)) : ?>
+					<?php if (in_array('com', $tags)) : ?>
 					<li title="<?php echo JText::_('COM_APPS_COMPONENT'); ?>" class="c">C</li>
 					<?php endif; ?>
-					<?php if (in_array('lang', $extension_data->tags)) : ?>
+					<?php if (in_array('lang', $tags)) : ?>
 					<li title="<?php echo JText::_('COM_APPS_LANGUAGE'); ?>" class="l">L</li>
 					<?php endif; ?>
 				</ul>
@@ -61,7 +62,7 @@ $breadcrumbs = $displayData['breadcrumbs'];
 				 <?php echo JText::sprintf('COM_APPS_EXTENSION_VOTES', $extension_data->link_votes); ?>
 			</div>
 			<div class="item-version">
-				<?php echo JText::sprintf('COM_APPS_EXTENSION_VERSION', $extension_data->version, JHTML::date($extension_data->link_modified)); ?>
+				<?php echo JText::sprintf('COM_APPS_EXTENSION_VERSION', $extension_data->fields->get('43'), JHTML::date($extension_data->link_modified)); ?>
 				
 			</div>
 		</div>
@@ -82,7 +83,7 @@ $breadcrumbs = $displayData['breadcrumbs'];
 		</div>
 		<div class="item-desc">
 			<p class="item-desc-title">
-				<?php echo $extension_data->link_name; ?> <small><?php echo JText::sprintf('COM_APPS_EXTENSION_AUTHOR', $extension_data->user); ?></small>
+				<?php echo $extension_data->link_name; ?> <small><?php echo JText::sprintf('COM_APPS_EXTENSION_AUTHOR', $extension_data->fields->get('39')); ?></small>
 			</p>
 			<p class="item-desc-text" align="justify">
 				<?php echo nl2br($extension_data->link_desc); ?>

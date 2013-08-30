@@ -69,5 +69,15 @@
 			default="4"
 			label="COM_APPS_CONFIG_PERROW">
 		</field>
+		<field name="fieldid_download_type"
+			type="text"
+			default=""
+			label="COM_APPS_DATA_MOSETSFIELDS_LABEL_DOWNLOADTYPE">
+		</field>
+		<field name="fieldid_download_url"
+			type="text"
+			default=""
+			label="COM_APPS_DATA_MOSETSFIELDS_LABEL_DOWNLOADURL">
+		</field>
         </fieldset>
 </config>
