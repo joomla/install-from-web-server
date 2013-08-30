@@ -117,7 +117,7 @@ Joomla.installfromwebajaxsubmit = function() {
 	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps'+tail);
 }
 
-Joomla.apps.clickforlinks = function (load=true) {
+Joomla.apps.clickforlinks = function (load) {
 	jQuery('a.transcode').live('click', function(event){
 		ajax_url = jQuery(this).attr('href');
 		Joomla.apps.view = ajax_url.replace(/^.+[&\?]view=(\w+).*$/, '$1');
@@ -144,7 +144,7 @@ jQuery(document).ready(function() {
 Joomla.apps.initialize = function() {
 	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps&view=dashboard');
 	
-	Joomla.apps.clickforlinks();
+	Joomla.apps.clickforlinks(true);
 	
 	jQuery('#com-apps-searchbox').live('keypress', function(event){
 		if(event.which == 13) {
