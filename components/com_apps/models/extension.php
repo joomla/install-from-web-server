@@ -179,7 +179,7 @@ class AppsModelExtension extends JModelList
 		// Get remote database
 		$db = $this->getRemoteDB();
 		
-		$query = 'SET SESSION group_concat_max_len=15000';
+		$query = 'SET SESSION group_concat_max_len=150000';
 		$db->setQuery($query);
 		$db->execute();
 		
@@ -191,7 +191,7 @@ class AppsModelExtension extends JModelList
 				't3.filename AS image',
 				't6.cat_name AS cat_name',
 				't6.cat_id AS cat_id',
-				'CONCAT("{", GROUP_CONCAT("\"", t5.caption, "\":\"", t4.value, "\""), "}") AS options',
+				'CONCAT("{", GROUP_CONCAT("\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
 			)
 		);
 
@@ -223,13 +223,9 @@ class AppsModelExtension extends JModelList
 		// Create item
 		$options = new JRegistry($item->options);
 		$item->image = $cdn . $item->image;
-		$item->user = $options->get('Developer Name');
-		$item->tags = explode('|', trim($options->get('Extension Includes')));
-		$item->compatibility = $options->get('Compatibility');
-		$item->version = $options->get('Version');
-		$item->downloadurl = $options->get('Link for download/registration/purchase: URL');
-		$item->type = $this->getTypeEnum($options->get('Extension Apps* download type'));
-		$item->license = $options->get('License');
+		$item->fields = $options;
+		$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
+		$item->type = $this->getTypeEnum($options->get($componentParams->get('fieldid_download_type')));
 		
 		return array($item);
 		
