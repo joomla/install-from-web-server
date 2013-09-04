@@ -17,6 +17,8 @@ Joomla.apps.jsfiles = [
 Joomla.loadweb = function(url) {
 	if ('' == url) { return false; }
 
+	url += '&product='+apps_product+'&release='+apps_release+'&dev_level='+apps_dev_level;
+
 	jQuery.ajax({
 		url: url,
 		dataType: 'jsonp',
