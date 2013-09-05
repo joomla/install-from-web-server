@@ -75,9 +75,9 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 			<?php elseif ($extension_data->type == 1): ?>
 			<a class="install" href="#" onclick="Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>', '<?php echo $extension_data->link_name; ?>')"><?php echo JText::_('COM_APPS_INSTALL'); ?></a>
 			<?php elseif ($extension_data->type == 2): ?>
-			<a target="_blank" class="install" onclick="return Joomla.installfromwebexternal('<?php echo (strstr($extension_data->downloadurl, '?')) ? $extension_data->downloadurl.'&' : $extension_data->downloadurl.'?' ; ?>')" href="#"><?php echo JText::_('COM_APPS_INSTALL_REGISTER'); ?></a>
+			<a target="_blank" class="install" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>', <?php echo $extension_data->link_id; ?>)" href="#"><?php echo JText::_('COM_APPS_INSTALL_REGISTER'); ?></a>
 			<?php elseif ($extension_data->type == 3): ?>
-			<a target="_blank" class="install" onclick="return Joomla.installfromwebexternal('<?php echo (strstr($extension_data->downloadurl, '?')) ? $extension_data->downloadurl.'&' : $extension_data->downloadurl.'?' ; ?>')" href="#"><?php echo JText::_('COM_APPS_INSTALL_PURCHASE'); ?></a>
+			<a target="_blank" class="install" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>', <?php echo $extension_data->link_id; ?>)" href="#"><?php echo JText::_('COM_APPS_INSTALL_PURCHASE'); ?></a>
 			<?php endif; ?>
 
 		</div>
