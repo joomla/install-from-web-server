@@ -167,6 +167,7 @@ class AppsModelDashboard extends JModelList
 		$default_limit		= $componentParams->get('default_limit', 8);
 		$input 				= new JInput;
 		$catid 				= $input->get('id', null, 'int');
+		$release			= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
 		$limitstart 		= $input->get('limitstart', 0, 'int');
 		$limit 				= $input->get('limit', $default_limit, 'int');
 		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
@@ -174,6 +175,8 @@ class AppsModelDashboard extends JModelList
 //		$orderCol 			= $this->state->get('list.ordering', 't2.link_rating');
 //		$orderDirn 			= $this->state->get('list.direction', 'DESC');
 //		$order 				= $orderCol.' '.$orderDirn;
+
+		$release = intval($release / 5) * 5;
 
 		// Get remote database
 		$db = $this->getRemoteDB();
@@ -198,8 +201,9 @@ class AppsModelDashboard extends JModelList
 			)
 		);
 
-
-		$where = array();
+		$where = array(
+			'EXISTS (SELECT 1 FROM jos_mt_cfvalues AS t6 WHERE t6.link_id = t2.link_id AND t6.cf_id = 37 AND (\''.$release.'\' REGEXP t6.value OR t6.value = \'\') GROUP BY t6.link_id HAVING COUNT(*) >= 1)'
+		);
 
 		// Featured extensions are selected randomly from the whole array
 		// When selection method is based on rating or hits, extensions are selected from the top 100

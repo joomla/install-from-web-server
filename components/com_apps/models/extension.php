@@ -175,6 +175,8 @@ class AppsModelExtension extends JModelList
 		// Get extension id
 		$input = new JInput;
 		$id = $input->get('id', null, 'int');
+		$release = preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
+		$release = intval($release / 5) * 5;
 		
 		// Get remote database
 		$db = $this->getRemoteDB();
@@ -204,6 +206,7 @@ class AppsModelExtension extends JModelList
 		$query->join('LEFT', 'jos_mt_cats AS t6 ON t6.cat_id = t1.cat_id');
 
 		$where = array(
+			'EXISTS (SELECT 1 FROM jos_mt_cfvalues AS t7 WHERE t7.link_id = t2.link_id AND t7.cf_id = 37 AND (\''.$release.'\' REGEXP t7.value OR t7.value = \'\') GROUP BY t7.link_id HAVING COUNT(*) >= 1)',
 			't2.link_id = ' . (int)$id,
 			't2.link_published = 1',
 			't2.link_approved = 1',

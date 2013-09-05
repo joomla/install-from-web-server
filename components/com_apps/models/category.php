@@ -179,6 +179,7 @@ class AppsModelCategory extends JModelList
 		$componentParams 	= JComponentHelper::getParams('com_apps');
 		$default_limit		= $componentParams->get('default_limit');
 		$input 				= new JInput;
+		$release			= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
 		$limitstart 		= $input->get('limitstart', 0, 'int');
 		$limit 				= $input->get('limit', $default_limit, 'int');
 		$order 				= $input->get('ordering', 't2.link_rating');
@@ -187,6 +188,8 @@ class AppsModelCategory extends JModelList
 //		$orderDirn 			= $this->state->get('list.direction', 'DESC');
 		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
 		$order 				= $orderCol.' '.$orderDirn;
+
+		$release = intval($release / 5) * 5;
 
 		$query = 'SET SESSION group_concat_max_len=150000';
 		$db->setQuery($query);
@@ -221,8 +224,9 @@ class AppsModelCategory extends JModelList
 			)
 		);
 
-
-		$where = array();
+		$where = array(
+			'EXISTS (SELECT 1 FROM jos_mt_cfvalues AS t6 WHERE t6.link_id = t2.link_id AND t6.cf_id = 37 AND (\''.$release.'\' REGEXP t6.value OR t6.value = \'\') GROUP BY t6.link_id HAVING COUNT(*) >= 1)'
+		);
 
 		// Select by specific category id or search filter
 		$query->from('jos_mt_cl AS t1');
