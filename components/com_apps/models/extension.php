@@ -175,6 +175,8 @@ class AppsModelExtension extends JModelList
 		// Get extension id
 		$input = new JInput;
 		$id = $input->get('id', null, 'int');
+		$release = preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
+		$release = intval($release / 5) * 5;
 		
 		// Get remote database
 		$db = $this->getRemoteDB();
@@ -204,6 +206,7 @@ class AppsModelExtension extends JModelList
 		$query->join('LEFT', 'jos_mt_cats AS t6 ON t6.cat_id = t1.cat_id');
 
 		$where = array(
+			'EXISTS (SELECT 1 FROM jos_mt_cfvalues AS t7 WHERE t7.link_id = t2.link_id AND t7.cf_id = 37 AND (\''.$release.'\' REGEXP t7.value OR t7.value = \'\') GROUP BY t7.link_id HAVING COUNT(*) >= 1)',
 			't2.link_id = ' . (int)$id,
 			't2.link_published = 1',
 			't2.link_approved = 1',
@@ -225,6 +228,31 @@ class AppsModelExtension extends JModelList
 		$item->image = $cdn . $item->image;
 		$item->fields = $options;
 		$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
+		if (preg_match('/\.xml\s*$/', $item->downloadurl)) {
+			$app = JFactory::getApplication();
+			$product = addslashes(base64_decode($app->input->get('product', '', 'base64')));
+			$release = preg_replace('/[^\d\.]/', '', base64_decode($app->input->get('release', '', 'base64')));
+			$dev_level = (int) base64_decode($app->input->get('dev_level', '', 'base64'));
+
+			$updatefile = JPATH_ROOT . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'joomla' . DIRECTORY_SEPARATOR . 'updater' . DIRECTORY_SEPARATOR . 'update.php';
+			$fh = fopen($updatefile, 'r');
+			$theData = fread($fh, filesize($updatefile));
+			fclose($fh);
+
+			$theData = str_replace('<?php', '', $theData);
+			$theData = str_replace('$ver->PRODUCT', "'".$product."'", $theData);
+			$theData = str_replace('$ver->RELEASE', "'".$release."'", $theData);
+			$theData = str_replace('$ver->DEV_LEVEL', "'".$dev_level."'", $theData);
+			
+			eval($theData);
+
+			$update = new JUpdate;
+			$update->loadFromXML($item->downloadurl);
+			$package_url = trim($update->get('downloadurl', false)->_data);
+			if ($package_url) {
+				$item->downloadurl = $package_url;
+			}
+		}
 		$item->type = $this->getTypeEnum($options->get($componentParams->get('fieldid_download_type')));
 		
 		return array($item);
