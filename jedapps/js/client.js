@@ -17,6 +17,8 @@ Joomla.apps.jsfiles = [
 Joomla.loadweb = function(url) {
 	if ('' == url) { return false; }
 
+	url += '&product='+apps_product+'&release='+apps_release+'&dev_level='+apps_dev_level;
+
 	jQuery.ajax({
 		url: url,
 		dataType: 'jsonp',
@@ -61,10 +63,15 @@ Joomla.webpaginate = function(url, target) {
 	});	
 }
 
-Joomla.installfromwebexternal = function(redirect_url) {
+Joomla.installfromwebexternal = function(redirect_url, appid) {
 	var redirect_confirm = confirm('You will be redirected to the following link to complete the registration/purchase - \n'+redirect_url);
 	if(true == redirect_confirm) {
-		window.location.href=redirect_url+'&installat='+apps_installat_url;
+		var form = jQuery('<form action="' + redirect_url + '" method="post">' +
+			'<input type="hidden" name="installat" value="' + apps_installat_url + '" />' +
+			'<input type="hidden" name="installapp" value="' + appid + '" />' +
+			'</form>');
+		jQuery('body').append(form);
+		jQuery(form).submit();
 	}
 	
 	return false;
@@ -112,7 +119,7 @@ Joomla.installfromwebajaxsubmit = function() {
 		ordering = jQuery('#com-apps-ordering').val();
 	}
 	if (ordering) {
-		tail += '&ordering='+ordering;alert(tail);
+		tail += '&ordering='+ordering;
 	}
 	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps'+tail);
 }

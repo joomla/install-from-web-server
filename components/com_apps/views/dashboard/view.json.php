@@ -42,7 +42,7 @@ class AppsViewDashboard extends JViewLegacy
 		$response['body'] = $this->loadTemplate($tpl);
 		$response['error'] = false;
 		$response['message'] = '';
-		$json = new JResponseJson($response['body'], $response['message'], $response['error']);
+		$json = new JResponseJson(iconv("UTF-8", "UTF-8//IGNORE", $response['body']), $response['message'], $response['error']);
 		
 		if ($app->input->get('callback', '', 'cmd')) {
 			echo $app->input->get('callback') . '(' . $json . ')';
