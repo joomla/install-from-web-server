@@ -40,6 +40,9 @@ Joomla.loadweb = function(url) {
 			Joomla.apps.slider();
 			Joomla.apps.clicker();
 			Joomla.apps.clickforlinks(false);
+			if(jQuery('#joomlaapsinstallatinput')) {
+				jQuery('#joomlaapsinstallatinput').val(apps_installat_url);
+			}
 		},
 		error: function(request, status, error) {
 			if (request.responseText) {
@@ -63,17 +66,11 @@ Joomla.webpaginate = function(url, target) {
 	});	
 }
 
-Joomla.installfromwebexternal = function(redirect_url, appid) {
+Joomla.installfromwebexternal = function(redirect_url) {
 	var redirect_confirm = confirm('You will be redirected to the following link to complete the registration/purchase - \n'+redirect_url);
 	if(true == redirect_confirm) {
-		var form = jQuery('<form action="' + redirect_url + '" method="post">' +
-			'<input type="hidden" name="installat" value="' + apps_installat_url + '" />' +
-			'<input type="hidden" name="installapp" value="' + appid + '" />' +
-			'</form>');
-		jQuery('body').append(form);
-		jQuery(form).submit();
+		return true;
 	}
-	
 	return false;
 }
 

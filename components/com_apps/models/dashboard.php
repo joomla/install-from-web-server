@@ -170,11 +170,7 @@ class AppsModelDashboard extends JModelList
 		$release			= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
 		$limitstart 		= $input->get('limitstart', 0, 'int');
 		$limit 				= $input->get('limit', $default_limit, 'int');
-		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
 		$dashboard_limit	= $componentParams->get('extensions_perrow') * 6; // 6 rows of extensions
-//		$orderCol 			= $this->state->get('list.ordering', 't2.link_rating');
-//		$orderDirn 			= $this->state->get('list.direction', 'DESC');
-//		$order 				= $orderCol.' '.$orderDirn;
 
 		$release = intval($release / 5) * 5;
 
@@ -186,56 +182,49 @@ class AppsModelDashboard extends JModelList
 		$db->execute();
 		
 		// Form query
-		$query = $db->getQuery(true);
-		$query->select(
-			array(
-				'SQL_CALC_FOUND_ROWS t2.link_id AS id',
-				't2.link_name AS name',
-				't2.alias AS alias',
-				't2.link_desc AS description',
-				't2.link_rating AS rating',
-				't2.user_id AS user_id',
-				't3.filename AS image',
-				't1.cat_id AS cat_id',
-				'CONCAT("{", GROUP_CONCAT("\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
-			)
-		);
-
-		$where = array(
-			'EXISTS (SELECT 1 FROM jos_mt_cfvalues AS t6 WHERE t6.link_id = t2.link_id AND t6.cf_id = 37 AND (\''.$release.'\' REGEXP t6.value OR t6.value = \'\') GROUP BY t6.link_id HAVING COUNT(*) >= 1)'
-		);
-
-		// Featured extensions are selected randomly from the whole array
-		// When selection method is based on rating or hits, extensions are selected from the top 100
-		$query->from('jos_mt_links AS t2');
-		$query->join('LEFT', 'jos_mt_cl AS t1 ON t1.link_id = t2.link_id');
 		$order = 't2.link_hits DESC';
-
-		$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
-		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
-		$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
-
-		if ($search) {
-			$where[] = '(t2.link_name LIKE(' . $db->quote('%'.$search.'%') . ') OR t2.link_desc LIKE(' . $db->quote('%'.$search.'%') . '))';
-		}
 		
-		$where = array_merge($where, array(
+		$query = $db->getQuery(true);
+		$query->select(array('t2.link_id AS id'));
+		$query->from('jos_mt_links AS t2');
+		$query->join('RIGHT', 'jos_mt_cfvalues AS t3 ON t3.link_id = t2.link_id AND t3.cf_id = 37 AND ("'.$release.'" REGEXP t3.value OR t3.value = "")');
+		$query->where(array(
 			't2.link_published = 1',
 			't2.link_approved = 1',
 			'(t2.publish_up <= NOW() OR t2.publish_up = "0000-00-00 00:00:00")',
 			'(t2.publish_down >= NOW() OR t2.publish_down = "0000-00-00 00:00:00")',
 		));
-
-		$query->where($where);
 		$query->order($order);
-		$query->group('t2.link_id');
-		$limitstart = 0;
 		$db->setQuery($query, $limitstart, $dashboard_limit);
+		$ids = $db->loadColumn();
+
+		$query = $db->getQuery(true);
+		$query->select(array(
+			't2.link_id AS id',
+			't2.link_name AS name',
+			't2.alias AS alias',
+			't2.link_desc AS description',
+			't2.link_rating AS rating',
+			't2.user_id AS user_id',
+			't3.filename AS image',
+			't1.cat_id AS cat_id',
+			'CONCAT("{", GROUP_CONCAT("\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
+		));
+
+		$query->from('jos_mt_links AS t2');
+		$query->join('LEFT', 'jos_mt_cl AS t1 ON t1.link_id = t2.link_id');
+		$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
+		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
+		$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
+
+		$query->where(array(
+			't2.link_id IN (' . implode(',', $ids) . ')',
+		));
+		$query->group('t2.link_id');
+		$query->order($order);
+		$db->setQuery($query);
 		$items = $db->loadObjectList();
 		
-		$db->setQuery('SELECT FOUND_ROWS()');
-		$this->_total = $db->loadResult();
-
 		// Get CDN URL
 		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
 		
