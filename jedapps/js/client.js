@@ -146,6 +146,13 @@ jQuery(document).ready(function() {
 });
 
 Joomla.apps.initialize = function() {
+	jQuery('<div id="appsloading"></div>').css("background", "rgba(255, 255, 255, .8) url('"+apps_base_url+"/components/com_apps/views/dashboard/css/ajax-loader.gif') 50% 50% no-repeat").appendTo('#myTabContent');
+	jQuery('#appsloading').ajaxStart(function() {
+		jQuery(this).show();
+	}).ajaxStop(function() {
+		jQuery(this).hide();
+	});
+
 	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps&view=dashboard');
 	
 	Joomla.apps.clickforlinks(true);
