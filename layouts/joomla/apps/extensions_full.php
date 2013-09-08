@@ -63,9 +63,11 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 				<?php echo JText::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS', $extension_data->link_votes, $extension_data->reviews); ?>
 				</a>
 			</div>
+			<div class="item-license">
+				<?php echo $extension_data->fields->get('50') . ' [' . $extension_data->fields->get('49') . ']'; ?>
+			</div>
 			<div class="item-version">
 				<?php echo JText::sprintf('COM_APPS_EXTENSION_VERSION', $extension_data->fields->get('43'), JHTML::date($extension_data->link_modified)); ?>
-				
 			</div>
 		</div>
 		<div style="clear:both;"></div>
