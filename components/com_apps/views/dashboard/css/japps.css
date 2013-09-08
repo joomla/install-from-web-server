@@ -485,7 +485,7 @@ ul.grid-pagination li a{
 	margin: 0;
 	height: 0;
 }
-.full-item-container .item-buttons a{
+.full-item-container .item-buttons a, .full-item-container .item-buttons button{
 	display: inline-block;
 	font-size: 14px;
 	color: #185186;
@@ -505,9 +505,10 @@ ul.grid-pagination li a{
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;	
 	border-bottom-left-radius: 5px;
-	border-bottom-right-radius: 5px;	
+	border-bottom-right-radius: 5px;
+	vertical-align: middle;
 }
-.full-item-container .item-buttons a.install{
+.full-item-container .item-buttons a.install, .full-item-container .item-buttons button.install{
 	border: solid 2px #299f3b;	
 	background-color: #299f3b;
 	color: #ffffff;
@@ -842,4 +843,15 @@ padding-left: 0px;
 }
 .com-apps-container .jspContainer{
 	min-height: 500px;
+}
+#appsloading {
+	position: fixed;
+	z-index: 1000;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	opacity: 0.80;
+	-ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity = 80);
+	filter: alpha(opacity = 80)};
 }
