@@ -71,7 +71,7 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 			<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
 			<a target="_blank" href="<?php echo $extension_data->website; ?>"><?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
 			<?php if (!$extension_data->type || $extension_data->type == 0): ?>
-			
+			<a target="_blank" class="install" href="<?php echo $extension_data->fields->get('29'); ?>"><?php echo JText::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL'); ?></a>
 			<?php elseif ($extension_data->type == 1): ?>
 			<a class="install" href="#" onclick="Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>', '<?php echo $extension_data->link_name; ?>')"><?php echo JText::_('COM_APPS_INSTALL'); ?></a>
 			<?php elseif ($extension_data->type == 2): ?>

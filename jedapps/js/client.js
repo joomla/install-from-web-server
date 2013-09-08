@@ -135,7 +135,7 @@ Joomla.apps.clickforlinks = function (load) {
 			Joomla.apps.id = ajax_url.replace(/^.+[&\?]id=(\d+).*$/, '$1');
 		}
 		event.preventDefault();
-		if (typeof(load) != 'undefined') {
+		if (load) {
 			Joomla.loadweb(apps_base_url + ajax_url);
 		}
 	});
