@@ -528,6 +528,17 @@ ul.grid-pagination li a{
 	display: block;
 	margin-top: 8px;
 }
+.item-license{
+	background: url(con_info.png);
+	background-repeat:no-repeat;
+	color: #838383;
+	padding-left: 20px;
+	font-size: 14px;
+	font-weight: bold;
+	width: 100%;
+	display: block;
+	margin-top: 8px;
+}
 .item-desc{
 	margin-left: 20px;
 	font-size: 14px;
