@@ -247,7 +247,7 @@ class AppsModelCategory extends JModelList
 		$componentParams 	= JComponentHelper::getParams('com_apps');
 		$input 				= new JInput;
 		$catid 				= $input->get('id', null, 'int');
-		$order 				= $input->get('ordering', 't2.link_rating');
+		$order 				= $input->get('ordering', 't2.link_hits');
 		$orderCol 			= $this->state->get('list.ordering', $order);
 		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
 		$order 				= $orderCol.' '.$orderDirn;
@@ -285,10 +285,6 @@ class AppsModelCategory extends JModelList
 			$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
 			$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
 			$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
-
-			if (!$order) {
-				$order = 't2.link_rating DESC';
-			}
 
 			$query->where(array(
 				't2.link_id IN (' . implode(',', $ids) . ')',
