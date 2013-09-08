@@ -194,6 +194,7 @@ class AppsModelExtension extends JModelList
 				't6.cat_name AS cat_name',
 				't6.cat_id AS cat_id',
 				'CONCAT("{", GROUP_CONCAT("\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
+				'COUNT(t7.rev_id) AS reviews',
 			)
 		);
 
@@ -204,6 +205,7 @@ class AppsModelExtension extends JModelList
 		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
 		$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
 		$query->join('LEFT', 'jos_mt_cats AS t6 ON t6.cat_id = t1.cat_id');
+		$query->join('LEFT', 'jos_mt_reviews AS t7 ON t7.link_id = t2.link_id');
 
 		$where = array(
 			'EXISTS (SELECT 1 FROM jos_mt_cfvalues AS t7 WHERE t7.link_id = t2.link_id AND t7.cf_id = 37 AND (\''.$release.'\' REGEXP t7.value OR t7.value = \'\') GROUP BY t7.link_id HAVING COUNT(*) >= 1)',
