@@ -67,6 +67,11 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 			</div>
 		</div>
 		<div style="clear:both;"></div>
+		<?php if ($extension_data->type > 1): ?>
+		<form action="<?php echo $extension_data->downloadurl; ?>" method="post" onsubmit="return Joomla.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>');">
+			<input id="joomlaapsinstallatinput" type="hidden" name="installat" value="" />
+			<input type="hidden" name="installapp" value="<?php echo $extension_data->link_id; ?>" />
+		<?php endif; ?>
 		<div class="item-buttons">
 			<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
 			<a target="_blank" href="<?php echo $extension_data->website; ?>"><?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
@@ -75,12 +80,15 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 			<?php elseif ($extension_data->type == 1): ?>
 			<a class="install" href="#" onclick="Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>', '<?php echo $extension_data->link_name; ?>')"><?php echo JText::_('COM_APPS_INSTALL'); ?></a>
 			<?php elseif ($extension_data->type == 2): ?>
-			<a target="_blank" class="install" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>', <?php echo $extension_data->link_id; ?>)" href="#"><?php echo JText::_('COM_APPS_INSTALL_REGISTER'); ?></a>
+			<button class="install" type="submit"><?php echo JText::_('COM_APPS_INSTALL_REGISTER'); ?></button>
 			<?php elseif ($extension_data->type == 3): ?>
-			<a target="_blank" class="install" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>', <?php echo $extension_data->link_id; ?>)" href="#"><?php echo JText::_('COM_APPS_INSTALL_PURCHASE'); ?></a>
+			<button class="install" type="submit"><?php echo JText::_('COM_APPS_INSTALL_PURCHASE'); ?></button>
 			<?php endif; ?>
 
 		</div>
+		<?php if ($extension_data->type > 1): ?>
+		</form>
+		<?php endif; ?>
 		<div class="item-desc">
 			<p class="item-desc-title">
 				<?php echo $extension_data->link_name; ?> <small><?php echo JText::sprintf('COM_APPS_EXTENSION_AUTHOR', $extension_data->fields->get('39')); ?></small>
