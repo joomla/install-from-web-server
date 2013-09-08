@@ -16,11 +16,12 @@ $breadcrumbs = $displayData['breadcrumbs'];
 $extensions_perrow = $componentParams->get('extensions_perrow', 4);
 $spanclass = 'span' . (12 / $extensions_perrow);
 
+$ordering_options[] = JHtml::_('select.option', 't2.link_hits', JText::_('COM_APPS_SORT_BY_POPULAR'));
 $ordering_options[] = JHtml::_('select.option', 't2.link_name', JText::_('COM_APPS_SORT_BY_NAME'));
 $ordering_options[] = JHtml::_('select.option', 't2.link_rating', JText::_('COM_APPS_SORT_BY_RATING'));
 $ordering_options[] = JHtml::_('select.option', 't2.link_created', JText::_('COM_APPS_SORT_BY_CREATED'));
 
-$selected_ordering = $app->input->get('ordering', 't2.link_rating');
+$selected_ordering = $app->input->get('ordering', 't2.link_hits');
 $view = $app->input->getCmd('view');
 if ($view != 'dashboard') {
 	$firstcrumb = '<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl(\'view=dashboard\'); ?>">' . JText::_('COM_APPS_EXTENSIONS') . '</a>';
