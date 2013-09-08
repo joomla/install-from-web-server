@@ -844,3 +844,14 @@ padding-left: 0px;
 .com-apps-container .jspContainer{
 	min-height: 500px;
 }
+#appsloading {
+	position: fixed;
+	z-index: 1000;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	opacity: 0.80;
+	-ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity = 80);
+	filter: alpha(opacity = 80)};
+}

@@ -59,7 +59,9 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 				<i class="icon-star"></i>
 					<?php endif; ?>
 				<?php endfor; ?>
-				 <?php echo JText::sprintf('COM_APPS_EXTENSION_VOTES', $extension_data->link_votes); ?>
+				<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>">
+				<?php echo JText::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS', $extension_data->link_votes, $extension_data->reviews); ?>
+				</a>
 			</div>
 			<div class="item-version">
 				<?php echo JText::sprintf('COM_APPS_EXTENSION_VERSION', $extension_data->fields->get('43'), JHTML::date($extension_data->link_modified)); ?>

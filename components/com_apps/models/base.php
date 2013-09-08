@@ -209,6 +209,20 @@ class AppsModelBase extends JModelList
 				}
 			}
 		}
+
+		$input = new JInput;
+		$view = $input->get('view', null);
+		$popular = new stdClass();
+		$popular->active = $view == 'dashboard' ? true : false;
+		$popular->id = 0;
+		$popular->name = 'Popular';
+		$popular->alias = 'popular';
+		$popular->description = JText::_('COM_APPS_EXTENSIONS_DASHBOARD');
+		$popular->parent = 0;
+		$popular->selected = $view == 'dashboard' ? true : false;
+		$popular->children = array();
+		array_unshift($this->_categories, $popular);
+		
 		return $this->_categories;
 	}
 
