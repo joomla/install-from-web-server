@@ -493,6 +493,7 @@ ul.grid-pagination li a{
 	border: solid 2px #185186;
 	padding: 6px 14px;
 	margin-top: 5px;
+	margin-right: 5px;
 	text-decoration: none;
 	-webkit-border-top-left-radius: 5px;
 	-webkit-border-top-right-radius: 5px;
@@ -854,15 +855,4 @@ padding-left: 0px;
 }
 .com-apps-container .jspContainer{
 	min-height: 500px;
-}
-#appsloading {
-	position: fixed;
-	z-index: 1000;
-	top: 0;
-	left: 0;
-	height: 100%;
-	width: 100%;
-	opacity: 0.80;
-	-ms-filter: progid:DXImageTransform.Microsoft.Alpha(Opacity = 80);
-	filter: alpha(opacity = 80)};
 }
