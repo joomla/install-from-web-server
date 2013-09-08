@@ -18,7 +18,7 @@ $category_sidebar 		= new JLayoutFile('joomla.apps.category_sidebar_ul');
 	<div class="scroll-pane">
 	<ul class="nav com-apps-list">
 		<?php foreach ($displayData as $category) : ?>
-			<li><a class="transcode<?php echo $category->active ? ' active' : ''; ?><?php echo $category->selected ? ' selected' : ''; ?>" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$category->id}"); ?>"><?php echo $category->name; ?></a>
+			<li><a class="transcode<?php echo $category->active ? ' active' : ''; ?><?php echo $category->selected ? ' selected' : ''; ?>" href="<?php echo AppsHelper::getAJAXUrl(($category->id ? "view=category&id={$category->id}" : "view=dashboard")); ?>"><?php echo $category->name; ?></a>
 			<?php if (count($category->children)) : ?>
 				<?php echo $category_sidebar->render($category->children); ?>
 			<?php endif; ?>

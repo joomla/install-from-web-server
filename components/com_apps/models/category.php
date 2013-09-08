@@ -173,7 +173,7 @@ class AppsModelCategory extends JModelList
 		return $base_model->getBreadcrumbs($this->getCatID());
 	}
 	
-	private function loadExtensions($db, $catid)
+	private function loadExtensionIDs($db, $catid)
 	{
 		// Get catid, search filter, order column, order direction
 		$componentParams 	= JComponentHelper::getParams('com_apps');
@@ -185,7 +185,6 @@ class AppsModelCategory extends JModelList
 		$order 				= $input->get('ordering', 't2.link_rating');
 		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
 		$orderCol 			= $this->state->get('list.ordering', $order);
-//		$orderDirn 			= $this->state->get('list.direction', 'DESC');
 		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
 		$order 				= $orderCol.' '.$orderDirn;
 
@@ -210,35 +209,16 @@ class AppsModelCategory extends JModelList
 		
 		// Form query
 		$query = $db->getQuery(true);
-		$query->select(
-			array(
-				'SQL_CALC_FOUND_ROWS t2.link_id AS id',
-				't2.link_name AS name',
-				't2.alias AS alias',
-				't2.link_desc AS description',
-				't2.link_rating AS rating',
-				't2.user_id AS user_id',
-				't3.filename AS image',
-				't1.cat_id AS cat_id',
-				'CONCAT("{", GROUP_CONCAT("\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
-			)
-		);
-
-		$where = array(
-			'EXISTS (SELECT 1 FROM jos_mt_cfvalues AS t6 WHERE t6.link_id = t2.link_id AND t6.cf_id = 37 AND (\''.$release.'\' REGEXP t6.value OR t6.value = \'\') GROUP BY t6.link_id HAVING COUNT(*) >= 1)'
-		);
-
-		// Select by specific category id or search filter
+		$query->select(array('t2.link_id AS id'));
 		$query->from('jos_mt_cl AS t1');
 		$query->join('LEFT', 'jos_mt_links AS t2 ON t1.link_id = t2.link_id');
+		$query->join('RIGHT', 'jos_mt_cfvalues AS t3 ON t3.link_id = t2.link_id AND t3.cf_id = 37 AND ("'.$release.'" REGEXP t3.value OR t3.value = "")');
+
 		if (!$order) {
 			$order = 't2.link_rating DESC';
 		}
 
-		$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
-		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
-		$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
-
+		$where = array();
 		if ($catid) {
 			$where[] = 't1.cat_id IN (' . implode(',', $catid) . ')';
 		}
@@ -258,7 +238,7 @@ class AppsModelCategory extends JModelList
 		$query->order($order);
 		$query->group('t2.link_id');
 		$db->setQuery($query, $limitstart, $limit);
-		return $db->loadObjectList();
+		return $db->loadColumn();
 	}
 	
 	public function getExtensions()
@@ -267,20 +247,57 @@ class AppsModelCategory extends JModelList
 		$componentParams 	= JComponentHelper::getParams('com_apps');
 		$input 				= new JInput;
 		$catid 				= $input->get('id', null, 'int');
+		$order 				= $input->get('ordering', 't2.link_rating');
+		$orderCol 			= $this->state->get('list.ordering', $order);
+		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
+		$order 				= $orderCol.' '.$orderDirn;
 		
 		// Get remote database
 		$db = $this->getRemoteDB();
-		$items = $this->loadExtensions($db, array($catid));
+		$ids = $this->loadExtensionIDs($db, array($catid));
 		
-		if (!count($items)) {
+		if (!count($ids)) {
 			$base_model = $this->getBaseModel();
 			$children = $base_model->getChildren($catid);
 			$catid = $this->getAllChildren($children, $catid);
-			$items = $this->loadExtensions($db, $catid);
+			if (count($catid)) {
+				$ids = $this->loadExtensionIDs($db, $catid);
+			}
 		}
-		
-		$db->setQuery('SELECT FOUND_ROWS()');
-		$this->_total = $db->loadResult();
+
+		$items = array();	
+		if (count($ids)) {
+			$query = $db->getQuery(true);
+			$query->select(array(
+				't2.link_id AS id',
+				't2.link_name AS name',
+				't2.alias AS alias',
+				't2.link_desc AS description',
+				't2.link_rating AS rating',
+				't2.user_id AS user_id',
+				't3.filename AS image',
+				't1.cat_id AS cat_id',
+				'CONCAT("{", GROUP_CONCAT("\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
+			));
+
+			$query->from('jos_mt_cl AS t1');
+			$query->join('LEFT', 'jos_mt_links AS t2 ON t1.link_id = t2.link_id');
+			$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
+			$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
+			$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
+
+			if (!$order) {
+				$order = 't2.link_rating DESC';
+			}
+
+			$query->where(array(
+				't2.link_id IN (' . implode(',', $ids) . ')',
+			));
+			$query->order($order);
+			$query->group('t2.link_id');
+			$db->setQuery($query);
+			$items = $db->loadObjectList();
+		}
 
 		// Get CDN URL
 		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";

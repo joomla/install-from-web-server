@@ -22,6 +22,12 @@ $ordering_options[] = JHtml::_('select.option', 't2.link_created', JText::_('COM
 
 $selected_ordering = $app->input->get('ordering', 't2.link_rating');
 $view = $app->input->getCmd('view');
+if ($view != 'dashboard') {
+	$firstcrumb = '<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl(\'view=dashboard\'); ?>">' . JText::_('COM_APPS_EXTENSIONS') . '</a>';
+}
+else {
+	$firstcrumb = JText::_('COM_APPS_EXTENSIONS_DASHBOARD');
+}
 ?>
 
 <?php if (!count($displayData['extensions'])) : ?>
@@ -46,7 +52,7 @@ $view = $app->input->getCmd('view');
 		<div class='grid-container'>
 			<div class="grid-header">
 			<div class="breadcrumbs">
-				<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl('view=dashboard'); ?>"><?php echo JText::_('COM_APPS_EXTENSIONS'); ?></a>
+				<?php echo $firstcrumb; ?>
 				<?php foreach ($breadcrumbs as $bc) : ?>
 				&nbsp;/&nbsp;<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$bc->id}"); ?>"><?php echo $bc->name; ?></a>
 				<?php endforeach; ?>
