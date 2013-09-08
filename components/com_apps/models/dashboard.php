@@ -171,6 +171,7 @@ class AppsModelDashboard extends JModelList
 		$limitstart 		= $input->get('limitstart', 0, 'int');
 		$limit 				= $input->get('limit', $default_limit, 'int');
 		$dashboard_limit	= $componentParams->get('extensions_perrow') * 6; // 6 rows of extensions
+		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
 
 		$release = intval($release / 5) * 5;
 
@@ -188,12 +189,20 @@ class AppsModelDashboard extends JModelList
 		$query->select(array('t2.link_id AS id'));
 		$query->from('jos_mt_links AS t2');
 		$query->join('RIGHT', 'jos_mt_cfvalues AS t3 ON t3.link_id = t2.link_id AND t3.cf_id = 37 AND ("'.$release.'" REGEXP t3.value OR t3.value = "")');
-		$query->where(array(
+
+		$where = array();
+		if ($search) {
+			$where[] = '(t2.link_name LIKE(' . $db->quote('%'.$search.'%') . ') OR t2.link_desc LIKE(' . $db->quote('%'.$search.'%') . '))';
+		}
+		
+		$where = array_merge($where, array(
 			't2.link_published = 1',
 			't2.link_approved = 1',
 			'(t2.publish_up <= NOW() OR t2.publish_up = "0000-00-00 00:00:00")',
 			'(t2.publish_down >= NOW() OR t2.publish_down = "0000-00-00 00:00:00")',
 		));
+		
+		$query->where($where);
 		$query->order($order);
 		$db->setQuery($query, $limitstart, $dashboard_limit);
 		$ids = $db->loadColumn();
