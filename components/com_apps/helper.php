@@ -11,7 +11,7 @@ class AppsHelper {
 		
 		$uri = JURI::getInstance($route_prefix);
 		$query = $uri->getQuery();
-		$query .= '&'.$fragment;
+		$query .= '&' . $fragment;
 		$uri->setQuery($query);
 		$url = $uri->toString();
 		
