@@ -253,7 +253,7 @@ class AppsModelExtension extends JModelList
 			$package_url_node = $update->get('downloadurl', false);
 			if (isset($package_url_node->_data)) {
 				$item->downloadurl = $package_url_node->_data;
-			}
+ 			}
 		}
 		$item->type = $this->getTypeEnum($options->get($componentParams->get('fieldid_download_type')));
 		
