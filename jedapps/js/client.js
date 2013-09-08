@@ -19,6 +19,14 @@ Joomla.loadweb = function(url) {
 
 	url += '&product='+apps_product+'&release='+apps_release+'&dev_level='+apps_dev_level;
 
+	jQuery('html, body').animate({ scrollTop: 0 }, 0);
+	jQuery('#appsloading')
+		.css("top", jQuery('#myTabContent').position().top - jQuery(window).scrollTop())
+		.css("left", jQuery('#myTabContent').position().left - jQuery(window).scrollLeft())
+		.css("width", jQuery('#myTabContent').width())
+		.css("height", jQuery('#myTabContent').height());
+
+	jQuery.event.trigger("ajaxStart");
 	jQuery.ajax({
 		url: url,
 		dataType: 'jsonp',
@@ -27,11 +35,12 @@ Joomla.loadweb = function(url) {
 		success: function (response) {
 			jQuery('#web-loader').hide();
 			jQuery('#jed-container').html(response.data);
-			jQuery('html, body').animate({ scrollTop: 0 }, 0);
+			jQuery.event.trigger("ajaxStop");
 		},
 		fail: function() {
 			jQuery('#web-loader').hide();
 			jQuery('#web-loader-error').show();
+			jQuery.event.trigger("ajaxStop");
 		},
 		complete: function() {
 			if (Joomla.apps.ordering !== "") {
@@ -43,6 +52,7 @@ Joomla.loadweb = function(url) {
 			if(jQuery('#joomlaapsinstallatinput')) {
 				jQuery('#joomlaapsinstallatinput').val(apps_installat_url);
 			}
+			jQuery.event.trigger("ajaxStop");
 		},
 		error: function(request, status, error) {
 			if (request.responseText) {
@@ -50,6 +60,7 @@ Joomla.loadweb = function(url) {
 			}
 			jQuery('#web-loader').hide();
 			jQuery('#web-loader-error').show();
+			jQuery.event.trigger("ajaxStop");
 		}
 	});
 }
@@ -146,7 +157,18 @@ jQuery(document).ready(function() {
 });
 
 Joomla.apps.initialize = function() {
-	jQuery('<div id="appsloading"></div>').css("background", "rgba(255, 255, 255, .8) url('"+apps_base_url+"/components/com_apps/views/dashboard/css/ajax-loader.gif') 50% 50% no-repeat").appendTo('#myTabContent');
+	jQuery('<div id="appsloading"></div>')
+		.css("background", "rgba(255, 255, 255, .8) url('"+apps_base_url+"components/com_apps/views/dashboard/css/ajax-loader.gif') 50% 15% no-repeat")
+		.css("top", jQuery('#myTabContent').position().top - jQuery(window).scrollTop())
+		.css("left", jQuery('#myTabContent').position().left - jQuery(window).scrollLeft())
+		.css("width", jQuery('#myTabContent').width())
+		.css("height", jQuery('#myTabContent').height())
+		.css("position", "fixed")
+		.css("z-index", "1000")
+		.css("opacity", "0.80")
+		.css("-ms-filter", "progid:DXImageTransform.Microsoft.Alpha(Opacity = 80)")
+		.css("filter", "alpha(opacity = 80)")
+		.appendTo('#myTabContent');
 	jQuery('#appsloading').ajaxStart(function() {
 		jQuery(this).show();
 	}).ajaxStop(function() {
