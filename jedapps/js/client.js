@@ -54,7 +54,7 @@ Joomla.loadweb = function(url) {
 			}
 			Joomla.apps.slider();
 			Joomla.apps.clicker();
-			Joomla.apps.clickforlinks(false);
+			Joomla.apps.clickforlinks();
 			if(jQuery('#joomlaapsinstallatinput')) {
 				jQuery('#joomlaapsinstallatinput').val(apps_installat_url);
 			}
@@ -118,10 +118,6 @@ Joomla.installfromwebcancel = function() {
 }
 
 Joomla.installfromwebajaxsubmit = function() {
-	if (Joomla.apps.view == 'extension') {
-		Joomla.apps.view = 'category';
-		Joomla.apps.id = jQuery('div.breadcrumbs a.transcode').slice(-1).attr('href').replace(/^.+[&\?]id=(\d+).*$/, '$1');
-	}
 	var tail = '&view='+Joomla.apps.view;
 	if (Joomla.apps.id) {
 		tail += '&id='+Joomla.apps.id;
@@ -142,20 +138,29 @@ Joomla.installfromwebajaxsubmit = function() {
 	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps'+tail);
 }
 
-Joomla.apps.clickforlinks = function (load) {
-	jQuery('a.transcode').live('click', function(event){
-		ajax_url = jQuery(this).attr('href');
-		Joomla.apps.view = ajax_url.replace(/^.+[&\?]view=(\w+).*$/, '$1');
-		if (Joomla.apps.view == 'dashboard') {
-			Joomla.apps.id = 0;
-		}
-		else {
-			Joomla.apps.id = ajax_url.replace(/^.+[&\?]id=(\d+).*$/, '$1');
-		}
-		event.preventDefault();
-		if (load) {
-			Joomla.loadweb(apps_base_url + ajax_url);
-		}
+Joomla.apps.clickforlinks = function () {
+	if (Joomla.apps.view == 'extension') {
+		Joomla.apps.view = 'category';
+		Joomla.apps.id = jQuery('div.breadcrumbs a.transcode').slice(-1).attr('href').replace(/^.+[&\?]id=(\d+).*$/, '$1');
+	}
+	jQuery('a.transcode').each(function(index) {
+		var ajaxurl = jQuery(this).attr('href');
+		(function() {
+			var ajax_url = ajaxurl;
+			var el = jQuery('a.transcode')[index];
+			jQuery(el).live('click', function(event){
+				Joomla.apps.view = ajax_url.replace(/^.+[&\?]view=(\w+).*$/, '$1');
+				if (Joomla.apps.view == 'dashboard') {
+					Joomla.apps.id = 0;
+				}
+				else {
+					Joomla.apps.id = ajax_url.replace(/^.+[&\?]id=(\d+).*$/, '$1');
+				}
+				event.preventDefault();
+				Joomla.loadweb(apps_base_url + ajax_url);
+			});
+		})();
+		jQuery(this).attr('href', '#');
 	});
 }
 
@@ -189,7 +194,7 @@ Joomla.apps.initialize = function() {
 
 	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps&view=dashboard');
 	
-	Joomla.apps.clickforlinks(true);
+	Joomla.apps.clickforlinks();
 	
 	jQuery('#com-apps-searchbox').live('keypress', function(event){
 		if(event.which == 13) {
