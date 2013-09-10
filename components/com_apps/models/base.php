@@ -61,6 +61,19 @@ class AppsModelBase extends JModelList
 		
 	}
 	
+	public function getMainImageUrl($image) {
+		
+		$componentParams = JComponentHelper::getParams('com_apps');
+		$default_image = $componentParams->get('default_image_path');
+		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
+		if ($image) {
+			$url = $cdn . $image;
+		} else {
+			$url = $default_image;
+		}
+		
+		return $url;
+	}
 	public static function getEntryUrl($entryId)
 	{
 		return $this->_baseURL . '&view=extension&id=' . $entryId;
