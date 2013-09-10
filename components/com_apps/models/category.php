@@ -302,7 +302,7 @@ class AppsModelCategory extends JModelList
 		$extensions = array();
 		foreach ($items as $item) {
 			$options = new JRegistry($item->options);
-			$item->image = $cdn . $item->image;
+			$item->image = $this->getBaseModel()->getMainImageUrl($item->image);
 			$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
 			$item->fields = $options;
 			$extensions[] = $item;

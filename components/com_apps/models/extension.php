@@ -227,7 +227,7 @@ class AppsModelExtension extends JModelList
 		
 		// Create item
 		$options = new JRegistry($item->options);
-		$item->image = $cdn . $item->image;
+		$item->image = $this->getBaseModel()->getMainImageUrl($item->image);
 		$item->fields = $options;
 		$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
 		if (preg_match('/\.xml\s*$/', $item->downloadurl)) {
