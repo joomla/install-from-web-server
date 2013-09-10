@@ -206,6 +206,10 @@ class AppsModelDashboard extends JModelList
 		$query->order($order);
 		$db->setQuery($query, $limitstart, $dashboard_limit);
 		$ids = $db->loadColumn();
+		
+		if ($search && !count($ids)) {
+			return array();
+		}
 
 		$query = $db->getQuery(true);
 		$query->select(array(
@@ -225,10 +229,12 @@ class AppsModelDashboard extends JModelList
 		$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
 		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
 		$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
-
-		$query->where(array(
-			't2.link_id IN (' . implode(',', $ids) . ')',
-		));
+		
+		if (count($ids)) {
+			$query->where(array(
+				't2.link_id IN (' . implode(',', $ids) . ')',
+			));
+		}
 		$query->group('t2.link_id');
 		$query->order($order);
 		$db->setQuery($query);
