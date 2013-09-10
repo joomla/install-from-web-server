@@ -11,7 +11,7 @@ defined('JPATH_BASE') or die;
 $category_sidebar 		= new JLayoutFile('joomla.apps.category_sidebar_ul');
 ?>
 <a class="transcode" href="<?php echo AppsHelper::getAJAXUrl('view=dashboard'); ?>">
-	<img  class="com-apps-logo" src="<?php echo JURI::root(); ?>jedapps/images/logo.png" alt="Joomla Apps"/>
+	<img  class="com-apps-logo" src="<?php echo JURI::root(); ?>jedapps/v1/images/logo.png" alt="Joomla Apps"/>
 </a>
 <div class="com-apps-sidebar sidebar-nav">
 	<h3><?php echo JText::_('COM_APPS_CATEGORIES'); ?></h3>
