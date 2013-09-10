@@ -79,5 +79,10 @@
 			default=""
 			label="COM_APPS_DATA_MOSETSFIELDS_LABEL_DOWNLOADURL">
 		</field>
+		<field name="default_image_path"
+			type="text"
+			default=""
+			label="COM_APPS_DATA_DEFAULT_IMAGE">
+		</field>
         </fieldset>
 </config>
