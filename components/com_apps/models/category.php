@@ -277,7 +277,7 @@ class AppsModelCategory extends JModelList
 				't2.user_id AS user_id',
 				't3.filename AS image',
 				't1.cat_id AS cat_id',
-				'CONCAT("{", GROUP_CONCAT("\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
+				'CONCAT("{", GROUP_CONCAT(DISTINCT "\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
 			));
 
 			$query->from('jos_mt_cl AS t1');

@@ -193,7 +193,7 @@ class AppsModelExtension extends JModelList
 				't3.filename AS image',
 				't6.cat_name AS cat_name',
 				't6.cat_id AS cat_id',
-				'CONCAT("{", GROUP_CONCAT("\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
+				'CONCAT("{", GROUP_CONCAT(DISTINCT "\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
 				'COUNT(DISTINCT t7.rev_id) AS reviews',
 			)
 		);
