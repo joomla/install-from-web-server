@@ -6,14 +6,8 @@ Joomla.apps.ordering = "";
 //Joomla.apps.fonturl = 'http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic';
 Joomla.apps.cssfiles = [
 	'jedapps/css/client.css',
-//	'components/com_apps/views/dashboard/css/japps.css',
-//	'components/com_apps/views/dashboard/css/jquery.jscrollpane.css',
 ];
-Joomla.apps.jsfiles = [
-//	'components/com_apps/views/dashboard/js/jquery.jscrollpane.min.js',
-//	'components/com_apps/views/dashboard/js/jquery.mousewheel.js',
-//	'components/com_apps/views/dashboard/js/jquery.japps.js'
-];
+Joomla.apps.jsfiles = [];
 
 Joomla.loadweb = function(url) {
 	if ('' == url) { return false; }
@@ -33,6 +27,7 @@ Joomla.loadweb = function(url) {
 	jQuery.ajax({
 		url: url,
 		dataType: 'jsonp',
+		cache: true,
 		callbackParameter: "jsoncallback",
 		timeout: 20000,
 		success: function (response) {
