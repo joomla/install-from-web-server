@@ -161,7 +161,7 @@ Joomla.apps.clickforlinks = function () {
 Joomla.apps.initialize = function() {
 	if (jQuery('#myTabContent').length) {
 		jQuery('<div id="appsloading"></div>')
-			.css("background", "rgba(255, 255, 255, .8) url('"+apps_base_url+"jedapps/v1/images/ajax-loader.gif') 50% 15% no-repeat")
+			.css("background", "rgba(255, 255, 255, .8) url('../media/jui/img/ajax-loader.gif') 50% 15% no-repeat")
 			.css("top", jQuery('#myTabContent').position().top - jQuery(window).scrollTop())
 			.css("left", jQuery('#myTabContent').position().left - jQuery(window).scrollLeft())
 			.css("width", jQuery('#myTabContent').width())
