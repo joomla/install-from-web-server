@@ -97,7 +97,10 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 		<?php endif; ?>
 		<div class="item-desc">
 			<p class="item-desc-title">
-				<?php echo $extension_data->link_name; ?> <small><?php echo JText::sprintf('COM_APPS_EXTENSION_AUTHOR', $extension_data->fields->get('39')); ?></small>
+				<?php echo $extension_data->link_name; ?>
+				<?php if ($extension_data->fields->get('39')): ?>
+					&nbsp;<small><?php echo JText::sprintf('COM_APPS_EXTENSION_AUTHOR', $extension_data->fields->get('39')); ?></small>
+				<?php endif; ?>
 			</p>
 			<p class="item-desc-text" align="justify">
 				<?php echo nl2br($extension_data->link_desc); ?>

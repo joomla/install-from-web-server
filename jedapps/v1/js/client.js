@@ -4,9 +4,7 @@ Joomla.apps.view = "dashboard";
 Joomla.apps.id = 0;
 Joomla.apps.ordering = "";
 //Joomla.apps.fonturl = 'http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic';
-Joomla.apps.cssfiles = [
-	'jedapps/css/client.css',
-];
+Joomla.apps.cssfiles = [];
 Joomla.apps.jsfiles = [];
 
 Joomla.loadweb = function(url) {
@@ -28,7 +26,7 @@ Joomla.loadweb = function(url) {
 		url: url,
 		dataType: 'jsonp',
 		cache: true,
-		callbackParameter: "jsoncallback",
+		jsonpCallback: "jedapps_jsonpcallback",
 		timeout: 20000,
 		success: function (response) {
 			jQuery('#web-loader').hide();
@@ -160,17 +158,10 @@ Joomla.apps.clickforlinks = function () {
 	});
 }
 
-jQuery(document).ready(function() {
-	var link = jQuery('#myTabTabs a[href="#web"]').get(0);
-	jQuery(link).closest('li').click(function (event){
-		Joomla.apps.initialize();
-	});
-});
-
 Joomla.apps.initialize = function() {
 	if (jQuery('#myTabContent').length) {
 		jQuery('<div id="appsloading"></div>')
-			.css("background", "rgba(255, 255, 255, .8) url('"+apps_base_url+"jedapps/images/ajax-loader.gif') 50% 15% no-repeat")
+			.css("background", "rgba(255, 255, 255, .8) url('"+apps_base_url+"jedapps/v1/images/ajax-loader.gif') 50% 15% no-repeat")
 			.css("top", jQuery('#myTabContent').position().top - jQuery(window).scrollTop())
 			.css("left", jQuery('#myTabContent').position().left - jQuery(window).scrollLeft())
 			.css("width", jQuery('#myTabContent').width())
@@ -312,7 +303,6 @@ Joomla.apps.clicker = function() {
 //		allow_single_deselect : true
 //	});
 	
-	<!--radio-->
 	var repRadioCount = 0;
 	
 	var countRadio = jQuery("input[type=radio]").length;
@@ -353,8 +343,6 @@ Joomla.apps.clicker = function() {
 		jQuery(this).prev(".radiobutton").trigger("click");
 	})	
 
-	<!--radio-->
-	<!--check-->
 	var repCheckCount = 0;
 	
 	var countCheck = jQuery("input[type=checkbox]").length;
