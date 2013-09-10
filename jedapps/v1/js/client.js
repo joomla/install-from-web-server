@@ -118,7 +118,7 @@ Joomla.installfromwebajaxsubmit = function() {
 	}
 	
 	if (jQuery('#com-apps-searchbox').val()) {
-		var value = encodeURI(jQuery('#com-apps-searchbox').val().toLowerCase().replace(/ +/g,'_').replace(/[0-9]/g,'').replace(/[^a-z0-9-_]/g,'').trim());
+		var value = encodeURI(jQuery('#com-apps-searchbox').val().toLowerCase().replace(/ +/g,'_').replace(/[^a-z0-9-_]/g,'').trim());
 		tail += '&filter_search='+value;
 	}
 

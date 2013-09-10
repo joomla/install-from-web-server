@@ -41,7 +41,7 @@ else {
 				</div>
 			</div>
 			<div class="row-fluid">
-				<h4><?php echo JText::_('COM_APPS_NO_RESULTS_DESCRIPTION'); ?></h4>
+				<blockquote><h4><?php echo JText::_('COM_APPS_NO_RESULTS_DESCRIPTION'); ?></h4></blockquote>
 			</div>
 		</div>
 	</div>

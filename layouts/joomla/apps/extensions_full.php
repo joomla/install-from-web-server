@@ -11,6 +11,9 @@ defined('JPATH_BASE') or die;
 $extension_data = $displayData['extensions'][0];
 $breadcrumbs = $displayData['breadcrumbs'];
 $tags = explode('|', trim($extension_data->fields->get('36')));
+if(JDEBUG) {
+	var_dump($extension_data);
+}
 ?>
 <div class="item-view">
 	<div class="grid-header">
@@ -81,7 +84,7 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 		<div class="item-buttons">
 			<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
 			<a target="_blank" href="<?php echo $extension_data->website; ?>"><?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
-			<?php if (!$extension_data->type || $extension_data->type == 0): ?>
+			<?php if ((!$extension_data->type || $extension_data->type == 0) && $extension_data->fields->get('29')): ?>
 			<a target="_blank" class="install" href="<?php echo $extension_data->fields->get('29'); ?>"><?php echo JText::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL'); ?></a>
 			<?php elseif ($extension_data->type == 1): ?>
 			<a class="install" href="#" onclick="Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>', '<?php echo $extension_data->link_name; ?>')"><?php echo JText::_('COM_APPS_INSTALL'); ?></a>
