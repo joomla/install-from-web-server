@@ -219,7 +219,7 @@ class AppsModelCategory extends JModelList
 		}
 
 		$where = array();
-		if ($catid && is_null($search)) {
+		if ($catid && !$search) {
 			$where[] = 't1.cat_id IN (' . implode(',', $catid) . ')';
 		}
 
