@@ -261,42 +261,52 @@ jQuery(document).ready(function(){
 	Joomla.apps.slider();
 })
 
+Joomla.apps.changeClasses = function(list) {
+	var removeclass = "list-view-container";
+	var addclass = "grid-view-container";
+	var classon = ".grid-view";
+	var classoff = ".list-view";
+	if (list) {
+		removeclass = "grid-view-container";
+		addclass = "list-view-container";
+		classon = ".list-view";
+		classoff = ".grid-view";
+	}
+	jQuery( ".items" ).each(function(index) {
+		jQuery(this).removeClass(removeclass);
+		jQuery(this).addClass(addclass);
+	});
+	jQuery(classon).each(function(index) {
+		jQuery(this).removeClass("pas");
+		jQuery(this).addClass("act");
+	});
+	jQuery(classoff).each(function(index) {
+		jQuery(this).removeClass("act");
+		jQuery(this).addClass("pas");	
+	});
+}
 
-
-	
 Joomla.apps.clicker = function() {
 	jQuery( ".grid-view" ).live("click",function() {
-		jQuery( ".items" ).removeClass("list-view-container");	
-		jQuery( ".items" ).addClass("grid-view-container");
-		jQuery( ".grid-view" ).addClass("act");	
-		jQuery( ".grid-view" ).removeClass("pas");	
-		jQuery( ".list-view" ).removeClass("act");	
-		jQuery( ".list-view" ).addClass("pas");	
-        
-        jQuery(".grid-view-container .row-fluid .item").each(function(){
-            jQuery(this).find("h4").insertAfter(jQuery(this).find('.item-type'));
-            jQuery(this).find("p.rating").insertBefore(jQuery(this).find('.item-image'));
-        })
+		Joomla.apps.changeClasses(false);
+		jQuery(".grid-view-container .row-fluid .item").each(function(){
+			jQuery(this).find("h4").insertAfter(jQuery(this).find('.item-type'));
+			jQuery(this).find("p.rating").insertBefore(jQuery(this).find('.item-image'));
+		});
 	});
 	jQuery( ".list-view" ).live("click",function() {
-		jQuery( ".items" ).removeClass("grid-view-container");	
-		jQuery( ".items" ).addClass("list-view-container");	
-        jQuery( ".grid-view" ).addClass("pas");	
-		jQuery( ".grid-view" ).removeClass("act");	
-		jQuery( ".list-view" ).removeClass("pas");	
-		jQuery( ".list-view" ).addClass("act");	
-        
-        jQuery(".list-view-container .row-fluid .item").each(function(){
-            jQuery(this).find("p.rating").insertAfter(jQuery(this).find('h4'));
-            jQuery(this).find(".item-type").insertAfter(jQuery(this).find('h4'));
+		Joomla.apps.changeClasses(true);
+		jQuery(".list-view-container .row-fluid .item").each(function(){
+			jQuery(this).find("p.rating").insertAfter(jQuery(this).find('h4'));
+			jQuery(this).find(".item-type").insertAfter(jQuery(this).find('h4'));
             
-            var height = jQuery(this).height() - 10;
-            jQuery(this).find('h4').css("height",height);
-            jQuery(this).find('h4').css("padding-top", (jQuery(this).height() - jQuery(this).find('h4').find('a').height()-10)/2);
+			var height = jQuery(this).height() - 10;
+			jQuery(this).find('h4').css("height",height);
+			jQuery(this).find('h4').css("padding-top", (jQuery(this).height() - jQuery(this).find('h4').find('a').height()-10)/2);
             
-            jQuery(this).find('.rating').css('margin-top', (jQuery(this).height() - jQuery(this).find('.rating').height())/2);
-            jQuery(this).find('ul.item-type').css('margin-top', (jQuery(this).height() - jQuery(this).find('ul.item-type').height())/2);
-        })
+			jQuery(this).find('.rating').css('margin-top', (jQuery(this).height() - jQuery(this).find('.rating').height())/2);
+			jQuery(this).find('ul.item-type').css('margin-top', (jQuery(this).height() - jQuery(this).find('ul.item-type').height())/2);
+		});
 	});
 //	jQuery('select').chosen({
 //		disable_search_threshold : 10,
