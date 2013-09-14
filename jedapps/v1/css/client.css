@@ -50,8 +50,8 @@ img.com-apps-logo{
 }
 .com-apps-sidebar ul.com-apps-list > li ul li a{
 	display: block;
-	line-height: 16px;
-	padding: 10px 0 10px 15px;
+	line-height: 20px;
+	padding: 15px;
 	font-size: 14px;
 	font-weight: 400;
 	font-family: 'Lato', sans serif;
@@ -271,6 +271,7 @@ line-height: 36px;
 	color: #185186;
 	font-size: 24px;
 	text-align: center;
+	cursor: pointer;
 }
 .com-apps-search input{
 	font-size: 18px;
@@ -982,4 +983,10 @@ padding-left: 0px;
 }
 .hidden {
 	display: none;
+}
+div.list-view-container hr {
+	display: none;
+}
+ul.com-apps-list li.active a.selected, ul.dummy-submenu li.active a.selected{
+	background-color: rgb(245, 245, 245);
 }
