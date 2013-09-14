@@ -984,3 +984,6 @@ padding-left: 0px;
 .hidden {
 	display: none;
 }
+div.list-view-container hr {
+	display: none;
+}

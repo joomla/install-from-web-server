@@ -300,8 +300,10 @@ Joomla.apps.clicker = function() {
 	jQuery( ".grid-view" ).live("click",function() {
 		Joomla.apps.changeClasses(false);
 		jQuery(".grid-view-container .row-fluid .item").each(function(){
-			jQuery(this).find("h4").insertAfter(jQuery(this).find('.item-type'));
+			jQuery(this).find("h4").insertAfter(jQuery(this).find('.item-type')).css("height", "").css("padding-top", "");
 			jQuery(this).find("p.rating").insertBefore(jQuery(this).find('.item-image'));
+			jQuery(this).find('.rating').css('margin-top', "");
+			jQuery(this).find('ul.item-type').css('margin-top', "");
 		});
 	});
 	jQuery( ".list-view" ).live("click",function() {
