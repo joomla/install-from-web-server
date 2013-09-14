@@ -22,8 +22,8 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 			<?php endif; ?>
 		<?php endfor; ?>
 	</p>
-	<div class="center">
-		<a class="item-image transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>">
+	<div class="center item-image">
+		<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>">
 			<img src="<?php echo $extension_data->image; ?>" class="img center" />
 		</a>
 	</div>
@@ -51,7 +51,7 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 		<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>"><?php echo $extension_data->name; ?></a>
 	</h4>
 	<p class="item-description">
-		<?php echo substr($extension_data->description, 0, 100); ?>
+		<?php echo substr($extension_data->description, 0, 200); ?>
 	</p>
 </div>
 </li>

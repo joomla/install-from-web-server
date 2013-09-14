@@ -46,8 +46,15 @@ Joomla.loadweb = function(url) {
 			if (Joomla.apps.ordering !== "") {
 				jQuery('#com-apps-ordering').prop("selectedIndex", Joomla.apps.ordering);
 			}
-			Joomla.apps.slider();
-			Joomla.apps.clicker();
+			Joomla.apps.active = [];
+			jQuery("ul.com-apps-list a.active").each(function(index){
+				Joomla.apps.active.push(jQuery(this).attr("href").replace(/^.+[&\?]id=(\d+).*$/, '$1'));
+			});
+			jQuery(".com-apps-sidebar ul.com-apps-list li a.active").each(function(index, value) {
+				if (!jQuery(value).hasClass('selected')) {
+					jQuery(value).parent().children("ul").css("display", "block");
+				}
+			});
 			Joomla.apps.clickforlinks();
 			if(jQuery('#joomlaapsinstallatinput')) {
 				jQuery('#joomlaapsinstallatinput').val(apps_installat_url);
@@ -55,6 +62,7 @@ Joomla.loadweb = function(url) {
 			if (jQuery('#myTabContent').length) {
 				jQuery.event.trigger("ajaxStop");
 			}
+			Joomla.apps.slider();
 		},
 		error: function(request, status, error) {
 			if (request.responseText) {
@@ -185,8 +193,12 @@ Joomla.apps.initialize = function() {
 	
 	jQuery('#com-apps-searchbox').live('keypress', function(event){
 		if(event.which == 13) {
-			Joomla.installfromwebajaxsubmit();
+			Joomla.apps.initiateSearch();
 		}
+	});
+
+	jQuery('div.com-apps-search i.icon-search').live('click', function(event){
+		Joomla.apps.initiateSearch();
 	});
 
 	jQuery('#com-apps-ordering').live('change', function(event){
@@ -200,42 +212,18 @@ Joomla.apps.initialize = function() {
 
 }
 
+Joomla.apps.initiateSearch = function() {
+	Joomla.apps.view = 'dashboard';
+	Joomla.apps.active = [];
+	Joomla.installfromwebajaxsubmit();
+}
+
 Joomla.apps.slider = function() {
-	jQuery(".com-apps-sidebar ul.com-apps-list li a").each( function(index, value) {
-		if (jQuery.inArray(jQuery(value).attr('href').replace(/^.+[&\?]id=(\d+).*$/, '$1'), Joomla.apps.active) > -1) {
-			jQuery(value).parent().addClass("active");
-			jQuery(value).parent().children("ul").show();
-		}
-	});
-	jQuery(".com-apps-sidebar ul.com-apps-list li a").each(function(index) {
-		var ajaxurl = jQuery(this).attr('href');
-		(function() {
-			var ajax_url = ajaxurl;
-			var el = jQuery(".com-apps-sidebar ul.com-apps-list li a")[index];
-			jQuery(el).click(function(event){
-				event.preventDefault();
-				if(jQuery(this).parent().hasClass("active")){
-					jQuery(this).parent().removeClass("active");
-					jQuery(this).parent().find("ul").stop(true,true).slideUp(300);
-					for (var i = 0; i < Joomla.apps.active.length; i++) {
-						if (Joomla.apps.active[i] == ajax_url.replace(/^.+[&\?]id=(\d+).*$/, '$1')) {
-							Joomla.apps.active.splice(i, 1);
-							break;
-						}
-					}
-				}
-				else{
-					jQuery(this).parent().closest("ul").find(" > li.active").find("ul").stop(true,true).slideUp(300);
-					jQuery(this).parent().closest("ul").find(" > li").removeClass("active");
-					jQuery(this).parent().addClass("active");
-					jQuery(this).parent().find("ul").stop(true,true).slideDown(300);
-					Joomla.apps.active.push(ajax_url.replace(/^.+[&\?]id=(\d+).*$/, '$1'));
-				}
-			});
-		})();
+	jQuery(".com-apps-sidebar ul.com-apps-list li a.selected").each(function(index, value) {
+		jQuery(value).parent().addClass("active");
+		jQuery(value).parent().children("ul").show();
 	});
 	jQuery("ul.nav-tabs li").click(function(){
-
 		setTimeout(function(){jQuery('.scroll-pane').jScrollPane({
 			autoReinitialise: true,
 			mouseWheelSpeed: 10
@@ -261,42 +249,54 @@ jQuery(document).ready(function(){
 	Joomla.apps.slider();
 })
 
+Joomla.apps.changeClasses = function(list) {
+	var removeclass = "list-view-container";
+	var addclass = "grid-view-container";
+	var classon = ".grid-view";
+	var classoff = ".list-view";
+	if (list) {
+		removeclass = "grid-view-container";
+		addclass = "list-view-container";
+		classon = ".list-view";
+		classoff = ".grid-view";
+	}
+	jQuery( ".items" ).each(function(index) {
+		jQuery(this).removeClass(removeclass);
+		jQuery(this).addClass(addclass);
+	});
+	jQuery(classon).each(function(index) {
+		jQuery(this).removeClass("pas");
+		jQuery(this).addClass("act");
+	});
+	jQuery(classoff).each(function(index) {
+		jQuery(this).removeClass("act");
+		jQuery(this).addClass("pas");	
+	});
+}
 
-
-	
 Joomla.apps.clicker = function() {
 	jQuery( ".grid-view" ).live("click",function() {
-		jQuery( ".items" ).removeClass("list-view-container");	
-		jQuery( ".items" ).addClass("grid-view-container");
-		jQuery( ".grid-view" ).addClass("act");	
-		jQuery( ".grid-view" ).removeClass("pas");	
-		jQuery( ".list-view" ).removeClass("act");	
-		jQuery( ".list-view" ).addClass("pas");	
-        
-        jQuery(".grid-view-container .row-fluid .item").each(function(){
-            jQuery(this).find("h4").insertAfter(jQuery(this).find('.item-type'));
-            jQuery(this).find("p.rating").insertBefore(jQuery(this).find('.item-image'));
-        })
+		Joomla.apps.changeClasses(false);
+		jQuery(".grid-view-container .row-fluid .item").each(function(){
+			jQuery(this).find("h4").insertAfter(jQuery(this).find('.item-type')).css("height", "").css("padding-top", "");
+			jQuery(this).find("p.rating").insertBefore(jQuery(this).find('.item-image'));
+			jQuery(this).find('.rating').css('margin-top', "");
+			jQuery(this).find('ul.item-type').css('margin-top', "");
+		});
 	});
 	jQuery( ".list-view" ).live("click",function() {
-		jQuery( ".items" ).removeClass("grid-view-container");	
-		jQuery( ".items" ).addClass("list-view-container");	
-        jQuery( ".grid-view" ).addClass("pas");	
-		jQuery( ".grid-view" ).removeClass("act");	
-		jQuery( ".list-view" ).removeClass("pas");	
-		jQuery( ".list-view" ).addClass("act");	
-        
-        jQuery(".list-view-container .row-fluid .item").each(function(){
-            jQuery(this).find("p.rating").insertAfter(jQuery(this).find('h4'));
-            jQuery(this).find(".item-type").insertAfter(jQuery(this).find('h4'));
+		Joomla.apps.changeClasses(true);
+		jQuery(".list-view-container .row-fluid .item").each(function(){
+			jQuery(this).find("p.rating").insertAfter(jQuery(this).find('h4'));
+			jQuery(this).find(".item-type").insertAfter(jQuery(this).find('h4'));
             
-            var height = jQuery(this).height() - 10;
-            jQuery(this).find('h4').css("height",height);
-            jQuery(this).find('h4').css("padding-top", (jQuery(this).height() - jQuery(this).find('h4').find('a').height()-10)/2);
+			var height = jQuery(this).height() - 10;
+			jQuery(this).find('h4').css("height",height);
+			jQuery(this).find('h4').css("padding-top", (jQuery(this).height() - jQuery(this).find('h4').find('a').height()-10)/2);
             
-            jQuery(this).find('.rating').css('margin-top', (jQuery(this).height() - jQuery(this).find('.rating').height())/2);
-            jQuery(this).find('ul.item-type').css('margin-top', (jQuery(this).height() - jQuery(this).find('ul.item-type').height())/2);
-        })
+			jQuery(this).find('.rating').css('margin-top', (jQuery(this).height() - jQuery(this).find('.rating').height())/2);
+			jQuery(this).find('ul.item-type').css('margin-top', (jQuery(this).height() - jQuery(this).find('ul.item-type').height())/2);
+		});
 	});
 //	jQuery('select').chosen({
 //		disable_search_threshold : 10,

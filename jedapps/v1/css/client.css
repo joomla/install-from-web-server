@@ -11,4 +11,7 @@ ul.item-type {margin:0px}
 .item-info-container {margin-left: 25px;}
 
 /* Grid */
-.item-image{width:110px; height:110px}
+.item-image{height:120px}
+.item-description{height:70px; overflow: hidden}
+
+

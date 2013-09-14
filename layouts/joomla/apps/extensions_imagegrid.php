@@ -30,9 +30,9 @@ else {
 	<div class="item-view span12">
 		<div class='grid-container'>
 			<div class="grid-header">
-				<div class="breadcrumbs">
-					<?php echo JText::_('COM_APPS_NO_RESULTS'); ?>
-				</div>
+				<ul class="breadcrumb">
+					<li><?php echo JText::_('COM_APPS_NO_RESULTS'); ?></li>
+				</ul>
 			</div>
 			<div class="row-fluid">
 				<blockquote><h4><?php echo JText::_('COM_APPS_NO_RESULTS_DESCRIPTION'); ?></h4></blockquote>
@@ -65,7 +65,7 @@ else {
 			?>
 			</ul>	
 			<hr />
-			<ul>
+			<ul class="thumbnails">
 			<?php 
 					}
 
