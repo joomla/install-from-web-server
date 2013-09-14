@@ -16,9 +16,9 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 	<p class="rating center">
 		<?php for ($i = 1; $i < 6; $i++) : ?>
 			<?php if ($extension_data->rating + 0.5 >= $i) : ?>
-		<i class="icon-star"></i>
+		<span class="icon-star"></span>
 			<?php else : ?>
-		<i class="icon-star-empty"></i>
+		<span class="icon-star-empty"></span>
 			<?php endif; ?>
 		<?php endfor; ?>
 	</p>
