@@ -17,49 +17,50 @@ if(JDEBUG) {
 ?>
 <div class="item-view">
 	<div class="grid-header">
-		<div class="breadcrumbs">
-			<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl('view=dashboard'); ?>"><?php echo JText::_('COM_APPS_EXTENSIONS'); ?></a>
+		<ul class="breadcrumb">
+			<li><a class="transcode" href="<?php echo AppsHelper::getAJAXUrl('view=dashboard'); ?>"><?php echo JText::_('COM_APPS_EXTENSIONS'); ?></a></li>
 			<?php foreach ($breadcrumbs as $bc) : ?>
-			&nbsp;/&nbsp;<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$bc->id}"); ?>"><?php echo $bc->name; ?></a>
+			<span class="divider"> / </span>
+			<li><a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$bc->id}"); ?>"><?php echo $bc->name; ?></a></li>
 			<?php endforeach; ?>
-			&nbsp;/&nbsp;
-			<?php echo $extension_data->link_name; ?>
-		</div>
+			<span class="divider"> / </span>
+			<li><?php echo $extension_data->link_name; ?></li>
+		</ul>
 	</div>
 	<div class="full-item-container">
-		<img class="item-logo" src="<?php echo $extension_data->image; ?>" />
-		<div class="item-info-container">
-			<div class="item-title"><?php echo $extension_data->link_name; ?></div>
+		<div id="item-left-container" class="pull-left">
+			<img class="img img-polaroid" src="<?php echo $extension_data->image; ?>" />
+		</div>
+		
+		<div class="item-info-container pull-left">
+			<h2><?php echo $extension_data->link_name; ?></h2>
 			<div>
-				<ul class="item-type">
-					
-					<?php if (in_array('mod', $tags)) : ?>
-					<li title="<?php echo JText::_('COM_APPS_MODULE'); ?>" class="m">M</li>
-					<?php endif; ?>
-					<?php if (in_array('plugin', $tags)) : ?>
-					<li title="<?php echo JText::_('COM_APPS_PLUGIN'); ?>" class="p">P</li>
-					<?php endif; ?>
-					<?php if (in_array('esp', $tags)) : ?>
-					<li title="<?php echo JText::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?>" class="s">S</li>
-					<?php endif; ?>
-					<?php if (in_array('tool', $tags)) : ?>
-					<li title="<?php echo JText::_('COM_APPS_TOOL'); ?>" class="t">T</li>
-					<?php endif; ?>
-					<?php if (in_array('com', $tags)) : ?>
-					<li title="<?php echo JText::_('COM_APPS_COMPONENT'); ?>" class="c">C</li>
-					<?php endif; ?>
-					<?php if (in_array('lang', $tags)) : ?>
-					<li title="<?php echo JText::_('COM_APPS_LANGUAGE'); ?>" class="l">L</li>
-					<?php endif; ?>
-				</ul>
+				<?php if (in_array('mod', $tags)) : ?>
+				<span title="<?php echo JText::_('COM_APPS_MODULE'); ?>" class="badge badge-jmodule">M</span> 
+				<?php endif; ?>
+				<?php if (in_array('plugin', $tags)) : ?>
+				<span title="<?php echo JText::_('COM_APPS_PLUGIN'); ?>" class="badge badge-jplugin">P</span> 
+				<?php endif; ?>
+				<?php if (in_array('esp', $tags)) : ?>
+				<span title="<?php echo JText::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?>" class="badge badge-jspecial">S</span> 
+				<?php endif; ?>
+				<?php if (in_array('tool', $tags)) : ?>
+				<span title="<?php echo JText::_('COM_APPS_TOOL'); ?>" class="badge badge-jtool">T</span> 
+				<?php endif; ?>
+				<?php if (in_array('com', $tags)) : ?>
+				<span title="<?php echo JText::_('COM_APPS_COMPONENT'); ?>" class="badge badge-jcomponent">C</span> 
+				<?php endif; ?>
+				<?php if (in_array('lang', $tags)) : ?>
+				<span title="<?php echo JText::_('COM_APPS_LANGUAGE'); ?>" class="badge badge-jlanguage">L</span>
+				<?php endif; ?>
 			</div>
 		
 			<div class="rating">
 				<?php for ($i = 1; $i < 6; $i++) : ?>
 					<?php if ($extension_data->link_rating + 0.5 >= $i) : ?>
-				<i class="icon-star rated"></i>
-					<?php else : ?>
 				<i class="icon-star"></i>
+					<?php else : ?>
+				<i class="icon-star-empty"></i>
 					<?php endif; ?>
 				<?php endfor; ?>
 				<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data) . '#action'; ?>">
@@ -75,23 +76,25 @@ if(JDEBUG) {
 				<?php echo JText::sprintf('COM_APPS_EXTENSION_VERSION', $extension_data->fields->get('43'), JHTML::date($extension_data->link_modified)); ?>
 			</div>
 		</div>
-		<div style="clear:both;"></div>
+		
+		<div class="clearfix"></div>
+		
 		<?php if ($extension_data->type > 1): ?>
 		<form action="<?php echo $extension_data->downloadurl; ?>" method="post" onsubmit="return Joomla.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>');">
-			<input id="joomlaapsinstallatinput" type="hidden" name="installat" value="" />
-			<input type="hidden" name="installapp" value="<?php echo $extension_data->link_id; ?>" />
+			<input id="joomlaapsinstallatinput" type="hidden" name="installat" value="" /> 
+			<input type="hidden" name="installapp" value="<?php echo $extension_data->link_id; ?>" /> 
 		<?php endif; ?>
-		<div class="item-buttons">
-			<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
-			<a target="_blank" href="<?php echo $extension_data->website; ?>"><?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
+		<div class="item-buttons form-actions">
+			<a target="_blank" class="btn btn-secondary" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a> 
+			<a target="_blank" class="btn btn-secondary" href="<?php echo $extension_data->website; ?>"><?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a> 
 			<?php if ((!$extension_data->type || $extension_data->type == 0) && $extension_data->fields->get('29')): ?>
-			<a target="_blank" class="install" href="<?php echo $extension_data->fields->get('29'); ?>"><?php echo JText::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL'); ?></a>
+			<a target="_blank" class="install btn btn-primary" href="<?php echo $extension_data->fields->get('29'); ?>"><?php echo JText::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL'); ?></a>
 			<?php elseif ($extension_data->type == 1): ?>
-			<a class="install" href="#" onclick="Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>', '<?php echo $extension_data->link_name; ?>')"><?php echo JText::_('COM_APPS_INSTALL'); ?></a>
+			<a class="install btn btn-primary" href="#" onclick="Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>', '<?php echo $extension_data->link_name; ?>')"><?php echo JText::_('COM_APPS_INSTALL'); ?></a>
 			<?php elseif ($extension_data->type == 2): ?>
-			<button class="install" type="submit"><?php echo JText::_('COM_APPS_INSTALL_REGISTER'); ?></button>
+			<button class="install btn btn-primary" type="submit"><?php echo JText::_('COM_APPS_INSTALL_REGISTER'); ?></button>
 			<?php elseif ($extension_data->type == 3): ?>
-			<button class="install" type="submit"><?php echo JText::_('COM_APPS_INSTALL_PURCHASE'); ?></button>
+			<button class="install btn btn-primary" type="submit"><?php echo JText::_('COM_APPS_INSTALL_PURCHASE'); ?></button>
 			<?php endif; ?>
 
 		</div>
@@ -100,9 +103,9 @@ if(JDEBUG) {
 		<?php endif; ?>
 		<div class="item-desc">
 			<p class="item-desc-title">
-				<?php echo $extension_data->link_name; ?>
+				<strong><?php echo $extension_data->link_name; ?></strong> 
 				<?php if ($extension_data->fields->get('39')): ?>
-					&nbsp;<small><?php echo JText::sprintf('COM_APPS_EXTENSION_AUTHOR', $extension_data->fields->get('39')); ?></small>
+					<?php echo JText::sprintf('COM_APPS_EXTENSION_AUTHOR', $extension_data->fields->get('39')); ?>
 				<?php endif; ?>
 			</p>
 			<p class="item-desc-text" align="justify">
