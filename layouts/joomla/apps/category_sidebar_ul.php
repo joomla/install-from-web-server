@@ -11,7 +11,7 @@ defined('JPATH_BASE') or die;
 $category_sidebar 		= new JLayoutFile('joomla.apps.category_sidebar_ul');
 ?>
 		<?php foreach ($displayData as $category) : ?>
-	<ul class="<?php echo count($category->children) ? 'nav com-apps-list' : 'dummy-submenu'; ?>">
+	<ul class="<?php echo count($category->children) ? 'nav nav-list' : 'dummy-submenu'; ?>">
 			<li<?php echo ($category->active && !$category->selected) ? ' class="active"' : ''; ?>><a class="transcode<?php echo $category->active ? ' active' : ''; ?><?php echo $category->selected ? ' selected' : ''; ?>" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$category->id}"); ?>"><?php echo $category->name; ?></a>
 			<?php if (count($category->children) && $category->active) : ?>
 				<?php echo $category_sidebar->render($category->children); ?>
