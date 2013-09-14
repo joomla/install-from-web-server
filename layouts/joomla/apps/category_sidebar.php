@@ -10,13 +10,10 @@
 defined('JPATH_BASE') or die;
 $category_sidebar 		= new JLayoutFile('joomla.apps.category_sidebar_ul');
 ?>
-<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl('view=dashboard'); ?>">
-	<img  class="com-apps-logo" src="<?php echo JURI::root(); ?>jedapps/v1/images/logo.png" alt="Joomla Apps"/>
-</a>
-<div class="com-apps-sidebar sidebar-nav">
-	<h3><?php echo JText::_('COM_APPS_CATEGORIES'); ?></h3>
-	<div class="scroll-pane">
-	<ul class="nav com-apps-list">
+<div class="com-apps-sidebar">
+	<div class="scroll-pane well">
+	<ul class="nav nav-list">
+		<li class="nav-header"><h3><?php echo JText::_('COM_APPS_CATEGORIES'); ?></h3></li>
 		<?php foreach ($displayData as $category) : ?>
 			<li<?php echo ($category->active && !$category->selected) ? ' class="active"' : ''; ?>><a class="transcode<?php echo $category->active ? ' active' : ''; ?><?php echo $category->selected ? ' selected' : ''; ?>" href="<?php echo AppsHelper::getAJAXUrl(($category->id ? "view=category&id={$category->id}" : "view=dashboard")); ?>"><?php echo $category->name; ?></a>
 			<?php if (count($category->children) && $category->active) : ?>

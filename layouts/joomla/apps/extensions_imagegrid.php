@@ -16,12 +16,6 @@ $breadcrumbs = $displayData['breadcrumbs'];
 $extensions_perrow = $componentParams->get('extensions_perrow', 4);
 $spanclass = 'span' . (12 / $extensions_perrow);
 
-$ordering_options[] = JHtml::_('select.option', 't2.link_hits', JText::_('COM_APPS_SORT_BY_POPULAR'));
-$ordering_options[] = JHtml::_('select.option', 't2.link_name', JText::_('COM_APPS_SORT_BY_NAME'));
-$ordering_options[] = JHtml::_('select.option', 't2.link_rating', JText::_('COM_APPS_SORT_BY_RATING'));
-$ordering_options[] = JHtml::_('select.option', 't2.link_created', JText::_('COM_APPS_SORT_BY_CREATED'));
-
-$selected_ordering = $app->input->get('ordering', 't2.link_hits');
 $view = $app->input->getCmd('view');
 if ($view != 'dashboard') {
 	$firstcrumb = '<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl(\'view=dashboard\'); ?>">' . JText::_('COM_APPS_EXTENSIONS') . '</a>';
@@ -36,9 +30,9 @@ else {
 	<div class="item-view span12">
 		<div class='grid-container'>
 			<div class="grid-header">
-				<div class="breadcrumbs">
-					<?php echo JText::_('COM_APPS_NO_RESULTS'); ?>
-				</div>
+				<ul class="breadcrumb">
+					<li><?php echo JText::_('COM_APPS_NO_RESULTS'); ?></li>
+				</ul>
 			</div>
 			<div class="row-fluid">
 				<blockquote><h4><?php echo JText::_('COM_APPS_NO_RESULTS_DESCRIPTION'); ?></h4></blockquote>
@@ -51,22 +45,19 @@ else {
 <div class="row-fluid">
 	<div class="item-view span12">
 		<div class='grid-container'>
-			<div class="grid-header">
-			<div class="breadcrumbs">
-				<?php echo $firstcrumb; ?>
-				<?php foreach ($breadcrumbs as $bc) : ?>
-				&nbsp;/&nbsp;<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$bc->id}"); ?>"><?php echo $bc->name; ?></a>
-				<?php endforeach; ?>
-			</div>
-			<div class="sort-by pull-right">
-				<?php 
-					if ($view != 'dashboard')
-						echo JHTML::_('select.genericlist', $ordering_options, 'ordering', null, 'value', 'text', $selected_ordering, 'com-apps-ordering'); 
-				?>
-			</div>
-		</div>
-		<div class="items grid-view-container">
-			<div class="row-fluid">
+
+		<ul class="breadcrumb">
+			<li><?php echo $firstcrumb; ?></li>
+			<?php foreach ($breadcrumbs as $bc) : ?>
+			<span class="divider"> / </span>
+			</li><a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$bc->id}"); ?>"><?php echo $bc->name; ?></a></li>
+			<?php $lastc = $bc; endforeach; ?>
+			
+			<!-- Link to category on JED -->
+			<li class="pull-right"><a href="<?php echo AppsHelper::getJEDCatUrl($lastc->id); ?>" target="_blank"><span class="icon-share-alt"></span></a></li>
+		</ul>
+
+		<ul class="thumbnails">
 			<?php
 				// Looping thru all the extensions, closing and starting a new row after every $extensions_perrow items
 				// The single extension box is loaded using the JLayout
@@ -75,9 +66,9 @@ else {
 					$ratingwidth = round(70 * ($extension->rating / 5));
 					if ($i != 0 && $i%$extensions_perrow == 0) { 
 			?>
-				</div>
-				<hr />
-				<div class="row-fluid">
+			</ul>	
+			<hr />
+			<ul class="thumbnails">
 			<?php 
 					}
 
@@ -88,7 +79,6 @@ else {
 					$i++;
 				endforeach;
 			?>
-			</div>
-		</div>
+		</ul>
 	</div>
 </div>

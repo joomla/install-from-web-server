@@ -167,6 +167,10 @@ class AppsModelDashboard extends JModelList
 		$default_limit		= $componentParams->get('default_limit', 8);
 		$input 				= new JInput;
 		$catid 				= $input->get('id', null, 'int');
+		$order 				= $input->get('ordering', 't2.link_hits');
+		$orderCol 			= $this->state->get('list.ordering', $order);
+		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
+		$order 				= $orderCol.' '.$orderDirn;
 		$release			= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
 		$limitstart 		= $input->get('limitstart', 0, 'int');
 		$limit 				= $input->get('limit', $default_limit, 'int');
@@ -181,9 +185,6 @@ class AppsModelDashboard extends JModelList
 		$query = 'SET SESSION group_concat_max_len=150000';
 		$db->setQuery($query);
 		$db->execute();
-		
-		// Form query
-		$order = 't2.link_hits DESC';
 		
 		$query = $db->getQuery(true);
 		$query->select(array('t2.link_id AS id'));

@@ -24,11 +24,8 @@ $extension_data			= array('extensions' => $this->extensions, 'breadcrumbs' => $t
 	</div> 
 	<div class="span9">
 		<div class="row-fluid">
-			<div class="span6">
+			<div class="span12">
 				<?php echo $simple_search->render(array()); ?>
-			</div>
-			<div class="span6">
-				<?php //echo $advanced_search->render(array()); ?>
 			</div>
 		</div>
 
