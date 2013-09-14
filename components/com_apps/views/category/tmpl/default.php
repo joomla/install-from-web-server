@@ -25,20 +25,12 @@ $current 				= ($this->pagination->limitstart / $this->pagination->limit) + coun
 	</div> 
 	<div class="span9">
 		<div class="row-fluid">
-			<div class="span6">
+			<div class="span12">
 				<?php echo $simple_search->render(array()); ?>
-			</div>
-			<div class="span6">
-				<?php echo $advanced_search->render(array()); ?>
 			</div>
 		</div>
 
 		<?php echo $extensions_imagegrid->render($extension_data); ?>
-		<?php if ($this->total > $current): ?>
-		<div align="center">
-			<a class="transcode btn btn-primary" href="index.php?option=com_apps&format=json&view=category&id=<?php echo $catid; ?>&limitstart=<?php echo $this->pagination->next; ?>">Load More</a>
-		</div>
-		<?php endif; ?>
 	</div>
 </div>
 </div>
