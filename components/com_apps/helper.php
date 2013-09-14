@@ -26,4 +26,13 @@ class AppsHelper {
 		$url .= 'index.php?option=com_mtree&task=viewlink&link_id=' . $item->link_id;
 		return $url;
 	}
+	
+	static function getJEDCatUrl($catid) {
+		$url = 'http://extensions.joomla.org/';
+		
+		if (!isset($catid)) { return $url; }
+
+		$url .= 'index.php?option=com_mtree&task=viewcat&cat_id=' . $catid;
+		return $url;
+	}
 }

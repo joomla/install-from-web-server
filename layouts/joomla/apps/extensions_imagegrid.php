@@ -51,7 +51,10 @@ else {
 			<?php foreach ($breadcrumbs as $bc) : ?>
 			<span class="divider"> / </span>
 			</li><a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$bc->id}"); ?>"><?php echo $bc->name; ?></a></li>
-			<?php endforeach; ?>
+			<?php $lastc = $bc; endforeach; ?>
+			
+			<!-- Link to category on JED -->
+			<li class="pull-right"><a href="<?php echo AppsHelper::getJEDCatUrl($lastc->id); ?>" target="_blank"><span class="icon-share-alt"></span></a></li>
 		</ul>
 
 		<ul class="thumbnails">
