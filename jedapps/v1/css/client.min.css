@@ -1,14 +1,1 @@
-/* Extension type badges */
-.label-jmodule, .badge-jmodule{background-color:#b94a48}
-.label-jplugin, .badge-jplugin{background-color:#3a87ad}
-.label-jcomponent, .badge-jcomponent{background-color: #468847}
-.label-jspecific, .badge-jspecific{background-color:#f89406}
-.label-jtool, .badge-jtool{background-color:#333333}
-.label-jlanguage, .badge-jlanguage{background-color:golden}
-ul.item-type {margin:0px}
-
-/* Full view */
-.item-info-container {margin-left: 25px;}
-
-/* Grid */
-.item-image{width:110px; height:110px}
+.label-jmodule,.badge-jmodule{background-color:#b94a48}.label-jplugin,.badge-jplugin{background-color:#3a87ad}.label-jcomponent,.badge-jcomponent{background-color:#468847}.label-jspecific,.badge-jspecific{background-color:#f89406}.label-jtool,.badge-jtool{background-color:#333}.label-jlanguage,.badge-jlanguage{background-color:golden}ul.item-type{margin:0}.item-info-container{margin-left:25px}.item-image{height:120px}.item-description{height:70px;overflow:hidden}

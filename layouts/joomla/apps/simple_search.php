@@ -31,11 +31,16 @@ $selected_ordering = $app->input->get('ordering', 't2.link_hits');
 			<i class="icon-remove"></i></button>
 	</div>
 	<div class="btn-group pull-right">
-		<div id="sortTable_chzn" class="chzn-container chzn-container-single chzn-container-single-nosearch">
 		<?php 
 			if ($view != 'extension')
 				echo JHTML::_('select.genericlist', $ordering_options, 'ordering', null, 'value', 'text', $selected_ordering, 'com-apps-ordering'); 
 		?>
-		</div>
 	</div>
+	
+	<?php if ($view != 'extension') : ?>
+	<div class="btn-group pull-right">
+		<button type="button" class="btn grid-view"><i class="icon-th-large"></i></button>
+		<button type="button" class="btn list-view"><i class="icon-list"></i></button>
+	</div>
+	<?php endif; ?>
 </div>
