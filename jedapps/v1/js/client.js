@@ -185,8 +185,12 @@ Joomla.apps.initialize = function() {
 	
 	jQuery('#com-apps-searchbox').live('keypress', function(event){
 		if(event.which == 13) {
-			Joomla.installfromwebajaxsubmit();
+			Joomla.apps.initiateSearch();
 		}
+	});
+
+	jQuery('div.com-apps-search i.icon-search').live('click', function(event){
+		Joomla.apps.initiateSearch();
 	});
 
 	jQuery('#com-apps-ordering').live('change', function(event){
@@ -198,6 +202,12 @@ Joomla.apps.initialize = function() {
 		Joomla.installfromweb(apps_installfrom_url);
 	}
 
+}
+
+Joomla.apps.initiateSearch = function() {
+	Joomla.apps.view = 'dashboard';
+	Joomla.apps.active = [];
+	Joomla.installfromwebajaxsubmit();
 }
 
 Joomla.apps.slider = function() {

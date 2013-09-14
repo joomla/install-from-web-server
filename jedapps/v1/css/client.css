@@ -271,6 +271,7 @@ line-height: 36px;
 	color: #185186;
 	font-size: 24px;
 	text-align: center;
+	cursor: pointer;
 }
 .com-apps-search input{
 	font-size: 18px;
