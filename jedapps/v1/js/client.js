@@ -46,8 +46,15 @@ Joomla.loadweb = function(url) {
 			if (Joomla.apps.ordering !== "") {
 				jQuery('#com-apps-ordering').prop("selectedIndex", Joomla.apps.ordering);
 			}
-			Joomla.apps.slider();
-			Joomla.apps.clicker();
+			Joomla.apps.active = [];
+			jQuery("ul.com-apps-list a.active").each(function(index){
+				Joomla.apps.active.push(jQuery(this).attr("href").replace(/^.+[&\?]id=(\d+).*$/, '$1'));
+			});
+			jQuery(".com-apps-sidebar ul.com-apps-list li a.active").each(function(index, value) {
+				if (!jQuery(value).hasClass('selected')) {
+					jQuery(value).parent().children("ul").css("display", "block");
+				}
+			});
 			Joomla.apps.clickforlinks();
 			if(jQuery('#joomlaapsinstallatinput')) {
 				jQuery('#joomlaapsinstallatinput').val(apps_installat_url);
@@ -55,6 +62,7 @@ Joomla.loadweb = function(url) {
 			if (jQuery('#myTabContent').length) {
 				jQuery.event.trigger("ajaxStop");
 			}
+			Joomla.apps.slider();
 		},
 		error: function(request, status, error) {
 			if (request.responseText) {
@@ -211,41 +219,11 @@ Joomla.apps.initiateSearch = function() {
 }
 
 Joomla.apps.slider = function() {
-	jQuery(".com-apps-sidebar ul.com-apps-list li a").each( function(index, value) {
-		if (jQuery.inArray(jQuery(value).attr('href').replace(/^.+[&\?]id=(\d+).*$/, '$1'), Joomla.apps.active) > -1) {
-			jQuery(value).parent().addClass("active");
-			jQuery(value).parent().children("ul").show();
-		}
-	});
-	jQuery(".com-apps-sidebar ul.com-apps-list li a").each(function(index) {
-		var ajaxurl = jQuery(this).attr('href');
-		(function() {
-			var ajax_url = ajaxurl;
-			var el = jQuery(".com-apps-sidebar ul.com-apps-list li a")[index];
-			jQuery(el).click(function(event){
-				event.preventDefault();
-				if(jQuery(this).parent().hasClass("active")){
-					jQuery(this).parent().removeClass("active");
-					jQuery(this).parent().find("ul").stop(true,true).slideUp(300);
-					for (var i = 0; i < Joomla.apps.active.length; i++) {
-						if (Joomla.apps.active[i] == ajax_url.replace(/^.+[&\?]id=(\d+).*$/, '$1')) {
-							Joomla.apps.active.splice(i, 1);
-							break;
-						}
-					}
-				}
-				else{
-					jQuery(this).parent().closest("ul").find(" > li.active").find("ul").stop(true,true).slideUp(300);
-					jQuery(this).parent().closest("ul").find(" > li").removeClass("active");
-					jQuery(this).parent().addClass("active");
-					jQuery(this).parent().find("ul").stop(true,true).slideDown(300);
-					Joomla.apps.active.push(ajax_url.replace(/^.+[&\?]id=(\d+).*$/, '$1'));
-				}
-			});
-		})();
+	jQuery(".com-apps-sidebar ul.com-apps-list li a.selected").each(function(index, value) {
+		jQuery(value).parent().addClass("active");
+		jQuery(value).parent().children("ul").show();
 	});
 	jQuery("ul.nav-tabs li").click(function(){
-
 		setTimeout(function(){jQuery('.scroll-pane').jScrollPane({
 			autoReinitialise: true,
 			mouseWheelSpeed: 10
