@@ -6,9 +6,10 @@
 .label-jtool, .badge-jtool{background-color:#333333}
 .label-jlanguage, .badge-jlanguage{background-color:golden}
 ul.item-type {margin:0px}
+.jbadge{vertical-align:middle}
 
 /* Full view */
-.item-info-container {margin-left: 25px;}
+.item-info-container {margin-left: 25px; line-height: 25px}
 
 /* Grid */
 .item-image{height:120px}
