@@ -18,7 +18,7 @@ Joomla.loadweb = function(url) {
 		return false;
 	}
 
-	url += '&product='+apps_product+'&release='+apps_release+'&dev_level='+apps_dev_level+'&list='+Joomla.apps.list;
+	url += '&product='+apps_product+'&release='+apps_release+'&dev_level='+apps_dev_level+'&list='+(Joomla.apps.list ? 'list' : 'grid');
 
 	jQuery('html, body').animate({ scrollTop: 0 }, 0);
 	if (jQuery('#myTabContent').length) {
@@ -232,41 +232,13 @@ Joomla.apps.initiateSearch = function() {
 Joomla.apps.clicker = function() {
 	jQuery(".grid-view").live("click",function() {
 		Joomla.apps.list = 0;
-		jQuery(".items").each(function(index) {
-			jQuery(this).removeClass('list-container');
-			jQuery(this).addClass('grid-container');
-		});
-		jQuery(".grid-container .item").each(function(index){
-			jQuery(this).find("h4").insertAfter(jQuery(this).find('.item-type')).css("height", "").css("padding-top", "");
-			jQuery(this).find("p.rating").insertBefore(jQuery(this).find('.item-image'));
-			jQuery(this).find('.rating').css('margin-top', "");
-			jQuery(this).find('ul.item-type').css('margin-top', "");
-			jQuery(this).find('.item-description').css("margin-top", "");
-		});
+		jQuery(".list-container").hide();
+		jQuery(".grid-container").show();
 	});
 	jQuery(".list-view").live("click",function() {
 		Joomla.apps.list = 1;
-		jQuery(".items").each(function(index) {
-			jQuery(this).removeClass('grid-container');
-			jQuery(this).addClass('list-container');
-		});
-		jQuery(".list-container .item").each(function(index){
-			var h4 = jQuery(this).find('h4');
-			var rating = jQuery(this).find("p.rating");
-			var type = jQuery(this).find(".item-type");
-			var desc = jQuery(this).find('.item-description');
-
-			jQuery(rating).insertAfter(h4);
-			jQuery(type).insertAfter(h4);
-
-			var height = jQuery(this).height();
-			jQuery(h4).css("height", height);
-			jQuery(h4).css("padding-top", (height - jQuery(h4).find('a').height())/2);
-            
-			jQuery(rating).css('margin-top', (height - jQuery(rating).height())/2);
-			jQuery(type).css('margin-top', (height - jQuery(type).height())/2);
-			jQuery(desc).css("margin-top", (height - jQuery(desc).height())/2);
-		});
+		jQuery(".grid-container").hide();
+		jQuery(".list-container").show();
 	});
 }
 
