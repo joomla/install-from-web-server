@@ -11,11 +11,16 @@ Joomla.apps = {
 		full: [],
 		grid: [],
 		list: []
-	}
+	},
+	adminform: {}
 };
 
 Joomla.loadweb = function(url) {
 	if ('' == url) { return false; }
+
+	if (Joomla.apps.adminform.hasOwnProperty('action')) {
+		jQuery('#adminForm').attr('action', Joomla.apps.adminform.action);
+	}
 
 	var pattern1 = new RegExp(apps_base_url);
 	var pattern2 = new RegExp("^index\.php");
@@ -217,6 +222,11 @@ Joomla.apps.clickforlinks = function () {
 		})();
 		jQuery(this).attr('href', '#');
 	});
+	if (Joomla.apps.view.toLowerCase() == 'extension' &&
+	    jQuery('div.form-actions button').length) {
+		Joomla.apps.adminform.action = jQuery('#adminForm').attr('action');
+		jQuery('#adminForm').attr('action', jQuery("#joomlaapsinstallfrominput").val());
+	}	
 }
 
 Joomla.apps.initialize = function() {
@@ -248,6 +258,15 @@ Joomla.apps.initialize = function() {
 		if(event.which == 13) {
 			Joomla.apps.initiateSearch();
 			return false;
+		}
+	});
+
+	jQuery('#myTabTabs li').live('click', function(event){
+		if (jQuery(this).find('a[href="#web"]').length && jQuery("#joomlaapsinstallfrominput").val()) {
+			jQuery('#adminForm').attr('action', jQuery("#joomlaapsinstallfrominput").val());
+		}
+		else if (Joomla.apps.adminform.hasOwnProperty('action')) {
+			jQuery('#adminForm').attr('action', Joomla.apps.adminform.action);
 		}
 	});
 
