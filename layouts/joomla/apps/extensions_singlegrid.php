@@ -50,8 +50,11 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 	<h4 class="center muted">
 		<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>"><?php echo trim($extension_data->name); ?></a>
 	</h4>
-	<p class="item-description">
+	<div class="item-description">
 		<?php echo mb_strlen(trim($extension_data->description)) > 1000 ? mb_substr(trim($extension_data->description), 0, mb_stripos(trim($extension_data->description), ' ', 1000)) . '...' : trim($extension_data->description); ?>
-	</p>
+		<div class="readmore">
+			<a href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>" class="transcode btn btn-small"><?php echo JText::_('COM_APPS_READ_MORE'); ?></a>
+		</div>
+	</div>
 </div>
 </li>
