@@ -30,24 +30,6 @@ if(JDEBUG) {
 	<div class="full-item-container">
 		<h2>
 			<span><?php echo $extension_data->link_name; ?></span> 
-			<?php if (in_array('mod', $tags)) : ?>
-			<span title="<?php echo JText::_('COM_APPS_MODULE'); ?>" class="badge jbadge badge-jmodule">M</span> 
-			<?php endif; ?>
-			<?php if (in_array('plugin', $tags)) : ?>
-			<span title="<?php echo JText::_('COM_APPS_PLUGIN'); ?>" class="badge jbadge badge-jplugin">P</span> 
-			<?php endif; ?>
-			<?php if (in_array('esp', $tags)) : ?>
-			<span title="<?php echo JText::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?>" class="badge jbadge badge-jspecial">S</span> 
-			<?php endif; ?>
-			<?php if (in_array('tool', $tags)) : ?>
-			<span title="<?php echo JText::_('COM_APPS_TOOL'); ?>" class="badge jbadge badge-jtool">T</span> 
-			<?php endif; ?>
-			<?php if (in_array('com', $tags)) : ?>
-			<span title="<?php echo JText::_('COM_APPS_COMPONENT'); ?>" class="badge jbadge badge-jcomponent">C</span> 
-			<?php endif; ?>
-			<?php if (in_array('lang', $tags)) : ?>
-			<span title="<?php echo JText::_('COM_APPS_LANGUAGE'); ?>" class="badge jbadge badge-jlanguage">L</span>
-			<?php endif; ?>
 		</h2>
 		
 		<div id="item-left-container" class="pull-left">
@@ -83,11 +65,33 @@ if(JDEBUG) {
 				<span class="icon-star-empty"></span>
 					<?php endif; ?>
 				<?php endfor; ?>
-				<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data) . '#action'; ?>">
+				&nbsp;
+				<a class="transcode" target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data) . '#action'; ?>">
 				<?php echo JText::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS', $extension_data->link_votes, $extension_data->reviews); ?>
 				</a>
 			</div>
 
+		</div>
+		
+		<div class="item-badge-container pull-right">
+			<?php if (in_array('com', $tags)) : ?>
+			<span title="<?php echo JText::_('COM_APPS_COMPONENT'); ?>" class="badge jbadge badge-jcomponent"><?php echo JText::_('COM_APPS_COMPONENT'); ?></span><br />
+			<?php endif; ?>
+			<?php if (in_array('lang', $tags)) : ?>
+			<span title="<?php echo JText::_('COM_APPS_LANGUAGE'); ?>" class="badge jbadge badge-jlanguage"><?php echo JText::_('COM_APPS_LANGUAGE'); ?></span><br />
+			<?php endif; ?>
+			<?php if (in_array('mod', $tags)) : ?>
+			<span title="<?php echo JText::_('COM_APPS_MODULE'); ?>" class="badge jbadge badge-jmodule"><?php echo JText::_('COM_APPS_MODULE'); ?></span><br />
+			<?php endif; ?>
+			<?php if (in_array('plugin', $tags)) : ?>
+			<span title="<?php echo JText::_('COM_APPS_PLUGIN'); ?>" class="badge jbadge badge-jplugin"><?php echo JText::_('COM_APPS_PLUGIN'); ?></span><br />
+			<?php endif; ?>
+			<?php if (in_array('esp', $tags)) : ?>
+			<span title="<?php echo JText::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?>" class="badge jbadge badge-jspecial"><?php echo JText::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?></span><br />
+			<?php endif; ?>
+			<?php if (in_array('tool', $tags)) : ?>
+			<span title="<?php echo JText::_('COM_APPS_TOOL'); ?>" class="badge jbadge badge-jtool"><?php echo JText::_('COM_APPS_TOOL'); ?></span><br />
+			<?php endif; ?>
 		</div>
 		
 		<div class="clearfix"></div>
@@ -98,8 +102,8 @@ if(JDEBUG) {
 			<input type="hidden" name="installapp" value="<?php echo $extension_data->link_id; ?>" /> 
 		<?php endif; ?>
 		<div class="item-buttons form-actions">
-			<a target="_blank" class="btn btn-secondary" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a> 
-			<a target="_blank" class="btn btn-secondary" href="<?php echo $extension_data->website; ?>"><?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a> 
+			<a target="_blank" class="transcode btn btn-secondary" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a> 
+			<a target="_blank" class="transcode btn btn-secondary" href="<?php echo $extension_data->website; ?>"><?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a> 
 			<?php if ((!$extension_data->type || $extension_data->type == 0) && $extension_data->fields->get('29')): ?>
 			<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->fields->get('29'); ?>"><?php echo JText::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL'); ?></a>
 			<?php elseif ($extension_data->type == 1): ?>
