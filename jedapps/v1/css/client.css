@@ -13,7 +13,7 @@ ul.item-type {margin:0px}
 
 /* Grid */
 .item-image{height:120px}
-.item-description{height:80px; overflow: hidden}
+.item-description{height:100px; overflow: hidden}
 .thumbnail{
 	padding: 16px 12px 16px 12px;
 }
@@ -86,7 +86,7 @@ ul.item-type {margin:0px}
 .list-container .item ul.item-type{
 	width:12%;
 }
-.list-container .item .item-description{
+.list-container .item .item-description {
 	width:45%;
 	overflow: hidden;
 }
@@ -98,4 +98,25 @@ ul.item-type {margin:0px}
 }
 .item-badge-container {
 	text-align: right;
+}
+.readmore {
+	position: absolute;
+	z-index: 100;
+	background: -moz-linear-gradient(top,  rgba(255,255,255,0) 0%, rgba(255,255,255,1) 45%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,0)), color-stop(45%,rgba(255,255,255,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 45%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 45%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 45%); /* IE10+ */
+	background: linear-gradient(to bottom,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 45%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */
+	padding-top: 40px;
+	padding-bottom: 20px;
+	text-align: center;
+	float: left;
+	width: 100%;
+	top: 36px;
+	left: 0px;
+}
+div.item-description {
+	position: relative;
 }
