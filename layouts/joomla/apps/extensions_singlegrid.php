@@ -28,30 +28,30 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 		</a>
 	</div>
 	<ul class="item-type center">
-		<?php if (in_array('mod', $tags)) : ?>
-		<span title="<?php echo JText::_('COM_APPS_MODULE'); ?>" class="badge badge-jmodule">M</span> 
-		<?php endif; ?>
-		<?php if (in_array('plugin', $tags)) : ?>
-		<span title="<?php echo JText::_('COM_APPS_PLUGIN'); ?>" class="badge badge-jplugin">P</span> 
-		<?php endif; ?>
-		<?php if (in_array('esp', $tags)) : ?>
-		<span title="<?php echo JText::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?>" class="badge badge-jspecial">S</span> 
-		<?php endif; ?>
-		<?php if (in_array('tool', $tags)) : ?>
-		<span title="<?php echo JText::_('COM_APPS_TOOL'); ?>" class="badge badge-jtool">T</span> 
-		<?php endif; ?>
 		<?php if (in_array('com', $tags)) : ?>
-		<span title="<?php echo JText::_('COM_APPS_COMPONENT'); ?>" class="badge badge-jcomponent">C</span> 
+		<span title="<?php echo JText::_('COM_APPS_COMPONENT'); ?>" class="label label-jcomponent">C</span> 
 		<?php endif; ?>
 		<?php if (in_array('lang', $tags)) : ?>
-		<span title="<?php echo JText::_('COM_APPS_LANGUAGE'); ?>" class="badge badge-jlanguage">L</span>
+		<span title="<?php echo JText::_('COM_APPS_LANGUAGE'); ?>" class="label label-jlanguage">L</span>
+		<?php endif; ?>
+		<?php if (in_array('mod', $tags)) : ?>
+		<span title="<?php echo JText::_('COM_APPS_MODULE'); ?>" class="label label-jmodule">M</span> 
+		<?php endif; ?>
+		<?php if (in_array('plugin', $tags)) : ?>
+		<span title="<?php echo JText::_('COM_APPS_PLUGIN'); ?>" class="label label-jplugin">P</span> 
+		<?php endif; ?>
+		<?php if (in_array('esp', $tags)) : ?>
+		<span title="<?php echo JText::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?>" class="label label-jspecial">S</span> 
+		<?php endif; ?>
+		<?php if (in_array('tool', $tags)) : ?>
+		<span title="<?php echo JText::_('COM_APPS_TOOL'); ?>" class="label label-jtool">T</span> 
 		<?php endif; ?>
 	</ul>
 	<h4 class="center muted">
-		<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>"><?php echo $extension_data->name; ?></a>
+		<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>"><?php echo trim($extension_data->name); ?></a>
 	</h4>
 	<p class="item-description">
-		<?php echo substr($extension_data->description, 0, 200); ?>
+		<?php echo mb_strlen(trim($extension_data->description)) > 1000 ? mb_substr(trim($extension_data->description), 0, mb_stripos(trim($extension_data->description), ' ', 1000)) . '...' : trim($extension_data->description); ?>
 	</p>
 </div>
 </li>
