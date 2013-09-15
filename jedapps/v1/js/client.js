@@ -309,6 +309,7 @@ Joomla.apps.clicker = function() {
 			jQuery(this).find('.rating').css('margin-top', "");
 			jQuery(this).find('ul.item-type').css('margin-top', "");
 			jQuery(this).find('.item-description').css("margin-top", "");
+			Joomla.apps.setDescription('grid', index, jQuery(this).find('.item-description'));
 		});
 	});
 	jQuery(".list-view").live("click",function() {
