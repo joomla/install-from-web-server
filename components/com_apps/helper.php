@@ -27,10 +27,10 @@ class AppsHelper {
 		return $url;
 	}
 	
-	static function getJEDCatUrl($catid) {
+	static function getJEDCatUrl($catid = 0) {
 		$url = 'http://extensions.joomla.org/';
 		
-		if (!isset($catid)) { return $url; }
+		if (!$catid) { return $url; }
 
 		$url .= 'index.php?option=com_mtree&task=viewcat&cat_id=' . $catid;
 		return $url;
