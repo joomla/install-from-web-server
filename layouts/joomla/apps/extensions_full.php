@@ -97,9 +97,9 @@ if(JDEBUG) {
 		<div class="clearfix"></div>
 		
 		<?php if ($extension_data->type > 1): ?>
-		<form action="<?php echo $extension_data->downloadurl; ?>" method="post" onsubmit="return Joomla.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>');">
-			<input id="joomlaapsinstallatinput" type="hidden" name="installat" value="" /> 
-			<input type="hidden" name="installapp" value="<?php echo $extension_data->link_id; ?>" /> 
+		<input id="joomlaapsinstallatinput" type="hidden" name="installat" value="" />
+		<input id="joomlaapsinstallfrominput" type="hidden" name="installfrom" value="<?php echo $extension_data->downloadurl; ?>" /> 
+		<input type="hidden" name="installapp" value="<?php echo $extension_data->link_id; ?>" /> 
 		<?php endif; ?>
 		<div class="item-buttons form-actions">
 			<a target="_blank" class="transcode btn btn-secondary" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a> 
@@ -115,9 +115,6 @@ if(JDEBUG) {
 			<?php endif; ?>
 
 		</div>
-		<?php if ($extension_data->type > 1): ?>
-		</form>
-		<?php endif; ?>
 		<div class="item-desc">
 			<p class="item-desc-title">
 				<strong><?php echo $extension_data->link_name; ?></strong> 
