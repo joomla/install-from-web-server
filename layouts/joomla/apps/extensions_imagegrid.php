@@ -23,15 +23,23 @@ if ($view != 'dashboard') {
 else {
 	$firstcrumb = JText::_('COM_APPS_EXTENSIONS_DASHBOARD');
 }
+$lastc = '';
 ?>
 
 <?php if (!count($displayData['extensions'])) : ?>
 <div class="row-fluid">
 	<div class="item-view span12">
-		<div class='grid-container'>
+		<div class='items grid-container'>
 			<div class="grid-header">
 				<ul class="breadcrumb">
-					<li><?php echo JText::_('COM_APPS_NO_RESULTS'); ?></li>
+					<li><?php echo $firstcrumb; ?></li>
+					<?php foreach ($breadcrumbs as $bc) : ?>
+					<span class="divider"> / </span>
+					</li><a class="transcode" href="<?php echo AppsHelper::getAJAXUrl("view=category&id={$bc->id}"); ?>"><?php echo $bc->name; ?></a></li>
+					<?php $lastc = $bc; endforeach; ?>
+					
+					<!-- Link to category on JED -->
+					<li class="pull-right"><a class="transcode" href="<?php echo AppsHelper::getJEDCatUrl(is_object($lastc) ? $lastc->id : $lastc); ?>" target="_blank"><span class="icon-share-alt"></span></a></li>
 				</ul>
 			</div>
 			<div class="row-fluid">
@@ -44,7 +52,7 @@ else {
 
 <div class="row-fluid">
 	<div class="item-view span12">
-		<div class='grid-container'>
+		<div class='items grid-container'>
 
 		<ul class="breadcrumb">
 			<li><?php echo $firstcrumb; ?></li>
@@ -54,7 +62,7 @@ else {
 			<?php $lastc = $bc; endforeach; ?>
 			
 			<!-- Link to category on JED -->
-			<li class="pull-right"><a href="<?php echo AppsHelper::getJEDCatUrl($lastc->id); ?>" target="_blank"><span class="icon-share-alt"></span></a></li>
+			<li class="pull-right"><a class="transcode" href="<?php echo AppsHelper::getJEDCatUrl(is_object($lastc) ? $lastc->id : $lastc); ?>" target="_blank"><span class="icon-share-alt"></span></a></li>
 		</ul>
 
 		<ul class="thumbnails">
@@ -67,7 +75,6 @@ else {
 					if ($i != 0 && $i%$extensions_perrow == 0) { 
 			?>
 			</ul>	
-			<hr />
 			<ul class="thumbnails">
 			<?php 
 					}

@@ -13,4 +13,89 @@ ul.item-type {margin:0px}
 
 /* Grid */
 .item-image{height:120px}
-.item-description{height:70px; overflow: hidden}
+.item-description{height:80px; overflow: hidden}
+.thumbnail{
+	padding: 16px 12px 16px 12px;
+}
+
+/* List */
+.list-container .item {
+	display: block;
+	width: 100%;
+}
+.list-container{
+	box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	-webkit-box-sizing: border-box;
+}
+.list-container .item{
+	margin-left:0;
+	border-bottom:1px solid #ccc;
+	margin-bottom:10px;
+	display:inline-block;
+	height: 120px;
+}
+.list-container .item:hover{
+	border-color:#185186;
+}
+.list-container .item:hover h4 a,
+.list-container .item:hover .item-description{
+	color:#33608f;
+	text-decoration:none;
+}
+.list-container .item .item-image{
+	display:none !important;
+}
+.list-container .item h4{
+	text-align:left;
+	margin:0;
+	margin-right:10px;
+	min-height:34px;
+	border-right:1px solid #ccc;
+	box-sizing:border-box;
+	-moz-box-sizing:border-box;
+	-webkit-box-sizing: border-box;
+}
+.list-container .item h4 a{
+	font-size:16px;
+	color:#333;
+	display:inline-block;
+}
+.list-container .item h4, 
+.list-container .item .item-type,
+.list-container .item .item-description{
+	float:left;
+}
+.list-container .item .rating{
+	float:right;
+	text-align:right;
+}
+.list-container .item ul.item-type{
+	margin-right:35px;
+}
+.list-container .item ul.item-type:after{
+	width:0;
+	height:0;
+}
+.list-container .item h4{
+	width:22%;
+}
+.list-container .item .rating{
+	width:12%;
+}
+.list-container .item ul.item-type{
+	width:12%;
+}
+.list-container .item .item-description{
+	width:45%;
+	overflow: hidden;
+}
+.list-container .thumbnail {
+	padding: 0px;
+}
+.list-container .item .item-image img{
+	height: 110px;
+}
+.item-badge-container {
+	text-align: right;
+}

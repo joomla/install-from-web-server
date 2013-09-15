@@ -22,12 +22,12 @@ $selected_ordering = $app->input->get('ordering', 't2.link_hits');
 ?>
 <div id="filter-bar" class="btn-toolbar">
 	<div class="filter-search btn-group pull-left">
-		<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="Search" value="" class="hasTooltip" title="">
+		<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="Search" value="<?php echo $filter_search; ?>" class="hasTooltip" title="">
 	</div>
 	<div class="btn-group pull-left hidden-phone">
-		<button type="submit" class="btn hasTooltip" title="" data-original-title="Search">
+		<button type="button" class="btn hasTooltip" title="" onclick="Joomla.apps.initiateSearch();" data-original-title="Search">
 			<i class="icon-search"></i></button>
-		<button type="button" class="btn hasTooltip" title="" onclick="document.id('filter_search').value='';this.form.submit();" data-original-title="Clear">
+		<button type="button" class="btn hasTooltip" title="" onclick="document.id('com-apps-searchbox').value='';" data-original-title="Clear">
 			<i class="icon-remove"></i></button>
 	</div>
 	<div class="btn-group pull-right">

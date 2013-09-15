@@ -1,16 +1,29 @@
-Joomla.apps = {};
-Joomla.apps.active = [];
-Joomla.apps.view = "dashboard";
-Joomla.apps.id = 0;
-Joomla.apps.ordering = "";
-//Joomla.apps.fonturl = 'http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic';
-Joomla.apps.cssfiles = [];
-Joomla.apps.jsfiles = [];
+Joomla.apps = {
+	view: "dashboard",
+	id: 0,
+	ordering: "",
+//	fonturl: 'http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic',
+	cssfiles: [],
+	jsfiles: [],
+	list: 0,
+	desc: {
+		full: [],
+		grid: [],
+		list: []
+	}
+};
 
 Joomla.loadweb = function(url) {
 	if ('' == url) { return false; }
 
-	url += '&product='+apps_product+'&release='+apps_release+'&dev_level='+apps_dev_level;
+	var pattern1 = new RegExp(apps_base_url);
+	var pattern2 = new RegExp("^index\.php");
+	if (!(pattern1.test(url) || pattern2.test(url))) {
+		window.open(url, "_blank");
+		return false;
+	}
+
+	url += '&product='+apps_product+'&release='+apps_release+'&dev_level='+apps_dev_level+'&list='+Joomla.apps.list;
 
 	jQuery('html, body').animate({ scrollTop: 0 }, 0);
 	if (jQuery('#myTabContent').length) {
@@ -21,6 +34,12 @@ Joomla.loadweb = function(url) {
 			.css("height", jQuery('#myTabContent').height());
 		jQuery.event.trigger("ajaxStart");
 	}
+
+	Joomla.apps.desc = {
+		full: [],
+		grid: [],
+		list: []
+	};
 
 	jQuery.ajax({
 		url: url,
@@ -46,23 +65,20 @@ Joomla.loadweb = function(url) {
 			if (Joomla.apps.ordering !== "") {
 				jQuery('#com-apps-ordering').prop("selectedIndex", Joomla.apps.ordering);
 			}
-			Joomla.apps.active = [];
-			jQuery("ul.com-apps-list a.active").each(function(index){
-				Joomla.apps.active.push(jQuery(this).attr("href").replace(/^.+[&\?]id=(\d+).*$/, '$1'));
-			});
-			jQuery(".com-apps-sidebar ul.com-apps-list li a.active").each(function(index, value) {
-				if (!jQuery(value).hasClass('selected')) {
-					jQuery(value).parent().children("ul").css("display", "block");
-				}
-			});
-			Joomla.apps.clickforlinks();
 			if(jQuery('#joomlaapsinstallatinput')) {
 				jQuery('#joomlaapsinstallatinput').val(apps_installat_url);
+			}
+			Joomla.apps.clickforlinks();
+			Joomla.apps.clicker();
+			jQuery('.item-description').each(function(index){
+				Joomla.apps.setDescription('grid', index, jQuery(this));
+			});
+			if (Joomla.apps.list) {
+				jQuery(".list-view").click();
 			}
 			if (jQuery('#myTabContent').length) {
 				jQuery.event.trigger("ajaxStop");
 			}
-			Joomla.apps.slider();
 		},
 		error: function(request, status, error) {
 			if (request.responseText) {
@@ -75,6 +91,30 @@ Joomla.loadweb = function(url) {
 			}
 		}
 	});
+}
+
+Joomla.apps.setDescription = function(type, index, value) {
+	if (Joomla.apps.desc[type].length <= index) {
+		var desc;
+		if (Joomla.apps.desc.full.length <= index) {
+			desc = jQuery(value).html();
+			(function() {
+				var description = desc;
+				Joomla.apps.desc.full.push(description);
+			})();
+		}
+		jQuery(value).html(Joomla.apps.desc.full[index]);
+		while (jQuery(value)[0].scrollHeight >  jQuery(value).height()) {
+			jQuery(value).html(jQuery(value).html().replace(/\s[^\s]+$/, '...'));
+		}
+		jQuery(value).html(jQuery(value).html().replace(/\W+$/, '...'));
+		desc = jQuery(value).html();
+		(function() {
+			var description = desc;
+			Joomla.apps.desc[type].push(description);
+		})();
+	}
+	jQuery(value).html(Joomla.apps.desc[type][index]);
 }
 
 Joomla.webpaginate = function(url, target) {
@@ -117,6 +157,15 @@ Joomla.installfromweb = function(install_url, name) {
 Joomla.installfromwebcancel = function() {
 	jQuery('#uploadform-web').hide();
 	jQuery('#jed-container').slideDown(300);
+//	Joomla.loadweb(apps_base_url+'index.php?format=json&option=com_apps&view=dashboard');
+	Joomla.apps.desc.grid = [];
+	Joomla.apps.desc.list = [];
+	jQuery('.item-description').each(function(index){
+		Joomla.apps.setDescription('grid', index, jQuery(this));
+	});
+	if (Joomla.apps.list) {
+		jQuery(".list-view").click();
+	}
 }
 
 Joomla.installfromwebajaxsubmit = function() {
@@ -141,29 +190,39 @@ Joomla.installfromwebajaxsubmit = function() {
 }
 
 Joomla.apps.clickforlinks = function () {
-	if (Joomla.apps.view == 'extension') {
-		Joomla.apps.view = 'category';
-		Joomla.apps.id = jQuery('div.breadcrumbs a.transcode').slice(-1).attr('href').replace(/^.+[&\?]id=(\d+).*$/, '$1');
-	}
-	jQuery('a.transcode').each(function(index) {
+	jQuery('a.transcode').each(function(index, value) {
 		var ajaxurl = jQuery(this).attr('href');
 		(function() {
 			var ajax_url = ajaxurl;
-			var el = jQuery('a.transcode')[index];
-			jQuery(el).live('click', function(event){
-				Joomla.apps.view = ajax_url.replace(/^.+[&\?]view=(\w+).*$/, '$1');
-				if (Joomla.apps.view == 'dashboard') {
-					Joomla.apps.id = 0;
+			jQuery(value).live('click', function(event){
+				var pattern1 = new RegExp(apps_base_url);
+				var pattern2 = new RegExp("^index\.php");
+				if (pattern1.test(ajax_url) || pattern2.test(ajax_url)) {
+					Joomla.apps.view = ajax_url.replace(/^.+[&\?]view=(\w+).*$/, '$1');
+					if (Joomla.apps.view == 'dashboard') {
+						Joomla.apps.id = 0;
+					}
+					else if (Joomla.apps.view == 'category') {
+						Joomla.apps.id = ajax_url.replace(/^.+[&\?]id=(\d+).*$/, '$1');
+					}
+					event.preventDefault();
+					Joomla.loadweb(apps_base_url + ajax_url);
 				}
-				else if (Joomla.apps.view == 'category') {
-					Joomla.apps.id = ajax_url.replace(/^.+[&\?]id=(\d+).*$/, '$1');
+				else {
+					event.preventDefault();
+					Joomla.loadweb(ajax_url);
 				}
-				event.preventDefault();
-				Joomla.loadweb(apps_base_url + ajax_url);
 			});
 		})();
 		jQuery(this).attr('href', '#');
 	});
+	if (jQuery('div.form-actions button').length) {
+		jQuery('div.form-actions button').live('click', function(event){
+			if (jQuery("#joomlaapsinstallfrominput")) {
+				jQuery('#adminForm').attr('action', jQuery("#joomlaapsinstallfrominput").val());
+			}
+		});
+	}
 }
 
 Joomla.apps.initialize = function() {
@@ -194,11 +253,8 @@ Joomla.apps.initialize = function() {
 	jQuery('#com-apps-searchbox').live('keypress', function(event){
 		if(event.which == 13) {
 			Joomla.apps.initiateSearch();
+			return false;
 		}
-	});
-
-	jQuery('div.com-apps-search i.icon-search').live('click', function(event){
-		Joomla.apps.initiateSearch();
 	});
 
 	jQuery('#com-apps-ordering').live('change', function(event){
@@ -214,207 +270,51 @@ Joomla.apps.initialize = function() {
 
 Joomla.apps.initiateSearch = function() {
 	Joomla.apps.view = 'dashboard';
-	Joomla.apps.active = [];
 	Joomla.installfromwebajaxsubmit();
 }
 
-Joomla.apps.slider = function() {
-	jQuery(".com-apps-sidebar ul.com-apps-list li a.selected").each(function(index, value) {
-		jQuery(value).parent().addClass("active");
-		jQuery(value).parent().children("ul").show();
-	});
-	jQuery("ul.nav-tabs li").click(function(){
-		setTimeout(function(){jQuery('.scroll-pane').jScrollPane({
-			autoReinitialise: true,
-			mouseWheelSpeed: 10
-		})},10);
-	});	
-	jQuery(".com-apps-advanced-search > a").click(function(){
-		jQuery(this).closest(".com-apps-advanced-search").toggleClass("active");
-		return false;
-	})
-	jQuery(".com-apps-advanced-search .cancel").click(function(){
-		jQuery( ".com-apps-advanced-search" ).removeClass("active");	
-	})
-	jQuery(document).mouseup(function (e)
-	{
-	    var container = jQuery(".com-apps-advanced-search");
-	    if (container.has(e.target).length == 0)
-	    {
-			jQuery( ".com-apps-advanced-search" ).removeClass("active");
-    	}
-	});
-}
-jQuery(document).ready(function(){
-	Joomla.apps.slider();
-})
-
-Joomla.apps.changeClasses = function(list) {
-	var removeclass = "list-view-container";
-	var addclass = "grid-view-container";
-	var classon = ".grid-view";
-	var classoff = ".list-view";
-	if (list) {
-		removeclass = "grid-view-container";
-		addclass = "list-view-container";
-		classon = ".list-view";
-		classoff = ".grid-view";
-	}
-	jQuery( ".items" ).each(function(index) {
-		jQuery(this).removeClass(removeclass);
-		jQuery(this).addClass(addclass);
-	});
-	jQuery(classon).each(function(index) {
-		jQuery(this).removeClass("pas");
-		jQuery(this).addClass("act");
-	});
-	jQuery(classoff).each(function(index) {
-		jQuery(this).removeClass("act");
-		jQuery(this).addClass("pas");	
-	});
-}
-
 Joomla.apps.clicker = function() {
-	jQuery( ".grid-view" ).live("click",function() {
-		Joomla.apps.changeClasses(false);
-		jQuery(".grid-view-container .row-fluid .item").each(function(){
+	jQuery(".grid-view").live("click",function() {
+		Joomla.apps.list = 0;
+		jQuery(".items").each(function(index) {
+			jQuery(this).removeClass('list-container');
+			jQuery(this).addClass('grid-container');
+		});
+		jQuery(".grid-container .item").each(function(index){
 			jQuery(this).find("h4").insertAfter(jQuery(this).find('.item-type')).css("height", "").css("padding-top", "");
 			jQuery(this).find("p.rating").insertBefore(jQuery(this).find('.item-image'));
 			jQuery(this).find('.rating').css('margin-top', "");
 			jQuery(this).find('ul.item-type').css('margin-top', "");
+			jQuery(this).find('.item-description').css("margin-top", "");
+			Joomla.apps.setDescription('grid', index, jQuery(this).find('.item-description'));
 		});
 	});
-	jQuery( ".list-view" ).live("click",function() {
-		Joomla.apps.changeClasses(true);
-		jQuery(".list-view-container .row-fluid .item").each(function(){
-			jQuery(this).find("p.rating").insertAfter(jQuery(this).find('h4'));
-			jQuery(this).find(".item-type").insertAfter(jQuery(this).find('h4'));
-            
-			var height = jQuery(this).height() - 10;
-			jQuery(this).find('h4').css("height",height);
-			jQuery(this).find('h4').css("padding-top", (jQuery(this).height() - jQuery(this).find('h4').find('a').height()-10)/2);
-            
-			jQuery(this).find('.rating').css('margin-top', (jQuery(this).height() - jQuery(this).find('.rating').height())/2);
-			jQuery(this).find('ul.item-type').css('margin-top', (jQuery(this).height() - jQuery(this).find('ul.item-type').height())/2);
+	jQuery(".list-view").live("click",function() {
+		Joomla.apps.list = 1;
+		jQuery(".items").each(function(index) {
+			jQuery(this).removeClass('grid-container');
+			jQuery(this).addClass('list-container');
 		});
-	});
-//	jQuery('select').chosen({
-//		disable_search_threshold : 10,
-//		allow_single_deselect : true
-//	});
-	
-	var repRadioCount = 0;
-	
-	var countRadio = jQuery("input[type=radio]").length;
-	
-	jQuery.fn.extend({
-		replaceRadio: function () {
-			repRadioCount++;
-			
-			if(jQuery(this).attr("name")===undefined){
-				jQuery(this).attr("name","radio_"+repRadioCount)
-			}
-			if(jQuery(this).attr("checked")=="checked"){
-				var radioHTML = "<div rel='"+jQuery(this).attr("name")+"' class='radiobutton checked'><div class='point'></div></div>"
-			}
-			else{
-				var radioHTML = "<div rel='"+jQuery(this).attr("name")+"' class='radiobutton'><div class='point'></div></div>"
-			}
-			
-			jQuery(this).hide();
-			jQuery(this).addClass("parsed-radio");
-			jQuery(this).before(radioHTML);
-		}
-	});				
-	for(var i=0; i<countRadio; i++){
-		jQuery("input[type=radio]").eq(i).replaceRadio();
-	}	
-	jQuery(".radiobutton").live("click",function(event){
-		var rel = jQuery(this).attr("rel");
-		if(rel != ""){
-			jQuery(".radiobutton[rel|='"+rel+"']").removeClass("checked");
-			jQuery("input[name|='"+rel+"']").removeAttr("checked");
-		}
-		jQuery(this).addClass("checked");
-		jQuery(this).next("input[type=radio]").attr("checked","checked");
-		
-	})	
-	jQuery("input[type=radio]").live("click",function(event){
-		jQuery(this).prev(".radiobutton").trigger("click");
-	})	
+		jQuery(".list-container .item").each(function(index){
+			var h4 = jQuery(this).find('h4');
+			var rating = jQuery(this).find("p.rating");
+			var type = jQuery(this).find(".item-type");
+			var desc = jQuery(this).find('.item-description');
 
-	var repCheckCount = 0;
-	
-	var countCheck = jQuery("input[type=checkbox]").length;
-	
-	jQuery.fn.extend({
-		replaceCheck: function () {
-			repCheckCount++;
-			
-			if(jQuery(this).attr("name")===undefined){
-				jQuery(this).attr("name","radio_"+repCheckCount)
-			}
-			if(jQuery(this).attr("checked")=="checked"){
-				var checkHTML = "<div rel='"+jQuery(this).attr("name")+"' class='checkbox checked'><div class='check'></div></div>"
-			}
-			else{
-				var checkHTML = "<div rel='"+jQuery(this).attr("name")+"' class='checkbox'><div class='check'></div></div>"
-			}
-			
-			jQuery(this).hide();
-			jQuery(this).addClass("parsed-check");
-			jQuery(this).before(checkHTML);
-		}
-	});				
-	for(var i=0; i<countCheck; i++){
-		jQuery("input[type=checkbox]").eq(i).replaceCheck();
-	}	
-	jQuery(".checkbox").live("click",function(event){
-		if(jQuery(this).hasClass("checked")){
-			jQuery(this).removeClass("checked")
-			jQuery(this).next("input[type=checkbox]").removeAttr("checked");
-		
-		}	
-		else{
-			jQuery(this).addClass("checked")
-			jQuery(this).next("input[type=checkbox]").attr("checked","checked");				
-		}
-	})	
-	jQuery("input[type=checkbox]").live("click",function(event){
-		jQuery(this).prev(".checkbox").trigger("click");
-	})	
+			jQuery(rating).insertAfter(h4);
+			jQuery(type).insertAfter(h4);
 
-	
-	jQuery(document).bind("DOMNodeInserted",function(){
-				
-		var newCountRadio = jQuery("input[type=radio]").length;
-		
-		var newCountCheck = jQuery("input[type=checkbox]").length;
-			
-		if( newCountRadio != countRadio){
-
-			var newCountRadio = jQuery("input[type=radio]:not('.parsed-radio')").length;
-			
-			for(var i=0; i<newCountRadio; i++){
-				jQuery("input[type=radio]:not('.parsed-radio')").eq(i).replaceRadio();
-			}	
-		}
-		
-		if( newCountCheck != countCheck){
-
-			var newCountCheck = jQuery("input[type=checkbox]:not('.parsed-check')").length;
-			
-			for(var i=0; i<newCountCheck; i++){
-				jQuery("input[type=checkbox]:not('.parsed-check')").eq(i).replaceCheck();
-			}	
-		}
-		
-		return false;
+			var height = jQuery(this).height();
+			jQuery(h4).css("height", height);
+			jQuery(h4).css("padding-top", (height - jQuery(h4).find('a').height())/2);
+            
+			jQuery(rating).css('margin-top', (height - jQuery(rating).height())/2);
+			jQuery(type).css('margin-top', (height - jQuery(type).height())/2);
+			jQuery(desc).css("margin-top", (height - jQuery(desc).height())/2);
+			Joomla.apps.setDescription('list', index, jQuery(desc));
+		});
 	});
 }
-jQuery(document).ready(function(){
-	Joomla.apps.clicker();
-});
 
 /*!
  * jScrollPane - v2.0.17 - 2013-08-17
