@@ -39,8 +39,8 @@ $selected_ordering = $app->input->get('ordering', 't2.link_hits');
 	
 	<?php if ($view != 'extension') : ?>
 	<div class="btn-group pull-right">
-		<button type="button" class="btn grid-view"><i class="icon-th-large"></i></button>
-		<button type="button" class="btn list-view"><i class="icon-list"></i></button>
+		<button type="button" class="btn grid-view"><i class="icon-grid-view"></i></button>
+		<button type="button" class="btn list-view"><i class="icon-list-view"></i></button>
 	</div>
 	<?php endif; ?>
 </div>
