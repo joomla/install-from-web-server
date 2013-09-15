@@ -24,6 +24,7 @@ else {
 	$firstcrumb = JText::_('COM_APPS_EXTENSIONS_DASHBOARD');
 }
 $lastc = '';
+$layouts = array('grid', 'list');
 ?>
 
 <?php if (!count($displayData['extensions'])) : ?>
@@ -52,7 +53,8 @@ $lastc = '';
 
 <div class="row-fluid">
 	<div class="item-view span12">
-		<div class='items grid-container'>
+		<?php foreach ($layouts as $layout): ?>
+		<div class='items <?php echo $layout; ?>-container'<?php ($app->input->getCmd('list', 'grid') == $layout) ? '' : ' style="display: none;"'; ?>>
 
 		<ul class="breadcrumb">
 			<li><?php echo $firstcrumb; ?></li>
@@ -80,12 +82,15 @@ $lastc = '';
 					}
 
 					$data	= array('spanclass' => $spanclass,'extension' => $extension);
-					$extensions_singlegrid = new JLayoutFile('joomla.apps.extensions_singlegrid');
+					$extensions_singlegrid = new JLayoutFile('joomla.apps.extensions_singlegrid_' . $layout);
 					echo $extensions_singlegrid->render($data);
 					
 					$i++;
 				endforeach;
 			?>
 		</ul>
+		
+		</div>
+		<?php endforeach; ?>
 	</div>
 </div>

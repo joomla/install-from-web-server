@@ -12,7 +12,7 @@ $extension_data = $displayData['extension']; //print_r($extension_data);
 $tags = explode('|', trim($extension_data->fields->get('36')));
 ?>
 <li class="item <?php echo $displayData['spanclass']; ?>">
-<div class="thumbnail">
+<div class="thumbnail" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>');">
 	<p class="rating center">
 		<?php for ($i = 1; $i < 6; $i++) : ?>
 			<?php if ($extension_data->rating + 0.5 >= $i) : ?>
@@ -23,9 +23,9 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 		<?php endfor; ?>
 	</p>
 	<div class="center item-image">
-		<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>">
+		<!--<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>">-->
 			<img src="<?php echo $extension_data->image; ?>" class="img center" />
-		</a>
+		<!--</a>-->
 	</div>
 	<ul class="item-type center">
 		<?php if (in_array('com', $tags)) : ?>
@@ -51,10 +51,8 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 		<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>"><?php echo trim($extension_data->name); ?></a>
 	</h4>
 	<div class="item-description">
-		<?php echo mb_strlen(trim($extension_data->description)) > 1000 ? mb_substr(trim($extension_data->description), 0, mb_stripos(trim($extension_data->description), ' ', 1000)) . '...' : trim($extension_data->description); ?>
-		<div class="readmore">
-			<a href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>" class="transcode btn btn-small"><?php echo JText::_('COM_APPS_READ_MORE'); ?></a>
-		</div>
+		<?php echo mb_strlen(trim($extension_data->description)) > 400 ? mb_substr(trim($extension_data->description), 0, mb_stripos(trim($extension_data->description), ' ', 400)) . '...' : trim($extension_data->description); ?>
+		<div class="fader">&nbsp;</div>
 	</div>
 </div>
 </li>
