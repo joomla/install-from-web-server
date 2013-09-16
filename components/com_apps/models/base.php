@@ -228,8 +228,8 @@ class AppsModelBase extends JModelList
 		$popular = new stdClass();
 		$popular->active = $view == 'dashboard' ? true : false;
 		$popular->id = 0;
-		$popular->name = 'Popular';
-		$popular->alias = 'popular';
+		$popular->name = JText::_('COM_APPS_HOME');
+		$popular->alias = 'home';
 		$popular->description = JText::_('COM_APPS_EXTENSIONS_DASHBOARD');
 		$popular->parent = 0;
 		$popular->selected = $view == 'dashboard' ? true : false;
