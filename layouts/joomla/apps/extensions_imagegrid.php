@@ -64,7 +64,9 @@ $layouts = array('grid', 'list');
 			<?php $lastc = $bc; endforeach; ?>
 			
 			<!-- Link to category on JED -->
-			<li class="pull-right"><a class="transcode" href="<?php echo AppsHelper::getJEDCatUrl(is_object($lastc) ? $lastc->id : $lastc); ?>" target="_blank"><span class="icon-share-alt"></span></a></li>
+			<?php if (isset($lastc->id)) : ?>
+			<li class="pull-right"><a href="<?php echo AppsHelper::getJEDCatUrl($lastc->id); ?>" target="_blank"><span class="icon-share-alt"></span></a></li>
+			<?php endif; ?>
 		</ul>
 
 		<ul class="thumbnails">
