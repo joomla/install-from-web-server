@@ -224,7 +224,7 @@ class AppsModelCategory extends JModelList
 		}
 
 		if ($search) {
-			$where[] = '(t2.link_name LIKE(' . $db->quote('%'.$search.'%') . ') OR t2.link_desc LIKE(' . $db->quote('%'.$search.'%') . '))';
+			$where[] = '(t2.link_name LIKE(' . $db->quote('%'.$db->escape($search, true).'%') . ') OR t2.link_desc LIKE(' . $db->quote('%'.$db->escape($search, true).'%') . '))';
 		}
 		
 		$where = array_merge($where, array(
@@ -247,6 +247,7 @@ class AppsModelCategory extends JModelList
 		$componentParams 	= JComponentHelper::getParams('com_apps');
 		$input 				= new JInput;
 		$catid 				= $input->get('id', null, 'int');
+		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
 		$order 				= $input->get('ordering', 't2.link_hits');
 		$orderCol 			= $this->state->get('list.ordering', $order);
 		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
@@ -268,7 +269,7 @@ class AppsModelCategory extends JModelList
 		$items = array();	
 		if (count($ids)) {
 			$query = $db->getQuery(true);
-			$query->select(array(
+			$fields = array(
 				't2.link_id AS id',
 				't2.link_name AS name',
 				't2.alias AS alias',
@@ -278,7 +279,11 @@ class AppsModelCategory extends JModelList
 				't3.filename AS image',
 				't1.cat_id AS cat_id',
 				'CONCAT("{", GROUP_CONCAT(DISTINCT "\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
-			));
+			);
+			if ($search) {
+				$fields[] = 'IF(t2.link_name LIKE(' . $db->quote('%'.$db->escape($search, true).'%') . '), 1, 0) as foundintitle';
+			}
+			$query->select($fields);
 
 			$query->from('jos_mt_cl AS t1');
 			$query->join('LEFT', 'jos_mt_links AS t2 ON t1.link_id = t2.link_id');
@@ -299,16 +304,21 @@ class AppsModelCategory extends JModelList
 		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
 		
 		// Populate array
-		$extensions = array();
+		$extensions = array(0=>array(), 1=>array());
 		foreach ($items as $item) {
 			$options = new JRegistry($item->options);
 			$item->image = $this->getBaseModel()->getMainImageUrl($item->image);
 			$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
 			$item->fields = $options;
-			$extensions[] = $item;
+			if ($search) {
+				$extensions[1 - $item->foundintitle][] = $item;
+			}
+			else {
+				$extensions[0][] = $item;
+			}
 		}
 		
-		return $extensions;
+		return array_merge($extensions[0], $extensions[1]);
 		
 	}
 	
