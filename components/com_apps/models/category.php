@@ -224,7 +224,7 @@ class AppsModelCategory extends JModelList
 		}
 
 		if ($search) {
-			$where[] = '(t2.link_name LIKE(' . $db->quote('%'.$search.'%') . ') OR t2.link_desc LIKE(' . $db->quote('%'.$search.'%') . '))';
+			$where[] = '(t2.link_name LIKE(' . $db->quote('%'.$db->escape($search, true).'%') . ') OR t2.link_desc LIKE(' . $db->quote('%'.$db->escape($search, true).'%') . '))';
 		}
 		
 		$where = array_merge($where, array(
@@ -281,7 +281,7 @@ class AppsModelCategory extends JModelList
 				'CONCAT("{", GROUP_CONCAT(DISTINCT "\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
 			);
 			if ($search) {
-				$fields[] = 'IF(t2.link_name LIKE(' . $db->quote('%'.$search.'%') . '), 1, 0) as foundintitle';
+				$fields[] = 'IF(t2.link_name LIKE(' . $db->quote('%'.$db->escape($search, true).'%') . '), 1, 0) as foundintitle';
 			}
 			$query->select($fields);
 
