@@ -1,10 +1,12 @@
 /* Extension type badges */
-.label-jmodule, .badge-jmodule{background-color:#b94a48}
-.label-jplugin, .badge-jplugin{background-color:#3a87ad}
-.label-jcomponent, .badge-jcomponent{background-color: #468847}
-.label-jspecific, .badge-jspecific{background-color:#f89406}
+.label-jmodule, .badge-jmodule{background-color:#e20a0a}
+.label-jplugin, .badge-jplugin{background-color:#57278e}
+.label-jcomponent, .badge-jcomponent{background-color: #1e9e33}
+.label-jspecific, .badge-jspecific{background-color:#d69b34}
 .label-jtool, .badge-jtool{background-color:#333333}
 .label-jlanguage, .badge-jlanguage{background-color:golden}
+.icon-star{color:#f6c801}
+.icon-star-empty{color:#dcdcdc}
 ul.item-type {margin:0px}
 .jbadge{vertical-align:middle}
 
