@@ -193,7 +193,7 @@ class AppsModelDashboard extends JModelList
 
 		$where = array();
 		if ($search) {
-			$where[] = '(t2.link_name LIKE(' . $db->quote('%'.$search.'%') . ') OR t2.link_desc LIKE(' . $db->quote('%'.$search.'%') . '))';
+			$where[] = '(t2.link_name LIKE(' . $db->quote('%'.$db->escape($search, true).'%') . ') OR t2.link_desc LIKE(' . $db->quote('%'.$db->escape($search, true).'%') . '))';
 		}
 		
 		$where = array_merge($where, array(
@@ -213,7 +213,7 @@ class AppsModelDashboard extends JModelList
 		}
 
 		$query = $db->getQuery(true);
-		$query->select(array(
+		$fields = array(
 			't2.link_id AS id',
 			't2.link_name AS name',
 			't2.alias AS alias',
@@ -223,7 +223,11 @@ class AppsModelDashboard extends JModelList
 			't3.filename AS image',
 			't1.cat_id AS cat_id',
 			'CONCAT("{", GROUP_CONCAT(DISTINCT "\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
-		));
+		);
+		if ($search) {
+			$fields[] = 'IF(t2.link_name LIKE(' . $db->quote('%'.$db->escape($search, true).'%') . '), 1, 0) as foundintitle';
+		}
+		$query->select($fields);
 
 		$query->from('jos_mt_links AS t2');
 		$query->join('LEFT', 'jos_mt_cl AS t1 ON t1.link_id = t2.link_id');
@@ -245,16 +249,21 @@ class AppsModelDashboard extends JModelList
 		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
 		
 		// Populate array
-		$extensions = array();
+		$extensions = array(0=>array(), 1=>array());
 		foreach ($items as $item) {
 			$options = new JRegistry($item->options);
 			$item->image = $this->getBaseModel()->getMainImageUrl($item->image);
 			$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
 			$item->fields = $options;
-			$extensions[] = $item;
+			if ($search) {
+				$extensions[1 - $item->foundintitle][] = $item;
+			}
+			else {
+				$extensions[0][] = $item;
+			}
 		}
 		
-		return $extensions;
+		return array_merge($extensions[0], $extensions[1]);
 		
 	}
 
