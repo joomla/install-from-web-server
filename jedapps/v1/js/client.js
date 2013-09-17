@@ -5,7 +5,7 @@ Joomla.apps = {
 //	fonturl: 'http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic',
 	cssfiles: [],
 	jsfiles: [],
-	list: 0,
+	list: 0
 };
 
 Joomla.loadweb = function(url) {
@@ -94,6 +94,7 @@ Joomla.webpaginate = function(url, target) {
 Joomla.installfromwebexternal = function(redirect_url) {
 	var redirect_confirm = confirm('You will be redirected to the following link to complete the registration/purchase - \n'+redirect_url);
 	if(true == redirect_confirm) {
+		jQuery('#adminForm').attr('action', redirect_url);
 		return true;
 	}
 	return false;
@@ -172,13 +173,6 @@ Joomla.apps.clickforlinks = function () {
 		})();
 		jQuery(this).attr('href', '#');
 	});
-	if (jQuery('div.form-actions button').length) {
-		jQuery('div.form-actions button').live('click', function(event){
-			if (jQuery("#joomlaapsinstallfrominput")) {
-				jQuery('#adminForm').attr('action', jQuery("#joomlaapsinstallfrominput").val());
-			}
-		});
-	}
 }
 
 Joomla.apps.initialize = function() {
