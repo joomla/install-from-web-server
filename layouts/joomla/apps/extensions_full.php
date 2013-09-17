@@ -124,7 +124,7 @@ if(JDEBUG) {
 			<button class="install btn btn-success" type="submit"><span class="icon-download"></span> <?php echo JText::_('COM_APPS_INSTALL_PURCHASE'); ?></button> 
 			<?php endif; ?>
 			<a target="_blank" class="transcode btn btn-secondary" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><span class="icon-list"></span> <?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a> 
-			<a target="_blank" class="transcode btn btn-secondary" href="<?php echo $extension_data->website; ?>"><span class="icon-share"></span> <?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a> 
+			<a target="_blank" class="transcode btn btn-secondary" href="<?php echo $extension_data->website; ?>"><span class="icon-share-alt"></span> <?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a> 
 
 		</div>
 		<div class="item-desc">
