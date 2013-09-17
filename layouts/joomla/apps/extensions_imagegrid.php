@@ -40,7 +40,7 @@ $layouts = array('grid', 'list');
 					<?php $lastc = $bc; endforeach; ?>
 					
 					<!-- Link to category on JED -->
-					<li class="pull-right"><a class="transcode" href="<?php echo AppsHelper::getJEDCatUrl(is_object($lastc) ? $lastc->id : $lastc); ?>" target="_blank"><span class="icon-share-alt"></span></a></li>
+					<li class="pull-right"><a class="transcode" href="<?php echo AppsHelper::getJEDCatUrl(is_object($lastc) ? $lastc->id : $lastc); ?>" target="_blank"><span class="icon-out-2"></span></a></li>
 				</ul>
 			</div>
 			<div class="row-fluid">
@@ -54,7 +54,7 @@ $layouts = array('grid', 'list');
 <div class="row-fluid">
 	<div class="item-view span12">
 		<?php foreach ($layouts as $layout): ?>
-		<div class='items <?php echo $layout; ?>-container'<?php echo ($app->input->getCmd('list', 'grid') == $layout) ? '' : ' style="display: none;"'; ?>>
+		<div class="items <?php echo $layout; ?>-container<?php echo ($app->input->getCmd('list', 'grid') == $layout) ? '' : ' hidden'; ?>">
 
 		<ul class="breadcrumb">
 			<li><?php echo $firstcrumb; ?></li>
@@ -65,7 +65,7 @@ $layouts = array('grid', 'list');
 			
 			<!-- Link to category on JED -->
 			<?php if (isset($lastc->id)) : ?>
-			<li class="pull-right"><a href="<?php echo AppsHelper::getJEDCatUrl($lastc->id); ?>" target="_blank"><span class="icon-share-alt"></span></a></li>
+			<li class="pull-right"><a href="<?php echo AppsHelper::getJEDCatUrl($lastc->id); ?>" target="_blank"><span class="icon-out-2"></span></a></li>
 			<?php endif; ?>
 		</ul>
 
@@ -76,7 +76,7 @@ $layouts = array('grid', 'list');
 				$i = 0;
 				foreach ($displayData['extensions'] as $extension) :
 					$ratingwidth = round(70 * ($extension->rating / 5));
-					if ($i != 0 && $i%$extensions_perrow == 0) { 
+					if ($i != 0 && $i%$extensions_perrow == 0 && $layout != 'list') { 
 			?>
 			</ul>	
 			<ul class="thumbnails">
