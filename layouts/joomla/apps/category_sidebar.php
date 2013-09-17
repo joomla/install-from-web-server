@@ -15,7 +15,7 @@ $category_sidebar 		= new JLayoutFile('joomla.apps.category_sidebar_ul');
 	<ul class="nav nav-list">
 		<li class="nav-header"><h3><?php echo JText::_('COM_APPS_CATEGORIES'); ?></h3></li>
 		<?php foreach ($displayData as $category) : ?>
-			<li<?php echo ($category->active && !$category->selected) ? ' class="active"' : ''; ?>><a class="transcode<?php echo $category->active ? ' active' : ''; ?><?php echo $category->selected ? ' selected' : ''; ?>" href="<?php echo AppsHelper::getAJAXUrl(($category->id ? "view=category&id={$category->id}" : "view=dashboard")); ?>"><?php echo $category->name; ?></a>
+			<li<?php echo ($category->selected) ? ' class="active"' : ''; ?>><a class="transcode<?php echo $category->selected ? ' selected' : ''; ?>" href="<?php echo AppsHelper::getAJAXUrl(($category->id ? "view=category&id={$category->id}" : "view=dashboard")); ?>"><?php echo $category->name; ?></a>
 			<?php if (count($category->children) && $category->active) : ?>
 				<?php echo $category_sidebar->render($category->children); ?>
 			<?php endif; ?>
