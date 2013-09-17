@@ -10,6 +10,22 @@
 ul.item-type {margin:0px}
 .jbadge{vertical-align:middle}
 
+/* Bootstrap form controls override */
+.full-item-container .control-group {
+	margin: 0px;
+}
+.full-item-container .control-label {
+	padding: 0px;
+	margin: 0px;
+}
+.full-item-container .controls {
+	margin-left: 100px;
+}
+
+.full-item-container .form-actions {
+	padding-left: 20px;
+}
+
 /* Full view */
 .item-info-container {margin-left: 25px; line-height: 25px}
 
@@ -82,9 +98,6 @@ ul.item-type {margin:0px}
 	padding: 0px;
 	height: 100%;
 	overflow: hidden;
-}
-.item-badge-container {
-	text-align: right;
 }
 .fader {
 	position: absolute;
