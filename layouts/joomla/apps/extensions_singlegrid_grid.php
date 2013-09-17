@@ -15,8 +15,10 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 <div class="thumbnail" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>');">
 	<p class="rating center">
 		<?php for ($i = 1; $i < 6; $i++) : ?>
-			<?php if ($extension_data->rating + 0.5 >= $i) : ?>
+			<?php if ($extension_data->rating + 0.25 >= $i) : ?>
 		<span class="icon-star"></span>
+			<?php elseif ($i - $extension_data->rating >= 0.25 && $i - $extension_data->rating < 0.75) : ?>
+		<span class="icon-star-2"></span>
 			<?php else : ?>
 		<span class="icon-star-empty"></span>
 			<?php endif; ?>
