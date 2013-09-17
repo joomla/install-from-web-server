@@ -110,17 +110,16 @@ if(JDEBUG) {
 		<?php endif; ?>
 		<div class="item-buttons form-actions">
 			<?php if ((!$extension_data->type || $extension_data->type == 0) && $extension_data->fields->get('29')): ?>
-			<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->fields->get('29'); ?>"><span class="icon-download"></span> <?php echo JText::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL'); ?></a> 
+			<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->fields->get('29'); ?>"><span class="icon-download"></span> <?php echo JText::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL'); ?></a>
 			<?php elseif ($extension_data->type == 1): ?>
-			<a class="install btn btn-success" href="#" onclick="return Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>', '<?php echo $extension_data->link_name; ?>')"><span class="icon-checkmark"></span> <?php echo JText::_('COM_APPS_INSTALL'); ?></a> 
+			<a class="install btn btn-success" href="#" onclick="return Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>', '<?php echo $extension_data->link_name; ?>')"><span class="icon-checkmark"></span> <?php echo JText::_('COM_APPS_INSTALL'); ?></a>
 			<?php elseif ($extension_data->type == 2): ?>
-			<button class="install btn btn-success" id="appssubmitbutton" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->fields->get('29'); ?>');" type="submit"><span class="icon-pencil"></span> <?php echo JText::_('COM_APPS_INSTALL_REGISTER'); ?></button> 
+			<button class="install btn btn-success" id="appssubmitbutton" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->fields->get('29'); ?>');" type="submit"><span class="icon-pencil"></span> <?php echo JText::_('COM_APPS_INSTALL_REGISTER'); ?></button>
 			<?php elseif ($extension_data->type == 3): ?>
-			<button class="install btn btn-success" id="appssubmitbutton" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->fields->get('29'); ?>');" type="submit"><span class="icon-cart"></span> <?php echo JText::_('COM_APPS_INSTALL_PURCHASE'); ?></button> 
-			<?php endif; ?>
-			<a target="_blank" class="transcode btn btn-primary" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><span class="icon-list"></span> <?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a> 
-			<a target="_blank" class="transcode btn btn-primary" href="<?php echo $extension_data->website; ?>"><span class="icon-share-alt"></span> <?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a> 
-
+			<button class="install btn btn-success" id="appssubmitbutton" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->fields->get('29'); ?>');" type="submit"><span class="icon-cart"></span> <?php echo JText::_('COM_APPS_INSTALL_PURCHASE'); ?></button>
+			<?php endif; ?>&nbsp;&nbsp;&nbsp;
+			<a target="_blank" class="transcode btn btn-primary" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><span class="icon-list"></span> <?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a>&nbsp;&nbsp;&nbsp;
+			<a target="_blank" class="transcode btn btn-primary" href="<?php echo $extension_data->website; ?>"><span class="icon-share-alt"></span> <?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
 		</div>
 		<div class="item-desc">
 			<p class="item-desc-title">
