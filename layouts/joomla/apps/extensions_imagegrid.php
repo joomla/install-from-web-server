@@ -54,7 +54,7 @@ $layouts = array('grid', 'list');
 <div class="row-fluid">
 	<div class="item-view span12">
 		<?php foreach ($layouts as $layout): ?>
-		<div class='items <?php echo $layout; ?>-container'<?php echo ($app->input->getCmd('list', 'grid') == $layout) ? '' : ' style="display: none;"'; ?>>
+		<div class="items <?php echo $layout; ?>-container<?php echo ($app->input->getCmd('list', 'grid') == $layout) ? '' : ' hidden'; ?>">
 
 		<ul class="breadcrumb">
 			<li><?php echo $firstcrumb; ?></li>
