@@ -49,9 +49,6 @@ class AppsViewDashboard extends JViewLegacy
 		} else {
 			echo str_replace(array('\n', '\t'), '', $json);
 		}
-		
-		jexit();
-		//parent::display($tpl);
 	}
 
 }
