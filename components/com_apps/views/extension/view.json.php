@@ -29,6 +29,11 @@ class AppsViewExtension extends JViewLegacy
 	public function display($tpl = null)
 	{
 		$app = JFactory::getApplication();
+		
+		if ($app->input->get('callback', '', 'cmd')) {
+			$document =& JFactory::getDocument();
+			$document->setMimeEncoding('application/javascript');
+		}
 
 		$this->categories	= $this->get('Categories');
 		$this->extensions	= $this->get('Extension');
