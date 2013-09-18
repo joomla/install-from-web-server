@@ -49,8 +49,6 @@ class AppsViewExtension extends JViewLegacy
 		} else {
 			echo str_replace(array('\n', '\t'), '', $json);
 		}
-		
-		jexit();
 	}
 
 }
