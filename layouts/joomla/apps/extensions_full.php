@@ -124,9 +124,9 @@ if(JDEBUG) {
 				<?php if ((is_numeric($extension_data->type) && $extension_data->type == 0) || $extension_data->type == 1 || (strtolower($extension_data->fields->get('50')) == "non-commercial" && strtolower($extension_data->fields->get('38')) != "require registration to download")): ?>
 				<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->fields->get('29'); ?>"><span class="icon-download"></span> <?php echo JText::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
 				<?php elseif ($extension_data->type == 2 || (strtolower($extension_data->fields->get('50')) == "non-commercial" && strtolower($extension_data->fields->get('38')) == "require registration to download")): ?>
-				<button class="install btn btn-success" id="appssubmitbutton" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->fields->get('29'); ?>');" type="submit"><span class="icon-pencil"></span> <?php echo JText::_('COM_APPS_INSTALL_REGISTER_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></button>
+				<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->fields->get('29'); ?>"><span class="icon-pencil"></span> <?php echo JText::_('COM_APPS_INSTALL_REGISTER_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
 				<?php elseif ($extension_data->type == 3 || (strtolower($extension_data->fields->get('50')) != "non-commercial")): ?>
-				<button class="install btn btn-success" id="appssubmitbutton" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->fields->get('29'); ?>');" type="submit"><span class="icon-cart"></span> <?php echo JText::_('COM_APPS_INSTALL_PURCHASE_EXTERNAL') . "&hellip;"; ?></button>
+				<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->fields->get('29'); ?>"><span class="icon-cart"></span> <?php echo JText::_('COM_APPS_INSTALL_PURCHASE_EXTERNAL') . "&hellip;"; ?></a>
 				<?php endif; ?>&nbsp;&nbsp;&nbsp;
 			<?php endif; ?>
 			<a target="_blank" class="transcode btn btn-primary" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><span class="icon-list"></span> <?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
