@@ -28,6 +28,7 @@ class AppsViewCategory extends JViewLegacy
 
 	public function display($tpl = null)
 	{
+		JResponse::allowCache(true);
 		$app = JFactory::getApplication();
 		
 		if ($app->input->get('callback', '', 'cmd')) {
