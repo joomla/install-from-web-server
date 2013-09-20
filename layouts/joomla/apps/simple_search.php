@@ -24,13 +24,13 @@ $selected_ordering = $app->input->get('ordering', 't2.link_hits');
 	<div class="filter-search btn-group pull-left">
 		<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="Search" value="<?php echo $filter_search; ?>" class="hasTooltip" title="">
 	</div>
-	<div class="btn-group pull-left hidden-phone">
+	<div class="btn-group pull-left search">
 		<button type="button" class="btn hasTooltip" title="" onclick="Joomla.apps.initiateSearch();" data-original-title="Search">
 			<i class="icon-search"></i></button>
 		<button type="button" class="btn hasTooltip" title="" onclick="document.id('com-apps-searchbox').value='';" data-original-title="Clear">
 			<i class="icon-remove"></i></button>
 	</div>
-	<div class="btn-group pull-right">
+	<div class="btn-group pull-right select">
 		<?php 
 			if ($view != 'extension')
 				echo JHTML::_('select.genericlist', $ordering_options, 'ordering', null, 'value', 'text', $selected_ordering, 'com-apps-ordering'); 
