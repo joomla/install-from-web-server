@@ -96,6 +96,11 @@ Joomla.installfromwebexternal = function(redirect_url) {
 	var redirect_confirm = confirm('You will be redirected to the following link to complete the registration/purchase - \n'+redirect_url);
 	if(true == redirect_confirm) {
 		jQuery('#adminForm').attr('action', redirect_url);
+		jQuery("input[name=task]").prop( "disabled", true );
+		jQuery("input[name=install_directory]").prop( "disabled", true );
+		jQuery("input[name=install_url]").prop( "disabled", true );
+		jQuery("input[name=installtype]").prop( "disabled", true );
+		jQuery("input[name=filter_search]").prop( "disabled", true );
 		return true;
 	}
 	return false;

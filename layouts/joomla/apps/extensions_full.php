@@ -101,6 +101,7 @@ if(JDEBUG) {
 				<?php endif; ?>
 			</div>
 		</div>
+
 		<div class="clearfix"></div>
 		
 		<?php if ($extension_data->type > 1): ?>
