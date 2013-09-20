@@ -12,18 +12,18 @@ ul.item-type {margin:0px}
 
 /* Bootstrap form controls override */
 .full-item-container .control-group {
-  margin: 0px;
+	margin: 0px;
 }
 .full-item-container .control-label {
-  padding: 0px;
-  margin: 0px;
+	padding: 0px;
+	margin: 0px;
 }
 .full-item-container .controls {
-  margin-left: 100px;
+	margin-left: 100px;
 }
 
 .full-item-container .form-actions {
-  padding-left: 20px;
+	padding-left: 20px;
 }
 
 /* Full view */
