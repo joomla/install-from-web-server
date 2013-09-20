@@ -149,7 +149,7 @@ div.item-description {
     min-height: 150px;
 }
 
-.com-apps-container .row-fluid [class*="span"] {
+.com-apps-container .grid-container .row-fluid [class*="span"] {
     margin-left: 2%;
 }
 
