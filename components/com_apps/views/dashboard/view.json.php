@@ -32,7 +32,7 @@ class AppsViewDashboard extends JViewLegacy
 		$app = JFactory::getApplication();
 		
 		if ($app->input->get('callback', '', 'cmd')) {
-			$document =& JFactory::getDocument();
+			$document = JFactory::getDocument();
 			$document->setMimeEncoding('application/javascript');
 		}
 		
