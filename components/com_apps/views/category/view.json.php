@@ -28,10 +28,11 @@ class AppsViewCategory extends JViewLegacy
 
 	public function display($tpl = null)
 	{
+		JResponse::allowCache(true);
 		$app = JFactory::getApplication();
 		
 		if ($app->input->get('callback', '', 'cmd')) {
-			$document =& JFactory::getDocument();
+			$document = JFactory::getDocument();
 			$document->setMimeEncoding('application/javascript');
 		}
 
