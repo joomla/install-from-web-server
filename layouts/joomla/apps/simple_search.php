@@ -17,6 +17,7 @@ $ordering_options[] = JHtml::_('select.option', 't2.link_hits', JText::_('COM_AP
 $ordering_options[] = JHtml::_('select.option', 't2.link_name', JText::_('COM_APPS_SORT_BY_NAME'));
 $ordering_options[] = JHtml::_('select.option', 't2.link_rating', JText::_('COM_APPS_SORT_BY_RATING'));
 $ordering_options[] = JHtml::_('select.option', 't2.link_created', JText::_('COM_APPS_SORT_BY_CREATED'));
+$ordering_options[] = JHtml::_('select.option', 't2.link_modified', JText::_('COM_APPS_SORT_BY_UPDATED'));
 
 $selected_ordering = $app->input->get('ordering', 't2.link_hits');
 ?>
