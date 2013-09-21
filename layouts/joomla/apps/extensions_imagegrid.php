@@ -40,7 +40,7 @@ $layouts = array('grid', 'list');
 					<?php $lastc = $bc; endforeach; ?>
 					
 					<!-- Link to category on JED -->
-					<li class="pull-right"><a class="transcode" href="<?php echo AppsHelper::getJEDCatUrl(is_object($lastc) ? $lastc->id : $lastc); ?>" target="_blank"><span class="icon-out-2"></span></a></li>
+					<li class="pull-right"><a href="<?php echo AppsHelper::getJEDCatUrl(is_object($lastc) ? $lastc->id : $lastc); ?>" target="_blank" title="<?php echo JText::_('COM_APPS_CATEGORY_JEDLINK'); ?>"><span class="icon-out-2"></span></a></li>
 				</ul>
 			</div>
 			<div class="row-fluid">
@@ -65,7 +65,7 @@ $layouts = array('grid', 'list');
 			
 			<!-- Link to category on JED -->
 			<?php if (isset($lastc->id)) : ?>
-			<li class="pull-right"><a href="<?php echo AppsHelper::getJEDCatUrl($lastc->id); ?>" target="_blank"><span class="icon-out-2"></span></a></li>
+			<li class="pull-right"><a href="<?php echo AppsHelper::getJEDCatUrl($lastc->id); ?>" target="_blank" title="<?php echo JText::_('COM_APPS_CATEGORY_JEDLINK'); ?>"><span class="icon-out-2"></span></a></li>
 			<?php endif; ?>
 		</ul>
 
