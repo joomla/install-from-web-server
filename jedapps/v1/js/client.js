@@ -22,11 +22,8 @@ Joomla.loadweb = function(url) {
 	var ordering = Joomla.apps.ordering;
 	if (ordering !== "" && jQuery('#com-apps-ordering').val()) {
 		ordering = jQuery('#com-apps-ordering').val();
-	}
-	if (ordering) {
 		url += '&ordering='+ordering;
 	}
-
 
 	jQuery('html, body').animate({ scrollTop: 0 }, 0);
 	if (jQuery('#myTabContent').length) {
@@ -243,10 +240,14 @@ Joomla.apps.clicker = function() {
 		Joomla.apps.list = 0;
 		jQuery(".list-container").addClass("hidden");
 		jQuery(".grid-container").removeClass("hidden");
+		jQuery("#btn-list-view").removeClass("active");
+		jQuery("#btn-grid-view").addClass("active");
 	});
 	jQuery(".list-view").live("click",function() {
 		Joomla.apps.list = 1;
 		jQuery(".grid-container").addClass("hidden");
 		jQuery(".list-container").removeClass("hidden");
+		jQuery("#btn-grid-view").removeClass("active");
+		jQuery("#btn-list-view").addClass("active");
 	});
 }
