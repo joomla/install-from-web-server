@@ -28,6 +28,9 @@ ul.item-type {margin:0px}
 
 /* Full view */
 .item-info-container {margin-left: 25px; line-height: 25px}
+.thumbnail:hover {
+	background-color: #F2F2F2;
+}
 
 /* Grid */
 .item-image{height:120px}
