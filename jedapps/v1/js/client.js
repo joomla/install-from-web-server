@@ -217,6 +217,11 @@ Joomla.apps.initialize = function() {
 			Joomla.apps.initiateSearch();
 		}
 	});
+	
+	jQuery('#search-reset').live('click', function(event){
+		jQuery('#com-apps-searchbox').val('');
+		Joomla.apps.initiateSearch();
+	});
 
 	jQuery('#com-apps-ordering').live('change', function(event){
 		Joomla.apps.ordering = jQuery(this).prop("selectedIndex");
