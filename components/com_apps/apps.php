@@ -10,8 +10,6 @@
 defined('_JEXEC') or die;
 
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'helper.php';
-$document = JFactory::getDocument();
-$document->addStyleSheet(JURI::base() . 'component/com_apps/css/apps.css');
 
 $controller = JControllerLegacy::getInstance('Apps');
 $controller->execute(JFactory::getApplication()->input->get('task'));
