@@ -11,6 +11,7 @@ defined('JPATH_BASE') or die;
 $app = JFactory::getApplication();
 $filter_search = str_replace('_', ' ', $app->input->getString('filter_search'));
 $view = $app->input->getCmd('view');
+$list = $app->input->getCmd('list', 'grid');
 
 // Sorting Options
 $ordering_options[] = JHtml::_('select.option', 't2.link_hits', JText::_('COM_APPS_SORT_BY_POPULAR'));
@@ -40,8 +41,8 @@ $selected_ordering = $app->input->get('ordering', 't2.link_hits');
 	
 	<?php if ($view != 'extension') : ?>
 	<div class="btn-group pull-right">
-		<button type="button" class="btn grid-view"><i class="icon-grid-view"></i></button>
-		<button type="button" class="btn list-view"><i class="icon-list-view"></i></button>
+		<button type="button" class="btn grid-view<?php echo ($list == 'grid') ? ' active' : ''; ?>" id="btn-grid-view"><i class="icon-grid-view"></i></button>
+		<button type="button" class="btn list-view<?php echo ($list == 'list') ? ' active' : ''; ?>" id="btn-list-view"><i class="icon-list-view"></i></button>
 	</div>
 	<?php endif; ?>
 </div>
