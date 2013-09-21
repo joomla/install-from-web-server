@@ -18,7 +18,7 @@ $spanclass = 'span' . (12 / $extensions_perrow);
 
 $view = $app->input->getCmd('view');
 if ($view != 'dashboard') {
-	$firstcrumb = '<a class="transcode" href="<?php echo AppsHelper::getAJAXUrl(\'view=dashboard\'); ?>">' . JText::_('COM_APPS_EXTENSIONS') . '</a>';
+	$firstcrumb = '<a class="transcode" href="' . AppsHelper::getAJAXUrl('view=dashboard') . '">' . JText::_('COM_APPS_EXTENSIONS') . '</a>';
 }
 else {
 	$firstcrumb = JText::_('COM_APPS_EXTENSIONS_DASHBOARD');
