@@ -12,18 +12,18 @@ ul.item-type {margin:0px}
 
 /* Bootstrap form controls override */
 .full-item-container .control-group {
-  margin: 0px;
+	margin: 0px;
 }
 .full-item-container .control-label {
-  padding: 0px;
-  margin: 0px;
+	padding: 0px;
+	margin: 0px;
 }
 .full-item-container .controls {
-  margin-left: 100px;
+	margin-left: 100px;
 }
 
 .full-item-container .form-actions {
-  padding-left: 20px;
+	padding-left: 20px;
 }
 
 /* Full view */
@@ -99,7 +99,6 @@ ul.item-type {margin:0px}
 }
 .fader {
 	position: absolute;
-	z-index: 100;
 	background: -moz-linear-gradient(top,  rgba(255,255,255,0) 0%, rgba(255,255,255,1) 95%); /* FF3.6+ */
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(255,255,255,0)), color-stop(95%,rgba(255,255,255,1))); /* Chrome,Safari4+ */
 	background: -webkit-linear-gradient(top,  rgba(255,255,255,0) 0%,rgba(255,255,255,1) 95%); /* Chrome10+,Safari5.1+ */
@@ -128,4 +127,82 @@ div.item-description {
 	width: 100%;
 	text-align: center;
 	height: auto;
+}
+/* Added to fix responsive issues */
+
+.com-apps-container .filter-search.btn-group.pull-left {
+    width: 31%;
+}
+.com-apps-container input {
+    width:90%;
+}
+
+.com-apps-container .btn-group.pull-right.select {
+    width:31%;
+}
+
+.com-apps-container .thumbnail {
+    min-height: 350px;
+}
+
+.com-apps-container .item-description {
+    min-height: 150px;
+}
+
+.com-apps-container .grid-container .row-fluid [class*="span"] {
+    margin-left: 2%;
+}
+
+.com-apps-container .row-fluid [class*="span"]:first-child {
+    margin-left: 0;
+}
+
+/* Put breakpoints in when the design breaks, not at generic widths */
+@media (max-width: 869px) {
+    .com-apps-sidebar .nav-header {
+        padding-left: 0;
+    }
+}
+
+@media (max-width: 800px) {
+    .com-apps-container .item-image {
+        min-height: 90px;
+    }
+
+}
+
+/* This is where the single column view starts */
+@media (max-width: 768px) {
+    .com-apps-container select {
+        font-size:10px;
+    }
+    .com-apps-container .thumbnail {
+        min-height: 300px;
+    }
+    .com-apps-container .item-description {
+        min-height: 100px;
+    }
+    .com-apps-container .row-fluid [class*="span"] {
+        margin-left: 0;
+    }
+
+}
+
+@media (max-width: 580px) {
+    .nav-tabs > li {
+ 
+ width: 100%;
+    }
+    #myTabTabs {
+        border-top: 1px solid lightgrey;
+        padding-top: 2px;
+    }
+}
+
+@media (max-width: 495px) {
+    /* need to add .search class to the button group */
+    .com-apps-container .btn-group.pull-left.search {
+        display: none;
+        visibility: hidden;
+    }
 }
