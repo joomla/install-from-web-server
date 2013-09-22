@@ -48,7 +48,7 @@ if(JDEBUG) {
 					<?php endif; ?>
 				<?php endfor; ?>
 				&nbsp;
-				<a class="transcode" target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data) . '#action'; ?>">
+				<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data) . '#action'; ?>">
 				<?php echo JText::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS', $extension_data->link_votes, $extension_data->reviews); ?>
 				</a>
 			</div>
@@ -57,7 +57,12 @@ if(JDEBUG) {
 					<?php echo JText::_('COM_APPS_EXTENSION_VERSION'); ?>
 				</div>
 				<div class="controls">
-					<?php echo $extension_data->fields->get('43') . ' ' . JText::sprintf('COM_APPS_EXTENSION_LAST_UPDATE', JHTML::date($extension_data->link_modified)); ?>
+					<?php 
+						echo $extension_data->fields->get('43');
+						if ($extension_data->link_modified != '0000-00-00 00:00:00') {
+							echo ' ' . JText::sprintf('COM_APPS_EXTENSION_LAST_UPDATE', JHTML::date($extension_data->link_modified)); 
+						}
+						?>
 				</div>
 			</div>
 			<?php if ($extension_data->fields->get('49')): ?>
@@ -129,10 +134,10 @@ if(JDEBUG) {
 				<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->fields->get('29'); ?>"><span class="icon-cart"></span> <?php echo JText::_('COM_APPS_INSTALL_PURCHASE_EXTERNAL') . "&hellip;"; ?></a>
 				<?php endif; ?>&nbsp;&nbsp;&nbsp;
 			<?php endif; ?>
-			<a target="_blank" class="transcode btn btn-primary" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><span class="icon-list"></span> <?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
+			<a target="_blank" class="btn btn-primary" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><span class="icon-list"></span> <?php echo JText::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
 			<?php if ($extension_data->website) : ?>
 			&nbsp;&nbsp;&nbsp;
-			<a target="_blank" class="transcode btn btn-primary" href="<?php echo $extension_data->website; ?>"><span class="icon-share-alt"></span> <?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
+			<a target="_blank" class="btn btn-primary" href="<?php echo $extension_data->website; ?>"><span class="icon-share-alt"></span> <?php echo JText::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
 			<?php endif; ?>
 		</div>
 		<div class="item-desc">
