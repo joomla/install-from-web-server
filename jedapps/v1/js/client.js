@@ -43,7 +43,7 @@ Joomla.loadweb = function(url) {
 		timeout: 20000,
 		success: function (response) {
 			jQuery('#web-loader').hide();
-			jQuery('#jed-container').html(response.data);
+			jQuery('#jed-container').html(response.data.html);
 			if (jQuery('#myTabContent').length) {
 				jQuery.event.trigger("ajaxStop");
 			}
@@ -87,7 +87,7 @@ Joomla.webpaginate = function(url, target) {
 	
 	jQuery.get(url, function(response) {
 		jQuery('#web-paginate-loader').hide();
-		jQuery('#'+target).html(response.data);
+		jQuery('#'+target).html(response.data.html);
 	}, 'jsonp').fail(function() { 
 		jQuery('#web-paginate-loader').hide();
 		//jQuery('#web-paginate-error').hide();
