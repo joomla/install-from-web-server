@@ -160,6 +160,12 @@ class AppsModelDashboard extends JModelList
 		return $base_model->getBreadcrumbs($this->getCatID());
 	}
 	
+	public function getPluginUpToDate()
+	{
+		$base_model = $this->getBaseModel();
+		return $base_model->getPluginUpToDate();
+	}
+	
 	public function getExtensions()
 	{
 		// Get catid, search filter, order column, order direction

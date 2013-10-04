@@ -173,6 +173,12 @@ class AppsModelCategory extends JModelList
 		return $base_model->getBreadcrumbs($this->getCatID());
 	}
 	
+	public function getPluginUpToDate()
+	{
+		$base_model = $this->getBaseModel();
+		return $base_model->getPluginUpToDate();
+	}
+	
 	private function loadExtensionIDs($db, $catid)
 	{
 		// Get catid, search filter, order column, order direction

@@ -45,6 +45,11 @@ class AppsModelBase extends JModelList
 	private $_children = array();
 	
 	private $_breadcrumbs = array();
+	
+	private $_pv = array(
+		'latest'	=>	'1.1.0',
+		'works'		=>	'1.0.1',
+	);
 
 	public static function getMainUrl()
 	{
@@ -256,4 +261,21 @@ class AppsModelBase extends JModelList
 		}
 		return $this->_children;
 	}
+
+	public function getPluginUpToDate()
+	{
+		$input = new JInput;
+		$remote = preg_replace('/[^\d\.]/', '', base64_decode($input->get('pv', '', 'base64')));
+		$local = $this->_pv;
+		if (version_compare($remote, $local['latest']) >= 0)
+		{
+			return 1;
+		}
+		elseif (version_compare($remote, $local['works']) >= 0)
+		{
+			return 0;
+		}
+		return -1;
+	}
+	
 }
