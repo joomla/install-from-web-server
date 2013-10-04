@@ -45,10 +45,13 @@ class AppsViewExtension extends JViewLegacy
 		$this->params->set('extensions_perrow', 4);
 		
 		$response = array();
-		$response['body'] = $this->loadTemplate($tpl);
+		$response['body'] = array(
+			'html' => iconv("UTF-8", "UTF-8//IGNORE", $this->loadTemplate($tpl)),
+			'pluginuptodate' => $this->get('PluginUpToDate'),
+		);
 		$response['error'] = false;
 		$response['message'] = '';
-		$json = new JResponseJson(iconv("UTF-8", "UTF-8//IGNORE", $response['body']), $response['message'], $response['error']);
+		$json = new JResponseJson($response['body'], $response['message'], $response['error']);
 
 		if ($app->input->get('callback', '', 'cmd')) {
 			echo str_replace(array('\n', '\t'), '', $app->input->get('callback') . '(' . $json . ')');
