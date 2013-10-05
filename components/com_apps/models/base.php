@@ -47,8 +47,8 @@ class AppsModelBase extends JModelList
 	private $_breadcrumbs = array();
 	
 	private $_pv = array(
-		'latest'	=>	'1.1.0',
-		'works'		=>	'1.0.1',
+		'latest'	=>	'1.0.0',
+		'works'		=>	'0.9.0',
 	);
 
 	public static function getMainUrl()
