@@ -176,7 +176,7 @@ class AppsModelDashboard extends JModelList
 		$order 				= $input->get('ordering', 't2.link_hits');
 		$orderCol 			= $this->state->get('list.ordering', $order);
 		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
-		$order 				= $orderCol.' '.$orderDirn;
+		$order 				= $this->getBaseModel()->getOrder($orderCol, $orderDirn);
 		$release			= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
 		$limitstart 		= $input->get('limitstart', 0, 'int');
 		$limit 				= $input->get('limit', $default_limit, 'int');

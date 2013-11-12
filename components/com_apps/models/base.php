@@ -47,8 +47,8 @@ class AppsModelBase extends JModelList
 	private $_breadcrumbs = array();
 	
 	private $_pv = array(
-		'latest'	=>	'1.0.0',
-		'works'		=>	'0.9.0',
+		'latest'	=>	'1.0.3',
+		'works'		=>	'1.0.0',
 	);
 
 	public static function getMainUrl()
@@ -278,4 +278,14 @@ class AppsModelBase extends JModelList
 		return -1;
 	}
 	
+	public function getOrder($col, $dir) {
+		switch ($col) {
+			case 't2.link_rating':
+				$ret = 'IF(t2.link_votes >= 5, 1, 0) '.$dir.', t2.link_rating '.$dir.', t2.link_votes '.$dir.', t2.link_id '.(strtoupper($dir) == 'DESC' ? 'ASC' : 'DESC');
+				break;
+			default:
+				$ret = $col.' '.$dir;
+		}
+		return $ret;
+	}
 }
