@@ -286,6 +286,9 @@ class AppsModelCategory extends JModelList
 				't1.cat_id AS cat_id',
 				'CONCAT("{", GROUP_CONCAT(DISTINCT "\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
 			);
+			if (preg_match('/^t2\.link_rating/', $order)) {
+				$fields[] = 'IF(t2.link_votes >= 5, 1, 0) as votelimit';
+			}
 			if ($search) {
 				$fields[] = 'IF(t2.link_name LIKE(' . $db->quote('%'.$db->escape($search, true).'%') . '), 1, 0) as foundintitle';
 			}
@@ -311,19 +314,40 @@ class AppsModelCategory extends JModelList
 		
 		// Populate array
 		$extensions = array(0=>array(), 1=>array());
+		if (preg_match('/^t2\.link_rating/', $order)) {
+			$extensions[0] = array(0=>array(), 1=>array());
+			$extensions[1] = array(0=>array(), 1=>array());
+		}
 		foreach ($items as $item) {
 			$options = new JRegistry($item->options);
 			$item->image = $this->getBaseModel()->getMainImageUrl($item->image);
 			$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
 			$item->fields = $options;
-			if ($search) {
+			if ($search && preg_match('/^t2\.link_rating/', $order)) {
+				$extensions[1 - $item->foundintitle][$item->votelimit][] = $item;
+			}
+			elseif ($search) {
 				$extensions[1 - $item->foundintitle][] = $item;
+			}
+			elseif (preg_match('/^t2\.link_rating/', $order)) {
+				$extensions[0][$item->votelimit][] = $item;
 			}
 			else {
 				$extensions[0][] = $item;
 			}
 		}
 		
+		if (preg_match('/^t2\.link_rating\s+(\w+)/', $order, $matches)) {
+			if (strtoupper($matches[1]) == 'DESC') {
+				$extensions[0] = array_merge($extensions[0][1], $extensions[0][0]);
+				$extensions[1] = array_merge($extensions[1][1], $extensions[1][0]);
+			}
+			else {
+				$extensions[0] = array_merge($extensions[0][0], $extensions[0][1]);
+				$extensions[1] = array_merge($extensions[1][0], $extensions[1][1]);
+			}
+		}
+
 		return array_merge($extensions[0], $extensions[1]);
 		
 	}
