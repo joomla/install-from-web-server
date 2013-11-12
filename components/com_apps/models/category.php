@@ -257,7 +257,7 @@ class AppsModelCategory extends JModelList
 		$order 				= $input->get('ordering', 't2.link_hits');
 		$orderCol 			= $this->state->get('list.ordering', $order);
 		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
-		$order 				= $orderCol.' '.$orderDirn;
+		$order 				= $this->getBaseModel()->getOrder($orderCol, $orderDirn);
 		
 		// Get remote database
 		$db = $this->getRemoteDB();
