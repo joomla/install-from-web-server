@@ -173,7 +173,7 @@ class AppsModelDashboard extends JModelList
 		$default_limit		= $componentParams->get('default_limit', 8);
 		$input 				= new JInput;
 		$catid 				= $input->get('id', null, 'int');
-		$order 				= $input->get('ordering', 't2.link_hits');
+		$order 				= $input->get('ordering', 't2.link_rating');
 		$orderCol 			= $this->state->get('list.ordering', $order);
 		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
 		$order 				= $this->getBaseModel()->getOrder($orderCol, $orderDirn);
