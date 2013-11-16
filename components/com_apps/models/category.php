@@ -254,7 +254,7 @@ class AppsModelCategory extends JModelList
 		$input 				= new JInput;
 		$catid 				= $input->get('id', null, 'int');
 		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
-		$order 				= $input->get('ordering', 't2.link_hits');
+		$order 				= $input->get('ordering', 't2.link_rating');
 		$orderCol 			= $this->state->get('list.ordering', $order);
 		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
 		$order 				= $this->getBaseModel()->getOrder($orderCol, $orderDirn);
