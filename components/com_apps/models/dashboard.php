@@ -173,10 +173,10 @@ class AppsModelDashboard extends JModelList
 		$default_limit		= $componentParams->get('default_limit', 8);
 		$input 				= new JInput;
 		$catid 				= $input->get('id', null, 'int');
-		$order 				= $input->get('ordering', 't2.link_hits');
+		$order 				= $input->get('ordering', 't2.link_rating');
 		$orderCol 			= $this->state->get('list.ordering', $order);
 		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
-		$order 				= $orderCol.' '.$orderDirn;
+		$order 				= $this->getBaseModel()->getOrder($orderCol, $orderDirn);
 		$release			= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
 		$limitstart 		= $input->get('limitstart', 0, 'int');
 		$limit 				= $input->get('limit', $default_limit, 'int');
@@ -202,6 +202,10 @@ class AppsModelDashboard extends JModelList
 			$where[] = '(t2.link_name LIKE(' . $db->quote('%'.$db->escape($search, true).'%') . ') OR t2.link_desc LIKE(' . $db->quote('%'.$db->escape($search, true).'%') . '))';
 		}
 		
+		if (preg_match('/^t2\.link_rating/', $order)) {
+			$where[] = 't2.link_votes >= 15';
+		}
+
 		$where = array_merge($where, array(
 			't2.link_published = 1',
 			't2.link_approved = 1',
