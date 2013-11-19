@@ -188,7 +188,7 @@ class AppsModelCategory extends JModelList
 		$release			= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
 		$limitstart 		= $input->get('limitstart', 0, 'int');
 		$limit 				= $input->get('limit', $default_limit, 'int');
-		$order 				= $input->get('ordering', 't2.link_rating');
+		$order 				= $input->get('ordering', 't2.link_hits');
 		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
 		$orderCol 			= $this->state->get('list.ordering', $order);
 		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
@@ -221,7 +221,7 @@ class AppsModelCategory extends JModelList
 		$query->join('RIGHT', 'jos_mt_cfvalues AS t3 ON t3.link_id = t2.link_id AND t3.cf_id = 37 AND ("'.$release.'" REGEXP t3.value OR t3.value = "")');
 
 		if (!$order) {
-			$order = 't2.link_rating DESC';
+			$order = 't2.link_hits DESC';
 		}
 
 		$where = array();
@@ -254,7 +254,7 @@ class AppsModelCategory extends JModelList
 		$input 				= new JInput;
 		$catid 				= $input->get('id', null, 'int');
 		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
-		$order 				= $input->get('ordering', 't2.link_rating');
+		$order 				= $input->get('ordering', 't2.link_hits');
 		$orderCol 			= $this->state->get('list.ordering', $order);
 		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
 		$order 				= $this->getBaseModel()->getOrder($orderCol, $orderDirn);
