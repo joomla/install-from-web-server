@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 
 JHtml::_('behavior.framework');
+JHtml::_('formbehavior.chosen', 'select');
 
 $n			= count($this->items);
 $listOrder	= $this->escape($this->state->get('list.ordering'));
@@ -117,5 +118,5 @@ $listDirn	= $this->escape($this->state->get('list.direction'));
 		<?php echo $this->pagination->getPagesLinks(); ?>
 	</div>
 	<?php endif; ?>
-</form>
 <?php endif; ?>
+</form>
