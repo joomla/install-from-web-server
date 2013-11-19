@@ -20,7 +20,7 @@ $ordering_options[] = JHtml::_('select.option', 't2.link_name', JText::_('COM_AP
 $ordering_options[] = JHtml::_('select.option', 't2.link_created', JText::_('COM_APPS_SORT_BY_CREATED'));
 $ordering_options[] = JHtml::_('select.option', 't2.link_modified', JText::_('COM_APPS_SORT_BY_UPDATED'));
 
-$selected_ordering = $app->input->get('ordering', 't2.link_rating');
+$selected_ordering = $app->input->get('ordering', 't2.link_hits');
 ?>
 <div id="filter-bar" class="btn-toolbar">
 	<div class="filter-search btn-group pull-left">
