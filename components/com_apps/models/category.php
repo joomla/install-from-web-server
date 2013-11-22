@@ -286,6 +286,7 @@ class AppsModelCategory extends JModelList
 			$query = $db->getQuery(true);
 			$fields = array(
 				't2.link_id AS id',
+				't2.link_id',
 				't2.link_name AS name',
 				't2.alias AS alias',
 				't2.link_desc AS description',
