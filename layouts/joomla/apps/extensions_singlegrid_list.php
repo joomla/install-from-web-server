@@ -10,6 +10,7 @@
 defined('JPATH_BASE') or die;
 $extension_data = $displayData['extension']; //print_r($extension_data);
 $tags = explode('|', trim($extension_data->fields->get('36')));
+$commercial = strtolower($extension_data->fields->get('50')) != "non-commercial" ? true : false;
 ?>
 <li class="item <?php echo $displayData['spanclass']; ?>">
 <div class="thumbnail" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>');">
@@ -24,7 +25,10 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 	</div>
 	<div class="item-icons">
 		<div class="item-parts">
-			<ul class="item-type center">
+			<ul class="item-type center<?php echo $commercial ? " label-jlicense" : ""; ?>">
+				<?php if ($commercial) : ?>
+				<span title="<?php echo $extension_data->fields->get('50'); ?>" class="label label-jlicense">$</span> 
+				<?php endif; ?>
 				<?php if (in_array('com', $tags)) : ?>
 				<span title="<?php echo JText::_('COM_APPS_COMPONENT'); ?>" class="label label-jcomponent">C</span> 
 				<?php endif; ?>
