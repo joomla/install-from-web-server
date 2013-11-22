@@ -46,6 +46,8 @@ class AppsModelDashboard extends JModelList
 	
 	private $_total = null;
 	
+	private $_orderby = 't2.link_hits';
+	
 	/**
 	 * Method to auto-populate the model state.
 	 *
@@ -166,6 +168,11 @@ class AppsModelDashboard extends JModelList
 		return $base_model->getPluginUpToDate();
 	}
 	
+	public function getOrderBy()
+	{
+		return $this->_orderby;
+	}
+	
 	public function getExtensions()
 	{
 		// Get catid, search filter, order column, order direction
@@ -173,7 +180,7 @@ class AppsModelDashboard extends JModelList
 		$default_limit		= $componentParams->get('default_limit', 8);
 		$input 				= new JInput;
 		$catid 				= $input->get('id', null, 'int');
-		$order 				= $input->get('ordering', 't2.link_hits');
+		$order 				= $input->get('ordering', $this->getOrderBy());
 		$orderCol 			= $this->state->get('list.ordering', $order);
 		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
 		$order 				= $this->getBaseModel()->getOrder($orderCol, $orderDirn);

@@ -39,6 +39,7 @@ class AppsViewDashboard extends JViewLegacy
 		$this->categories	= $this->get('Categories');
 		$this->extensions	= $this->get('Extensions');
 		$this->breadcrumbs	= $this->get('Breadcrumbs');
+		$this->orderby		= $this->get('OrderBy');
 		$this->params 		= new JRegistry();
 		
 		// Temporary params @DELETE

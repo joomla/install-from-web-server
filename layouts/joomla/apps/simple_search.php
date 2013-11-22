@@ -12,6 +12,11 @@ $app = JFactory::getApplication();
 $filter_search = str_replace('_', ' ', $app->input->getString('filter_search'));
 $view = $app->input->getCmd('view');
 $list = $app->input->getCmd('list', 'grid');
+$orderby = $app->input->get('ordering', 't2.link_hits');
+if (array_key_exists('orderby', $displayData))
+{
+	$orderby = $displayData['orderby'];
+}
 
 // Sorting Options
 $ordering_options[] = JHtml::_('select.option', 't2.link_hits', JText::_('COM_APPS_SORT_BY_POPULAR'));
@@ -20,7 +25,7 @@ $ordering_options[] = JHtml::_('select.option', 't2.link_name', JText::_('COM_AP
 $ordering_options[] = JHtml::_('select.option', 't2.link_created', JText::_('COM_APPS_SORT_BY_CREATED'));
 $ordering_options[] = JHtml::_('select.option', 't2.link_modified', JText::_('COM_APPS_SORT_BY_UPDATED'));
 
-$selected_ordering = $app->input->get('ordering', 't2.link_hits');
+$selected_ordering = $app->input->get('ordering', $orderby);
 ?>
 <div id="filter-bar" class="btn-toolbar">
 	<div class="filter-search btn-group pull-left">
