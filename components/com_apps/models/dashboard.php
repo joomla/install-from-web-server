@@ -46,6 +46,8 @@ class AppsModelDashboard extends JModelList
 	
 	private $_total = null;
 	
+	private $_orderby = 't2.link_hits';
+	
 	/**
 	 * Method to auto-populate the model state.
 	 *
@@ -166,6 +168,11 @@ class AppsModelDashboard extends JModelList
 		return $base_model->getPluginUpToDate();
 	}
 	
+	public function getOrderBy()
+	{
+		return $this->_orderby;
+	}
+	
 	public function getExtensions()
 	{
 		// Get catid, search filter, order column, order direction
@@ -173,7 +180,7 @@ class AppsModelDashboard extends JModelList
 		$default_limit		= $componentParams->get('default_limit', 8);
 		$input 				= new JInput;
 		$catid 				= $input->get('id', null, 'int');
-		$order 				= $input->get('ordering', 't2.link_hits');
+		$order 				= $input->get('ordering', $this->getOrderBy());
 		$orderCol 			= $this->state->get('list.ordering', $order);
 		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
 		$order 				= $this->getBaseModel()->getOrder($orderCol, $orderDirn);
@@ -230,9 +237,11 @@ class AppsModelDashboard extends JModelList
 			't2.link_desc AS description',
 			't2.link_rating AS rating',
 			't2.user_id AS user_id',
+			't2.link_votes',
 			't3.filename AS image',
 			't1.cat_id AS cat_id',
 			'CONCAT("{", GROUP_CONCAT(DISTINCT "\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
+			'COUNT(DISTINCT t7.rev_id) AS reviews',
 		);
 		if ($search) {
 			$fields[] = 'IF(t2.link_name LIKE(' . $db->quote('%'.$db->escape($search, true).'%') . '), 1, 0) as foundintitle';
@@ -244,6 +253,7 @@ class AppsModelDashboard extends JModelList
 		$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
 		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
 		$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
+		$query->join('LEFT', 'jos_mt_reviews AS t7 ON t7.link_id = t2.link_id');
 		
 		if (count($ids)) {
 			$query->where(array(

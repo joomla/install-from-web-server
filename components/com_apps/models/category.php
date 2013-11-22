@@ -45,6 +45,8 @@ class AppsModelCategory extends JModelList
 	private $_breadcrumbs = array();
 	
 	private $_total = null;
+	
+	private $_orderby = 't2.link_rating';
 
 	/**
 	 * Method to auto-populate the model state.
@@ -179,6 +181,11 @@ class AppsModelCategory extends JModelList
 		return $base_model->getPluginUpToDate();
 	}
 	
+	public function getOrderBy()
+	{
+		return $this->_orderby;
+	}
+	
 	private function loadExtensionIDs($db, $catid)
 	{
 		// Get catid, search filter, order column, order direction
@@ -254,16 +261,13 @@ class AppsModelCategory extends JModelList
 		$input 				= new JInput;
 		$catid 				= $input->get('id', null, 'int');
 		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
-		$order 				= $input->get('ordering', 't2.link_hits');
-		$orderCol 			= $this->state->get('list.ordering', $order);
-		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
-		$order 				= $this->getBaseModel()->getOrder($orderCol, $orderDirn);
 		
 		// Get remote database
 		$db = $this->getRemoteDB();
 		$ids = $this->loadExtensionIDs($db, array($catid));
 		
 		if (!count($ids)) {
+			$this->_orderby = 't2.link_hits';
 			$base_model = $this->getBaseModel();
 			$children = $base_model->getChildren($catid);
 			$catid = $this->getAllChildren($children, $catid);
@@ -271,6 +275,11 @@ class AppsModelCategory extends JModelList
 				$ids = $this->loadExtensionIDs($db, $catid);
 			}
 		}
+
+		$order 				= $input->get('ordering', $this->getOrderBy());
+		$orderCol 			= $this->state->get('list.ordering', $order);
+		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
+		$order 				= $this->getBaseModel()->getOrder($orderCol, $orderDirn);
 
 		$items = array();	
 		if (count($ids)) {
@@ -282,9 +291,11 @@ class AppsModelCategory extends JModelList
 				't2.link_desc AS description',
 				't2.link_rating AS rating',
 				't2.user_id AS user_id',
+				't2.link_votes',
 				't3.filename AS image',
 				't1.cat_id AS cat_id',
 				'CONCAT("{", GROUP_CONCAT(DISTINCT "\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
+				'COUNT(DISTINCT t7.rev_id) AS reviews',
 			);
 			if (preg_match('/^t2\.link_rating/', $order)) {
 				$fields[] = 'IF(t2.link_votes >= 5, 1, 0) as votelimit';
@@ -299,6 +310,7 @@ class AppsModelCategory extends JModelList
 			$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
 			$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
 			$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
+			$query->join('LEFT', 'jos_mt_reviews AS t7 ON t7.link_id = t2.link_id');
 
 			$query->where(array(
 				't2.link_id IN (' . implode(',', $ids) . ')',
