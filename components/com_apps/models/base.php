@@ -47,7 +47,7 @@ class AppsModelBase extends JModelList
 	private $_breadcrumbs = array();
 	
 	private $_pv = array(
-		'latest'	=>	'1.0.3',
+		'latest'	=>	'1.0.4',
 		'works'		=>	'1.0.0',
 	);
 

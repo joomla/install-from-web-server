@@ -39,6 +39,7 @@ class AppsViewCategory extends JViewLegacy
 		$this->categories	= $this->get('Categories');
 		$this->extensions	= $this->get('Extensions');
 		$this->breadcrumbs	= $this->get('Breadcrumbs');
+		$this->orderby		= $this->get('OrderBy');
 		$this->total		= $this->get('Count');
 		$this->pagination	= $this->get('Pagination');
 		$this->params 		= new JRegistry();
