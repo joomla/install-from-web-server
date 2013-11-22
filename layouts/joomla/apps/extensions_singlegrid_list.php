@@ -56,6 +56,10 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 				<span class="icon-star-empty"></span>
 					<?php endif; ?>
 				<?php endfor; ?>
+				<br />
+				<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data) . '#action'; ?>">
+				<?php echo JText::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS', $extension_data->link_votes, $extension_data->reviews); ?>
+				</a>
 			</p>
 		</div>
 	</div>
