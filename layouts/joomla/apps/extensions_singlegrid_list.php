@@ -13,19 +13,19 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 $commercial = strtolower($extension_data->fields->get('50')) != "non-commercial" ? true : false;
 ?>
 <li class="item <?php echo $displayData['spanclass']; ?>">
-<div class="thumbnail" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>');">
-	<div class="item-header">
+<div class="thumbnail">
+	<div class="item-header" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>');">
 		<h4 class="muted">
 			<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>"><?php echo trim($extension_data->name); ?></a>
 		</h4>
 	</div>
-	<div class="item-description">
+	<div class="item-description" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>');">
 		<?php echo mb_strlen(trim($extension_data->description)) > 400 ? mb_substr(trim($extension_data->description), 0, mb_stripos(trim($extension_data->description), ' ', 400)) . '...' : trim($extension_data->description); ?>
 		<div class="fader">&nbsp;</div>
 	</div>
 	<div class="item-icons">
 		<div class="item-parts">
-			<ul class="item-type center<?php echo $commercial ? " label-jcommercial" : ""; ?>">
+			<ul class="item-type center">
 				<?php if ($commercial) : ?>
 				<span title="<?php echo $extension_data->fields->get('50'); ?>" class="label label-jcommercial">$</span> 
 				<?php endif; ?>
@@ -62,7 +62,7 @@ $commercial = strtolower($extension_data->fields->get('50')) != "non-commercial"
 				<?php endfor; ?>
 				<br />
 				<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data) . '#action'; ?>">
-				<?php echo JText::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS', $extension_data->link_votes, $extension_data->reviews); ?>
+				<?php echo JText::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS_LIST', $extension_data->link_votes, $extension_data->reviews); ?>
 				</a>
 			</p>
 		</div>
