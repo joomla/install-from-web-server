@@ -15,6 +15,7 @@ $extensions_singlegrid 	= new JLayoutFile('joomla.apps.extensions_singlegrid');
 $advanced_search	 	= new JLayoutFile('joomla.apps.advanced_search');
 $simple_search			= new JLayoutFile('joomla.apps.simple_search');
 $extension_data			= array('extensions' => $this->extensions, 'breadcrumbs' => $this->breadcrumbs, 'params' => $this->params);
+$order_data			= array('orderby' => $this->orderby);
 ?>
 <div class="com-apps-container">
 <div class="row-fluid">
@@ -24,7 +25,7 @@ $extension_data			= array('extensions' => $this->extensions, 'breadcrumbs' => $t
 	<div class="span9">
 		<div class="row-fluid">
 			<div class="span12">
-				<?php echo $simple_search->render(array()); ?>
+				<?php echo $simple_search->render($order_data); ?>
 			</div>
 		</div>
 
