@@ -25,9 +25,9 @@ $commercial = strtolower($extension_data->fields->get('50')) != "non-commercial"
 	</div>
 	<div class="item-icons">
 		<div class="item-parts">
-			<ul class="item-type center<?php echo $commercial ? " label-jlicense" : ""; ?>">
+			<ul class="item-type center<?php echo $commercial ? " label-jcommercial" : ""; ?>">
 				<?php if ($commercial) : ?>
-				<span title="<?php echo $extension_data->fields->get('50'); ?>" class="label label-jlicense">$</span> 
+				<span title="<?php echo $extension_data->fields->get('50'); ?>" class="label label-jcommercial">$</span> 
 				<?php endif; ?>
 				<?php if (in_array('com', $tags)) : ?>
 				<span title="<?php echo JText::_('COM_APPS_COMPONENT'); ?>" class="label label-jcomponent">C</span> 
