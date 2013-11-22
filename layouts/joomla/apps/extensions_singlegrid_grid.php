@@ -13,7 +13,7 @@ $tags = explode('|', trim($extension_data->fields->get('36')));
 $commercial = strtolower($extension_data->fields->get('50')) != "non-commercial" ? true : false;
 ?>
 <li class="item <?php echo $displayData['spanclass']; ?>">
-<div class="thumbnail" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>');">
+<div class="thumbnail">
 	<p class="rating center">
 		<?php for ($i = 1; $i < 6; $i++) : ?>
 			<?php if ($extension_data->rating + 0.25 >= $i) : ?>
@@ -26,43 +26,45 @@ $commercial = strtolower($extension_data->fields->get('50')) != "non-commercial"
 		<?php endfor; ?>
 		<br />
 		<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data) . '#action'; ?>">
-		<?php echo JText::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS', $extension_data->link_votes, $extension_data->reviews); ?>
+		<?php echo JText::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS_LIST', $extension_data->link_votes, $extension_data->reviews); ?>
 		</a>
 	</p>
-	<div class="center item-image">
-		<!--<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>">-->
-			<img src="<?php echo $extension_data->image; ?>" class="img center" />
-		<!--</a>-->
-	</div>
-	<ul class="item-type center<?php echo $commercial ? " label-jcommercial" : ""; ?>">
-		<?php if ($commercial) : ?>
-		<span title="<?php echo $extension_data->fields->get('50'); ?>" class="label label-jcommercial">$</span> 
-		<?php endif; ?>
-		<?php if (in_array('com', $tags)) : ?>
-		<span title="<?php echo JText::_('COM_APPS_COMPONENT'); ?>" class="label label-jcomponent">C</span> 
-		<?php endif; ?>
-		<?php if (in_array('lang', $tags)) : ?>
-		<span title="<?php echo JText::_('COM_APPS_LANGUAGE'); ?>" class="label label-jlanguage">L</span>
-		<?php endif; ?>
-		<?php if (in_array('mod', $tags)) : ?>
-		<span title="<?php echo JText::_('COM_APPS_MODULE'); ?>" class="label label-jmodule">M</span> 
-		<?php endif; ?>
-		<?php if (in_array('plugin', $tags)) : ?>
-		<span title="<?php echo JText::_('COM_APPS_PLUGIN'); ?>" class="label label-jplugin">P</span> 
-		<?php endif; ?>
-		<?php if (in_array('esp', $tags)) : ?>
-		<span title="<?php echo JText::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?>" class="label label-jspecial">S</span> 
-		<?php endif; ?>
-		<?php if (in_array('tool', $tags)) : ?>
-		<span title="<?php echo JText::_('COM_APPS_TOOL'); ?>" class="label label-jtool">T</span> 
-		<?php endif; ?>
-	</ul>
-	<h4 class="center muted">
-		<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>"><?php echo trim($extension_data->name); ?></a>
-	</h4>
-	<div class="item-description">
-		<?php echo mb_strlen(trim($extension_data->description)) > 400 ? mb_substr(trim($extension_data->description), 0, mb_stripos(trim($extension_data->description), ' ', 400)) . '...' : trim($extension_data->description); ?>
-		<div class="fader">&nbsp;</div>
+	<div onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>');">
+		<div class="center item-image">
+			<!--<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>">-->
+				<img src="<?php echo $extension_data->image; ?>" class="img center" />
+			<!--</a>-->
+		</div>
+		<ul class="item-type center">
+			<?php if ($commercial) : ?>
+			<span title="<?php echo $extension_data->fields->get('50'); ?>" class="label label-jcommercial">$</span> 
+			<?php endif; ?>
+			<?php if (in_array('com', $tags)) : ?>
+			<span title="<?php echo JText::_('COM_APPS_COMPONENT'); ?>" class="label label-jcomponent">C</span> 
+			<?php endif; ?>
+			<?php if (in_array('lang', $tags)) : ?>
+			<span title="<?php echo JText::_('COM_APPS_LANGUAGE'); ?>" class="label label-jlanguage">L</span>
+			<?php endif; ?>
+			<?php if (in_array('mod', $tags)) : ?>
+			<span title="<?php echo JText::_('COM_APPS_MODULE'); ?>" class="label label-jmodule">M</span> 
+			<?php endif; ?>
+			<?php if (in_array('plugin', $tags)) : ?>
+			<span title="<?php echo JText::_('COM_APPS_PLUGIN'); ?>" class="label label-jplugin">P</span> 
+			<?php endif; ?>
+			<?php if (in_array('esp', $tags)) : ?>
+			<span title="<?php echo JText::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?>" class="label label-jspecial">S</span> 
+			<?php endif; ?>
+			<?php if (in_array('tool', $tags)) : ?>
+			<span title="<?php echo JText::_('COM_APPS_TOOL'); ?>" class="label label-jtool">T</span> 
+			<?php endif; ?>
+		</ul>
+		<h4 class="center muted">
+			<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>"><?php echo trim($extension_data->name); ?></a>
+		</h4>
+		<div class="item-description">
+			<?php echo mb_strlen(trim($extension_data->description)) > 400 ? mb_substr(trim($extension_data->description), 0, mb_stripos(trim($extension_data->description), ' ', 400)) . '...' : trim($extension_data->description); ?>
+			<div class="fader">&nbsp;</div>
+		</div>
 	</div>
 </div>
 </li>
