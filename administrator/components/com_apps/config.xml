@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+        <fieldset
+                name="database"
+                label="COM_APPS_DATABASE_CONFIG_LABEL"
+                description="COM_APPS_DATABASE_CONFIG_DESC"
+        >
+		<field name="host"
+			type="text"
+			default="localhost"
+			label="COM_APPS_CONFIG_HOST_LABEL"
+			description="COM_APPS_CONFIG_HOST_DESC">
+		</field>
+		<field name="port"
+			type="text"
+			default="3306"
+			label="COM_APPS_CONFIG_PORT_LABEL"
+			description="COM_APPS_CONFIG_PORT_DESC">
+		</field>
+		<field name="database"
+			type="text"
+			default="ext_ducksoup"
+			label="COM_APPS_CONFIG_DATABASE_LABEL"
+			description="COM_APPS_CONFIG_DATABASE_DESC">
+		</field>
+		<field name="user"
+			type="text"
+			default="root"
+			label="COM_APPS_CONFIG_USER_LABEL"
+			description="COM_APPS_CONFIG_USER_DESC">
+		</field>
+		<field name="password"
+			type="text"
+			default="password"
+			label="COM_APPS_CONFIG_PASSWORD_LABEL"
+			description="COM_APPS_CONFIG_PASSWORD_DESC">
+		</field>
+        </fieldset>
+        <fieldset
+                name="details"
+                label="COM_APPS_DETAILS_CONFIG_LABEL"
+                description="COM_APPS_DETAILS_CONFIG_DESC"
+        >
+		<field name="cdn"
+			type="text"
+			default="cdn"
+			label="COM_APPS_CONFIG_CDN_LABEL"
+			description="COM_APPS_CONFIG_CDN_DESC">
+		</field>
+		<field name="route_prefix"
+			type="text"
+			default=""
+			label="COM_APPS_CONFIG_ROUTING_PREFIX_LABEL"
+			description="COM_APPS_CONFIG_ROUTING_PREFIX_DESC">
+		</field>
+        </fieldset>
+        <fieldset
+                name="data"
+                label="COM_APPS_DATA_CONFIG_LABEL"
+        >
+		<field name="default_limit"
+			type="text"
+			default="8"
+			label="COM_APPS_CONFIG_DEFAULT_LIMIT_LABEL"
+			description="COM_APPS_CONFIG_DEFAULT_LIMIT_DESC">
+		</field>
+		<field name="extensions_perrow"
+			type="text"
+			default="4"
+			label="COM_APPS_CONFIG_PERROW">
+		</field>
+		<field name="fieldid_download_type"
+			type="text"
+			default=""
+			label="COM_APPS_DATA_MOSETSFIELDS_LABEL_DOWNLOADTYPE">
+		</field>
+		<field name="fieldid_download_url"
+			type="text"
+			default=""
+			label="COM_APPS_DATA_MOSETSFIELDS_LABEL_DOWNLOADURL">
+		</field>
+		<field name="default_image_path"
+			type="text"
+			default=""
+			label="COM_APPS_DATA_DEFAULT_IMAGE">
+		</field>
+        </fieldset>
+</config>
