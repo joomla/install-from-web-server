@@ -10,7 +10,7 @@
 defined('JPATH_BASE') or die;
 $extension_data = $displayData['extension']; //print_r($extension_data);
 $tags = explode('|', trim($extension_data->fields->get('36')));
-$commercial = strtolower($extension_data->fields->get('50')) != "non-commercial" ? true : false;
+$commercial = strtolower($extension_data->fields->get('50')) != "free" ? true : false;
 ?>
 <li class="item <?php echo $displayData['spanclass']; ?>">
 <div class="thumbnail">
