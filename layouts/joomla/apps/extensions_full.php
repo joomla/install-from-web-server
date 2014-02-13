@@ -126,11 +126,11 @@ if(JDEBUG) {
 				<button class="install btn btn-success" id="appssubmitbutton" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>');" type="submit"><span class="icon-cart"></span> <?php echo JText::_('COM_APPS_INSTALL_PURCHASE') . "&hellip;"; ?></button>
 				<?php endif; ?>&nbsp;&nbsp;&nbsp;
 			<?php elseif ($extension_data->fields->get('29')) : ?>
-				<?php if ((is_numeric($extension_data->type) && $extension_data->type == 0) || $extension_data->type == 1 || (strtolower($extension_data->fields->get('50')) == "non-commercial" && strtolower($extension_data->fields->get('38')) != "require registration to download")): ?>
+				<?php if ((is_numeric($extension_data->type) && $extension_data->type == 0) || $extension_data->type == 1 || (strtolower($extension_data->fields->get('50')) == "free" && strtolower($extension_data->fields->get('38')) != "require registration to download")): ?>
 				<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->fields->get('29'); ?>"><span class="icon-download"></span> <?php echo JText::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
-				<?php elseif ($extension_data->type == 2 || (strtolower($extension_data->fields->get('50')) == "non-commercial" && strtolower($extension_data->fields->get('38')) == "require registration to download")): ?>
+				<?php elseif ($extension_data->type == 2 || (strtolower($extension_data->fields->get('50')) == "free" && strtolower($extension_data->fields->get('38')) == "require registration to download")): ?>
 				<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->fields->get('29'); ?>"><span class="icon-pencil"></span> <?php echo JText::_('COM_APPS_INSTALL_REGISTER_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
-				<?php elseif ($extension_data->type == 3 || (strtolower($extension_data->fields->get('50')) != "non-commercial")): ?>
+				<?php elseif ($extension_data->type == 3 || (strtolower($extension_data->fields->get('50')) != "free")): ?>
 				<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->fields->get('29'); ?>"><span class="icon-cart"></span> <?php echo JText::_('COM_APPS_INSTALL_PURCHASE_EXTERNAL') . "&hellip;"; ?></a>
 				<?php endif; ?>&nbsp;&nbsp;&nbsp;
 			<?php endif; ?>
