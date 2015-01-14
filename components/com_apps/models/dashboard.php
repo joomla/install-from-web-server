@@ -191,7 +191,7 @@ class AppsModelDashboard extends JModelList
 		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
 
 		$release = intval($release / 5) * 5;
-
+/*
 		// Get remote database
 		$db = $this->getRemoteDB();
 		
@@ -265,6 +265,15 @@ class AppsModelDashboard extends JModelList
 		$query->order($order);
 		$db->setQuery($query);
 		$items = $db->loadObjectList();
+		*/
+		$cache = JFactory::getCache();
+		$cache->setCaching( 1 );
+		$http = new JHttp;
+		$categories_json = $cache->call(array($http, 'get'), 'http://extensions.joomla.org/index.php?option=com_jed&controller=filter&view=extension&format=json&limit=20&limitstart=0');
+
+		$items = json_decode($categories_json->body);
+		$items = $items->data;
+	
 		
 		// Get CDN URL
 		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
@@ -272,10 +281,12 @@ class AppsModelDashboard extends JModelList
 		// Populate array
 		$extensions = array(0=>array(), 1=>array());
 		foreach ($items as $item) {
+			print_r($item);
 			$options = new JRegistry($item->options);
-			$item->image = $this->getBaseModel()->getMainImageUrl($item->image);
+			$item->image = $this->getBaseModel()->getMainImageUrl($item);
+			$item->rating = 3;
 			$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
-			$item->fields = $options;
+
 			if ($search) {
 				$extensions[1 - $item->foundintitle][] = $item;
 			}

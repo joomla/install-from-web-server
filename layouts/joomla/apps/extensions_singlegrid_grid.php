@@ -9,8 +9,8 @@
 
 defined('JPATH_BASE') or die;
 $extension_data = $displayData['extension']; //print_r($extension_data);
-$tags = explode('|', trim($extension_data->fields->get('36')));
-$commercial = strtolower($extension_data->fields->get('50')) != "free" ? true : false;
+$tags = $extension_data->includes->value;
+$commercial = $extension_data->type->value != "free" ? true : false;
 ?>
 <li class="item <?php echo $displayData['spanclass']; ?>">
 <div class="thumbnail">
@@ -59,10 +59,10 @@ $commercial = strtolower($extension_data->fields->get('50')) != "free" ? true : 
 			<?php endif; ?>
 		</ul>
 		<h4 class="center muted">
-			<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>"><?php echo trim($extension_data->name); ?></a>
+			<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id}"); ?>"><?php echo trim($extension_data->core_title->value); ?></a>
 		</h4>
 		<div class="item-description">
-			<?php echo mb_strlen(trim($extension_data->description)) > 400 ? mb_substr(trim($extension_data->description), 0, mb_stripos(trim($extension_data->description), ' ', 400)) . '...' : trim($extension_data->description); ?>
+			<?php echo mb_strlen(trim($extension_data->core_body->value)) > 400 ? mb_substr(trim($extension_data->core_body->value), 0, mb_stripos(trim($extension_data->description), ' ', 400)) . '...' : trim($extension_data->core_body->value); ?>
 			<div class="fader">&nbsp;</div>
 		</div>
 	</div>
