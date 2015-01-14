@@ -256,6 +256,9 @@ class AppsModelCategory extends JModelList
 	
 	public function getExtensions()
 	{
+		
+		return array();
+		
 		// Get catid, search filter, order column, order direction
 		$componentParams 	= JComponentHelper::getParams('com_apps');
 		$input 				= new JInput;

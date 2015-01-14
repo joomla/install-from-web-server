@@ -66,11 +66,13 @@ class AppsModelBase extends JModelList
 		
 	}
 	
-	public function getMainImageUrl($image) {
+	public function getMainImageUrl($item) {
 		
 		$componentParams = JComponentHelper::getParams('com_apps');
 		$default_image = $componentParams->get('default_image_path');
-		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
+		$cdn = trim($componentParams->get('cdn'), '/') . "/";
+		$image = $item->logo_value->path;
+		
 		if ($image) {
 			$url = $cdn . $image;
 		} else {
@@ -105,36 +107,16 @@ class AppsModelBase extends JModelList
 	{
 		if (!is_object($this->_categories))
 		{
-			// Get remote database
-			$db = $this->getRemoteDB();
-			
-			// Form query
-			$query = $db->getQuery(true);
-			$query->select(
-				array(
-					'cat_id AS id',
-					'cat_name AS name',
-					'alias',
-					'cat_desc AS description',
-					'cat_parent AS parent',
-				)
-			);
-			$query->from('jos_mt_cats');
-			$query->where(
-				array(
-					'cat_published = 1',
-					'cat_approved = 1',
-				)
-			);
-			$query->order('cat_parent, cat_name ASC');
-			$db->setQuery($query);
-			$items = $db->loadObjectList();
-			
-			$db->setQuery('SELECT FOUND_ROWS()');
-			$this->_total = $db->loadResult();
+			$cache = JFactory::getCache();
+			$cache->setCaching( 1 );
+			$http = new JHttp;
+			$categories_json = $cache->call(array($http, 'get'), 'http://extensions.joomla.org/index.php?option=com_jed&view=category&layout=list&format=json&order=level&limit=-1');
+
+			$items = json_decode($categories_json->body);
+			$this->_total = count($items);
 
 			// Properties to be populated
-			$properties = array('id', 'name', 'alias', 'description', 'parent');
+			$properties = array('id', 'title', 'alias', 'parent');
 			
 			// Array to collect children categories
 			$children = array();
@@ -150,7 +132,7 @@ class AppsModelBase extends JModelList
 			foreach ($items as $item)
 			{
 				// Skip root category
-				if (trim(strtolower($item->name)) == 'root')
+				if (trim(strtolower($item->title->value)) == 'root')
 				{
 					continue;
 				}
@@ -159,43 +141,44 @@ class AppsModelBase extends JModelList
 				$parent =& $this->_categories;
 				
 				// Create empty array to populate with parent category's children
-				if ($item->parent and !array_key_exists($item->parent, $children))
+				if ($item->parent_id->value > 0 && !array_key_exists($item->parent_id->value, $children))
 				{
-					$children[$item->parent] = array();
+					$children[$item->parent_id->value] = array();
 				}
 				
 				// Change value of parent linking to children array
-				if ($item->parent)
+				if ($item->parent_id->value)
 				{
-					$parent =& $children[$item->parent];
+					$parent =& $children[$item->parent_id->value];
 				}
 				
 				// Populate category with values
-				$parent[$item->id] = new stdclass;
-				$parent[$item->id]->active = false;
-				foreach ($properties as $p)
-				{
-					$parent[$item->id]->{$p} = $item->{$p};
-				}
+				$parent[$item->id->value] = new stdclass;
+				$parent[$item->id->value]->active = false;
+				
+				$parent[$item->id->value]->id = $item->id->value;
+				$parent[$item->id->value]->name = $item->title->value;
+				$parent[$item->id->value]->alias = $item->alias->value;
+				$parent[$item->id->value]->parent = $item->parent_id->value;
 				
 				// Mark selected category
-				$parent[$item->id]->selected = false;
-				if ($parent[$item->id]->id == $catid)
+				$parent[$item->id->value]->selected = false;
+				if ($parent[$item->id->value]->id == $catid)
 				{
-					$parent[$item->id]->selected = true;
+					$parent[$item->id->value]->selected = true;
 				}
 
 				// Create empty array for current category's own children
-				if (!array_key_exists($item->id, $children))
+				if (!array_key_exists($item->id->value, $children))
 				{
-					$children[$item->id] = array();
+					$children[$item->id->value] = array();
 				}
-				$parent[$item->id]->children =& $children[$item->id];
-				$refs[$item->id] =& $parent[$item->id];
-				if (in_array($item->id, $active))
+				$parent[$item->id->value]->children =& $children[$item->id->value];
+				$refs[$item->id->value] =& $parent[$item->id->value];
+				if (in_array($item->id->value, $active))
 				{
-					$parent[$item->id]->active = true;
-					$id = $item->id;
+					$parent[$item->id->value]->active = true;
+					$id = $item->id->value;
 					do
 					{
 						if (!array_key_exists($id, $refs)) {
