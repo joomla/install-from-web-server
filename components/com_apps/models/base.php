@@ -71,36 +71,13 @@ class AppsModelBase extends JModelList
 		$componentParams = JComponentHelper::getParams('com_apps');
 		$default_image = $componentParams->get('default_image_path');
 		$cdn = trim($componentParams->get('cdn'), '/') . "/";
-		$image = $item->logo_value->path;
+		$image = $item->logo->value[0]->path ? $item->logo->value[0]->path : $item->images->value[0]->path;
 		
-		if ($image) {
-			$url = $cdn . $image;
-		} else {
-			$url = $default_image;
-		}
-		
-		return $url;
+		return $image;
 	}
 	public static function getEntryUrl($entryId)
 	{
 		return $this->_baseURL . '&view=extension&id=' . $entryId;
-	}
-	
-	public function getRemoteDB() {
-		if (!is_object($this->_remotedb)) {
-			jimport('joomla.application.component.helper');
-			$componentParams = JComponentHelper::getParams('com_apps');
-
-			$fields = array('driver', 'host', 'user', 'password', 'database', 'port');
-			$options = array();
-		
-			foreach ($fields as $field) {
-				$options[$field] = $componentParams->get($field);
-			}
-		
-			$this->_remotedb = JDatabaseDriver::getInstance( $options );
-		}
-		return $this->_remotedb;
 	}
 	
 	public function getCategories($catid)

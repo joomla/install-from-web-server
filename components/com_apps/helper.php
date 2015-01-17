@@ -21,9 +21,9 @@ class AppsHelper {
 	static function getJEDUrl($item) {
 		$url = 'http://extensions.joomla.org/';
 		
-		if (!isset($item->link_id)) { return $url; }
+		if (!isset($item->id->value)) { return $url; }
 
-		$url .= 'index.php?option=com_mtree&task=viewlink&link_id=' . $item->link_id;
+		$url .= 'index.php?option=com_jed&view=extension&layout=default&id=' . $item->id->value;
 		return $url;
 	}
 	
@@ -32,7 +32,7 @@ class AppsHelper {
 		
 		if (!$catid) { return $url; }
 
-		$url .= 'index.php?option=com_mtree&task=viewcat&cat_id=' . $catid;
+		$url .= 'index.php?option=com_jed&view=category&layout=list&id=' . $catid;
 		return $url;
 	}
 }

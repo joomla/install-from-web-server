@@ -33,6 +33,8 @@ class AppsModelExtension extends JModelList
 	protected $_extension = 'com_apps';
 
 	private $_parent = null;
+	
+	private $_catid = null;
 
 	private $_items = null;
 	
@@ -130,11 +132,6 @@ class AppsModelExtension extends JModelList
 		return $this->_parent;
 	}
 
-	private function getRemoteDB() {
-		$base_model = $this->getBaseModel();
-		return $base_model->getRemoteDB();
-	}
-	
 	private function getBaseModel()
 	{
 		$base_model = JModelLegacy::getInstance('Base', 'AppsModel');
@@ -143,19 +140,7 @@ class AppsModelExtension extends JModelList
 	
 	private function getCatID()
 	{
-		$input = new JInput;
-		$id = $input->get('id', null, 'int');
-
-		// Get remote database
-		$db = $this->getRemoteDB();
-		
-		// Get category id
-		$query = $db->getQuery(true);
-		$query->select('cat_id');
-		$query->from('jos_mt_cl');
-		$query->where('link_id = ' . (int)$id);
-		$db->setQuery($query);
-		return $db->loadResult();
+		return $this->_catid;
 	}
 	
 	public function getCategories()
@@ -179,70 +164,41 @@ class AppsModelExtension extends JModelList
 	public function getExtension()
 	{
 		// Get extension id
-		$input = new JInput;
-		$id = $input->get('id', null, 'int');
-		$release = preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
-		$release = intval($release / 5) * 5;
-		
-		// Get remote database
-		$db = $this->getRemoteDB();
-		
-		$query = 'SET SESSION group_concat_max_len=150000';
-		$db->setQuery($query);
-		$db->execute();
-		
-		// Form query
-		$query = $db->getQuery(true);
-		$query->select(
-			array(
-				't2.*',
-				't3.filename AS image',
-				't6.cat_name AS cat_name',
-				't6.cat_id AS cat_id',
-				'CONCAT("{", GROUP_CONCAT(DISTINCT "\"", t5.cf_id, "\":\"", t4.value, "\""), "}") AS options',
-				'COUNT(DISTINCT t7.rev_id) AS reviews',
-			)
-		);
+		$cache 						= JFactory::getCache();
+		$cache->setCaching( 1 );
+		$http 						= new JHttp;
+		$api_url 					= new JUri;
+		$input 						= new JInput;
+		$id 							= $input->get('id', null, 'int');
+		$release 					= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
+		$release 					= intval($release / 5) * 5;
 
+		$api_url->setScheme('http');
+		$api_url->setHost('extensions.joomla.org/index.php');
+		$api_url->setvar('option', 'com_jed');
+		$api_url->setvar('controller', 'filter');
+		$api_url->setvar('view', 'extension');
+		$api_url->setvar('format', 'json');
+		$api_url->setvar('filter[approved]', '1');
+		$api_url->setvar('filter[published]', '1');
+		$api_url->setvar('extend', '0');
+		$api_url->setvar('filter[id]', $id);
 
-		$query->from('jos_mt_links AS t2');
-		$query->join('LEFT', 'jos_mt_cl AS t1 ON t1.link_id = t2.link_id');
-		$query->join('LEFT', 'jos_mt_images AS t3 ON t3.link_id = t2.link_id');
-		$query->join('LEFT', 'jos_mt_cfvalues AS t4 ON t2.link_id = t4.link_id');
-		$query->join('LEFT', 'jos_mt_customfields AS t5 ON t4.cf_id = t5.cf_id');
-		$query->join('LEFT', 'jos_mt_cats AS t6 ON t6.cat_id = t1.cat_id');
-		$query->join('LEFT', 'jos_mt_reviews AS t7 ON t7.link_id = t2.link_id');
-		$query->join('RIGHT', 'jos_mt_cfvalues AS t8 ON t8.link_id = t2.link_id AND t8.cf_id = 37 AND ("'.$release.'" REGEXP t8.value OR t8.value = "")');
-
-		$where = array(
-			't2.link_id = ' . (int)$id,
-			't2.link_published = 1',
-			't2.link_approved = 1',
-			'(t2.publish_up <= NOW() OR t2.publish_up = "0000-00-00 00:00:00")',
-			'(t2.publish_down >= NOW() OR t2.publish_down = "0000-00-00 00:00:00")',
-		);
-
-		$query->where($where);
-		$query->group('t2.link_id');
-		$db->setQuery($query);
-		$item = $db->loadObject();
-
-		// Get CDN URL
-		$componentParams = JComponentHelper::getParams('com_apps');
-		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
+		$extension_json = $cache->call(array($http, 'get'), $api_url);
 		
 		// Create item
-		$options = new JRegistry($item->options);
-		$item->image = $this->getBaseModel()->getMainImageUrl($item->image);
-		$item->fields = $options;
-		$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
+		$items = json_decode($extension_json->body);
+		$item = $items->data[0];
+		$this->_catid = $item->core_catid->value;
+		$item->image = $this->getBaseModel()->getMainImageUrl($item);
+		$item->downloadurl = $item->download_integration_url->value;
 		if (preg_match('/\.xml\s*$/', $item->downloadurl)) {
 			$app = JFactory::getApplication();
 			$product = addslashes(base64_decode($app->input->get('product', '', 'base64')));
 			$release = preg_replace('/[^\d\.]/', '', base64_decode($app->input->get('release', '', 'base64')));
 			$dev_level = (int) base64_decode($app->input->get('dev_level', '', 'base64'));
 
-			$updatefile = JPATH_ROOT . DIRECTORY_SEPARATOR . 'libraries' . DIRECTORY_SEPARATOR . 'joomla' . DIRECTORY_SEPARATOR . 'updater' . DIRECTORY_SEPARATOR . 'update.php';
+			$updatefile = JPATH_ROOT . '/libraries/joomla/updater/update.php';
 			$fh = fopen($updatefile, 'r');
 			$theData = fread($fh, filesize($updatefile));
 			fclose($fh);
@@ -261,7 +217,7 @@ class AppsModelExtension extends JModelList
 				$item->downloadurl = $package_url_node->_data;
  			}
 		}
-		$item->type = $this->getTypeEnum($options->get($componentParams->get('fieldid_download_type')));
+		$item->type = $this->getTypeEnum($item->download_integration_type->value);
 		
 		return array($item);
 		
