@@ -46,7 +46,7 @@ class AppsModelDashboard extends JModelList
 	
 	private $_total = null;
 	
-	private $_orderby = 't2.link_hits';
+	private $_orderby = 'score';
 	
 	/**
 	 * Method to auto-populate the model state.
@@ -176,21 +176,46 @@ class AppsModelDashboard extends JModelList
 	public function getExtensions()
 	{
 		// Get catid, search filter, order column, order direction
+		$cache 						= JFactory::getCache();
+		$cache->setCaching( 1 );
+		$http 						= new JHttp;
 		$componentParams 	= JComponentHelper::getParams('com_apps');
+		$api_url 					= new JUri;
 		$default_limit		= $componentParams->get('default_limit', 8);
-		$input 				= new JInput;
-		$catid 				= $input->get('id', null, 'int');
-		$order 				= $input->get('ordering', $this->getOrderBy());
-		$orderCol 			= $this->state->get('list.ordering', $order);
-		$orderDirn 			= $orderCol == 't2.link_name' ? 'ASC' : 'DESC';
-		$order 				= $this->getBaseModel()->getOrder($orderCol, $orderDirn);
-		$release			= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
-		$limitstart 		= $input->get('limitstart', 0, 'int');
-		$limit 				= $input->get('limit', $default_limit, 'int');
+		$input 						= new JInput;
+		$catid 						= $input->get('id', null, 'int');
+		$order 						= $input->get('ordering', $this->getOrderBy());
+		$orderCol 				= $this->state->get('list.ordering', $order);
+		$orderDirn 				= $orderCol == 'core_title' ? 'ASC' : 'DESC';
+		$order 						= $this->getBaseModel()->getOrder($orderCol, $orderDirn);
+		$release					= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
+		$limitstart 			= $input->get('limitstart', 0, 'int');
+		$limit 						= $input->get('limit', $default_limit, 'int');
 		$dashboard_limit	= $componentParams->get('extensions_perrow') * 6; // 6 rows of extensions
-		$search 			= str_replace('_', ' ', urldecode($input->get('filter_search', null)));
+		$search 					= str_replace('_', ' ', urldecode(trim($input->get('filter_search', null))));
 
 		$release = intval($release / 5) * 5;
+		
+		$api_url->setScheme('http');
+		$api_url->setHost('extensions.joomla.org/index.php');
+		$api_url->setvar('option', 'com_jed');
+		$api_url->setvar('controller', 'filter');
+		$api_url->setvar('view', 'extension');
+		$api_url->setvar('format', 'json');
+		$api_url->setvar('limit', $limit);
+		$api_url->setvar('limitstart', $limitstart);
+		$api_url->setvar('filter[approved]', '1');
+		$api_url->setvar('filter[published]', '1');
+		$api_url->setvar('extend', '0');
+		$api_url->setvar('order', $orderCol);
+		$api_url->setvar('dir', $orderDirn);
+		
+		if ($search)
+		$api_url->setvar('searchall', $search);
+		
+		//echo $api_url;
+		$extensions_json = $cache->call(array($http, 'get'), $api_url);
+		
 /*
 		// Get remote database
 		$db = $this->getRemoteDB();
@@ -266,13 +291,10 @@ class AppsModelDashboard extends JModelList
 		$db->setQuery($query);
 		$items = $db->loadObjectList();
 		*/
-		$cache = JFactory::getCache();
-		$cache->setCaching( 1 );
-		$http = new JHttp;
-		$categories_json = $cache->call(array($http, 'get'), 'http://extensions.joomla.org/index.php?option=com_jed&controller=filter&view=extension&format=json&limit=20&limitstart=0');
 
-		$items = json_decode($categories_json->body);
+		$items = json_decode($extensions_json->body);
 		$items = $items->data;
+		//$this->_total = count($items);
 	
 		
 		// Get CDN URL
@@ -281,11 +303,9 @@ class AppsModelDashboard extends JModelList
 		// Populate array
 		$extensions = array(0=>array(), 1=>array());
 		foreach ($items as $item) {
-			print_r($item);
-			$options = new JRegistry($item->options);
+			//print_r($item);
 			$item->image = $this->getBaseModel()->getMainImageUrl($item);
-			$item->rating = 3;
-			$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
+			//$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
 
 			if ($search) {
 				$extensions[1 - $item->foundintitle][] = $item;
