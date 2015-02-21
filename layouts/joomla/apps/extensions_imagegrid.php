@@ -75,6 +75,7 @@ $layouts = array('grid', 'list');
 				// The single extension box is loaded using the JLayout
 				$i = 0;
 				foreach ($displayData['extensions'] as $extension) :
+					// @todo Looks unsed maybe removing the following line? 
 					// $ratingwidth = round(70 * ($extension->rating / 5));
 					if ($i != 0 && $i%$extensions_perrow == 0 && $layout != 'list') { 
 			?>
