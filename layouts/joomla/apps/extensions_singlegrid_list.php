@@ -16,7 +16,7 @@ $commercial = $extension_data->type->value != "free" ? true : false;
 <div class="thumbnail">
 	<div class="item-header" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id->value}"); ?>');">
 		<h4 class="muted">
-			<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id->value}"); ?>"><?php echo trim($extension_data->name); ?></a>
+			<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id->value}"); ?>"><?php echo trim($extension_data->core_title->value); ?></a>
 		</h4>
 	</div>
 	<div class="item-description" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl("view=extension&id={$extension_data->id->value}"); ?>');">
