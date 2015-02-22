@@ -33,17 +33,17 @@ class AppsModelExtension extends JModelList
 	protected $_extension = 'com_apps';
 
 	private $_parent = null;
-	
+
 	private $_catid = null;
 
 	private $_items = null;
-	
+
 	private $_remotedb = null;
-	
+
 	public $_extensionstitle = null;
-	
+
 	private $_categories = null;
-	
+
 	private $_breadcrumbs = array();
 
 	/**
@@ -137,12 +137,12 @@ class AppsModelExtension extends JModelList
 		$base_model = JModelLegacy::getInstance('Base', 'AppsModel');
 		return $base_model;
 	}
-	
+
 	private function getCatID()
 	{
 		return $this->_catid;
 	}
-	
+
 	public function getCategories()
 	{
 		$base_model = $this->getBaseModel();
@@ -154,13 +154,13 @@ class AppsModelExtension extends JModelList
 		$base_model = $this->getBaseModel();
 		return $base_model->getBreadcrumbs($this->getCatID());
 	}
-	
+
 	public function getPluginUpToDate()
 	{
 		$base_model = $this->getBaseModel();
 		return $base_model->getPluginUpToDate();
 	}
-	
+
 	public function getExtension()
 	{
 		// Get extension id
@@ -185,7 +185,7 @@ class AppsModelExtension extends JModelList
 		$api_url->setvar('filter[id]', $id);
 
 		$extension_json = $cache->call(array($http, 'get'), $api_url);
-		
+
 		// Create item
 		$items = json_decode($extension_json->body);
 		$item = $items->data[0];
@@ -207,7 +207,7 @@ class AppsModelExtension extends JModelList
 			$theData = str_replace('$ver->PRODUCT', "'".$product."'", $theData);
 			$theData = str_replace('$ver->RELEASE', "'".$release."'", $theData);
 			$theData = str_replace('$ver->DEV_LEVEL', "'".$dev_level."'", $theData);
-			
+
 			eval($theData);
 
 			$update = new JUpdate;
@@ -217,19 +217,19 @@ class AppsModelExtension extends JModelList
 				$item->downloadurl = $package_url_node->_data;
  			}
 		}
-		$item->type = $this->getTypeEnum($item->download_integration_type->value);
-		
+		$item->download_type = $this->getTypeEnum($item->download_integration_type->value);
+
 		return array($item);
-		
+
 	}
-	
+
 	private function getTypeEnum($text) {
 		$options = array();
 		$options[0] = 'None';
 		$options[1] = 'Free Direct Download link:';
 		$options[2] = 'Free but Registration required at link:';
 		$options[3] = 'Commercial purchase required at link:';
-		
+
 		return array_search($text, $options);
 	}
 

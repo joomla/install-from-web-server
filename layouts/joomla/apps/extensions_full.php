@@ -99,28 +99,28 @@ if(JDEBUG) {
 
 		<div class="clearfix"></div>
 
-		<?php if ($extension_data->type > 1): ?>
+		<?php if ($extension_data->download_type > 1): ?>
 		<input id="joomlaapsinstallatinput" type="hidden" name="installat" value="" />
 		<input id="joomlaapsinstallfrominput" type="hidden" name="installfrom" value="<?php echo $extension_data->downloadurl; ?>" />
 		<input type="hidden" name="installapp" value="<?php echo $extension_data->link_id; ?>" />
 		<?php endif; ?>
 		<div class="item-buttons form-actions">
-			<?php if ($extension_data->downloadurl && is_numeric($extension_data->type)): ?>
-				<?php if ($extension_data->type == 0): ?>
+			<?php if ($extension_data->downloadurl && is_numeric($extension_data->download_type)): ?>
+				<?php if ($extension_data->download_type == 0): ?>
 				<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->downloadurl; ?>"><span class="icon-download"></span> <?php echo JText::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
-				<?php elseif ($extension_data->type == 1): ?>
+				<?php elseif ($extension_data->download_type == 1): ?>
 				<a class="install btn btn-success" href="#" onclick="return Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>', '<?php echo $extension_data->core_title->value; ?>')"><span class="icon-checkmark"></span> <?php echo JText::_('COM_APPS_INSTALL') . "&hellip;"; ?></a>
-				<?php elseif ($extension_data->type == 2): ?>
+				<?php elseif ($extension_data->download_type == 2): ?>
 				<button class="install btn btn-success" id="appssubmitbutton" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>');" type="submit"><span class="icon-pencil"></span> <?php echo JText::_('COM_APPS_INSTALL_REGISTER') . "&hellip;"; ?></button>
-				<?php elseif ($extension_data->type == 3): ?>
+				<?php elseif ($extension_data->download_type == 3): ?>
 				<button class="install btn btn-success" id="appssubmitbutton" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>');" type="submit"><span class="icon-cart"></span> <?php echo JText::_('COM_APPS_INSTALL_PURCHASE') . "&hellip;"; ?></button>
 				<?php endif; ?>&nbsp;&nbsp;&nbsp;
 			<?php elseif ($extension_data->download_link->value) : ?>
-				<?php if ((is_numeric($extension_data->type) && $extension_data->type == 0) || $extension_data->type == 1 || (strtolower($extension_data->type->value) == "free" && !$extension_data->requires_registration->value)): ?>
+				<?php if ((is_numeric($extension_data->download_type) && $extension_data->download_type == 0) || $extension_data->download_type == 1 || (strtolower($extension_data->download_type->value) == "free" && !$extension_data->requires_registration->value)): ?>
 				<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-download"></span> <?php echo JText::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
-				<?php elseif ($extension_data->type == 2 || (strtolower($extension_data->type->value) == "free" && $extension_data->requires_registration->value)): ?>
+				<?php elseif ($extension_data->download_type == 2 || (strtolower($extension_data->download_type->value) == "free" && $extension_data->requires_registration->value)): ?>
 				<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-pencil"></span> <?php echo JText::_('COM_APPS_INSTALL_REGISTER_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
-				<?php elseif ($extension_data->type == 3 || (strtolower($extension_data->type->value) != "free")): ?>
+				<?php elseif ($extension_data->download_type == 3 || (strtolower($extension_data->download_type->value) != "free")): ?>
 				<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-cart"></span> <?php echo JText::_('COM_APPS_INSTALL_PURCHASE_EXTERNAL') . "&hellip;"; ?></a>
 				<?php endif; ?>&nbsp;&nbsp;&nbsp;
 			<?php endif; ?>
