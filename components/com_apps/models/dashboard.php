@@ -182,7 +182,6 @@ class AppsModelDashboard extends JModelList
 		$order 						= $input->get('ordering', $this->getOrderBy());
 		$orderCol 				= $this->state->get('list.ordering', $order);
 		$orderDirn 				= $orderCol == 'core_title' ? 'ASC' : 'DESC';
-		$order 						= $this->getBaseModel()->getOrder($orderCol, $orderDirn);
 		$release					= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
 		$limitstart 			= $input->get('limitstart', 0, 'int');
 		$limit 						= $input->get('limit', $default_limit, 'int');
