@@ -30,6 +30,9 @@ if(JDEBUG) {
 	<div class="full-item-container">
 		<h2>
 			<span><?php echo $extension_data->core_title->value; ?></span>
+			<?php if ($extension_data->popular->value == 1): ?>
+				 <span class="label label-info"><?php echo JText::_('COM_APPS_POPULAR_TEXT'); ?></span>
+			<?php endif; ?>
 		</h2>
 
 		<div id="item-left-container" class="pull-left">
@@ -134,7 +137,7 @@ if(JDEBUG) {
 			<p class="item-desc-title">
 				<strong><?php echo $extension_data->core_title->text; ?></strong>
 				<?php if ($extension_data->core_created_user_id->value): ?>
-					<?php echo JText::sprintf('COM_APPS_EXTENSION_AUTHOR', $extension_data->core_created_user_id->text); ?>
+					 <?php echo JText::sprintf('COM_APPS_EXTENSION_AUTHOR', $extension_data->core_created_user_id->text); ?>
 				<?php endif; ?>
 			</p>
 			<p class="item-desc-text" align="justify">
