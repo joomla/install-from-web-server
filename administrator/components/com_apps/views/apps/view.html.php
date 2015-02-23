@@ -43,7 +43,6 @@ class AppsViewApps extends JViewLegacy
 	protected function addToolBar() 
 	{
 			JToolbarHelper::title(JText::_('COM_APPS_ADMINISTRATION'), '');
-
 			JToolBarHelper::preferences('com_apps');
 	}
 
@@ -68,10 +67,9 @@ class AppsViewApps extends JViewLegacy
 		$count          = $clientXml->count();
 		$clientVersions = array();
 
-		for ($i = 0; $i < ($count); $i++)
+		for ($i = 0; $i < $count; $i++)
 		{
-			$ifwc = $clientXml->update[$i];
-
+			$ifwc             = $clientXml->update[$i];
 			$clientVersions[] = array(
 				'version'               => (string)$ifwc->version,
 				'targetplatformversion' => (string)$ifwc->targetplatform['version'],
