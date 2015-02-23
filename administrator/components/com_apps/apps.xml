@@ -8,7 +8,7 @@
  <authorEmail>admin@joomla.org</authorEmail>
  <authorUrl>www.joomla.org</authorUrl>
  <version>1.0.0</version>
- <description>COM_APPS_DESCRIPTION</description>
+ <description>COM_APPS_XML_DESCRIPTION</description>
  <files>
   <filename>apps.php</filename>
  </files>
