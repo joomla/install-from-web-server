@@ -9,3 +9,8 @@
 .row-fluid .extensions {
     width: 75%;
 }
+
+.com-apps-container .thumbnail .item-image img {
+	max-width: 100%;
+	max-height: 90%;
+}
