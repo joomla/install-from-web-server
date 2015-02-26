@@ -40,7 +40,7 @@ class AppsModelBase extends JModelList
 
 	private $_remotedb = null;
 
-	private $_categories = null;
+	private $_categories = array();
 
 	private $_children = array();
 
@@ -82,7 +82,7 @@ class AppsModelBase extends JModelList
 
 	public function getCategories($catid)
 	{
-		if (!is_object($this->_categories))
+		if (empty($this->_categories))
 		{
 			$cache = JFactory::getCache();
 			$cache->setCaching(1);
