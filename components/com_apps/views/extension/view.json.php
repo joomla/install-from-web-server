@@ -35,9 +35,9 @@ class AppsViewExtension extends JViewLegacy
 			$document = JFactory::getDocument();
 			$document->setMimeEncoding('application/javascript');
 		}
-
-		$this->categories	= $this->get('Categories');
+		
 		$this->extensions	= $this->get('Extension');
+		$this->categories	= $this->get('Categories');
 		$this->breadcrumbs	= $this->get('Breadcrumbs');
 		$this->params 		= new JRegistry();
 		
