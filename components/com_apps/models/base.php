@@ -32,13 +32,7 @@ class AppsModelBase extends JModelList
 	 */
 	protected $_extension = 'com_apps';
 
-	private $_parent = null;
-
-	private $_items = null;
-
 	private $_baseURL = 'index.php?format=json&option=com_apps';
-
-	private $_remotedb = null;
 
 	private $_categories = array();
 
@@ -66,15 +60,17 @@ class AppsModelBase extends JModelList
 
 	}
 
-	public function getMainImageUrl($item) {
-
+	public function getMainImageUrl($item)
+	{
 		$componentParams = JComponentHelper::getParams('com_apps');
-		$default_image = $componentParams->get('default_image_path');
-		$cdn = trim($componentParams->get('cdn'), '/') . "/";
-		$image = (isset($item->logo->value[0]->path) && $item->logo->value[0]->path) ? $item->logo->value[0]->path : $item->images->value[0]->path;
+		$default_image   = $componentParams->get('default_image_path');
+		$cdn             = trim($componentParams->get('cdn'), '/') . "/";
+		$image           = (isset($item->logo->value[0]->path) && $item->logo->value[0]->path)
+			? $item->logo->value[0]->path : $item->images->value[0]->path;
 
 		return $image;
 	}
+
 	public static function getEntryUrl($entryId)
 	{
 		return $this->_baseURL . '&view=extension&id=' . $entryId;
@@ -85,11 +81,13 @@ class AppsModelBase extends JModelList
 		if (empty($this->_categories))
 		{
 			$cache = JFactory::getCache();
+			$http  = new JHttp;
+
 			$cache->setCaching(1);
-			$http = new JHttp;
+
 			$categories_json = $cache->call(array($http, 'get'), 'http://extensions.joomla.org/index.php?option=com_jed&view=category&layout=list&format=json&order=order&limit=-1');
-			$items = json_decode($categories_json->body);
-			$this->_total = count($items);
+			$items           = json_decode($categories_json->body);
+			$this->_total    = count($items);
 
 			// Properties to be populated
 			$properties = array('id', 'title', 'alias', 'parent');
@@ -205,6 +203,7 @@ class AppsModelBase extends JModelList
 		// Add the Home item
 		$input = new JInput;
 		$view = $input->get('view', null);
+
 		$home = new stdClass();
 		$home->active      = $view == 'dashboard' ? true : false;
 		$home->id          = 0;
@@ -214,6 +213,7 @@ class AppsModelBase extends JModelList
 		$home->parent      = 0;
 		$home->selected    = ($view == 'dashboard' ? true : false);
 		$home->children    = array();
+
 		array_unshift($this->_categories, $home);
 
 		return $this->_categories;
@@ -225,6 +225,7 @@ class AppsModelBase extends JModelList
 		{
 			$this->getCategories($catid);
 		}
+
 		return $this->_breadcrumbs;
 	}
 
@@ -234,14 +235,15 @@ class AppsModelBase extends JModelList
 		{
 			$this->getCategories($catid);
 		}
+
 		return $this->_children;
 	}
 
 	public function getPluginUpToDate()
 	{
-		$input = new JInput;
+		$input  = new JInput;
 		$remote = preg_replace('/[^\d\.]/', '', base64_decode($input->get('pv', '', 'base64')));
-		$local = $this->_pv;
+		$local  = $this->_pv;
 		if (version_compare($remote, $local['latest']) >= 0)
 		{
 			return 1;
@@ -250,6 +252,7 @@ class AppsModelBase extends JModelList
 		{
 			return 0;
 		}
+
 		return -1;
 	}
 }
