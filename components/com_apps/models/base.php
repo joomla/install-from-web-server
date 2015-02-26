@@ -85,10 +85,9 @@ class AppsModelBase extends JModelList
 		if (!is_object($this->_categories))
 		{
 			$cache = JFactory::getCache();
-			$cache->setCaching( 1 );
+			$cache->setCaching(1);
 			$http = new JHttp;
-			$categories_json = $cache->call(array($http, 'get'), 'http://extensions.joomla.org/index.php?option=com_jed&view=category&layout=list&format=json&order=level&limit=-1');
-
+			$categories_json = $cache->call(array($http, 'get'), 'http://extensions.joomla.org/index.php?option=com_jed&view=category&layout=list&format=json&order=order&limit=-1');
 			$items = json_decode($categories_json->body);
 			$this->_total = count($items);
 
@@ -98,108 +97,124 @@ class AppsModelBase extends JModelList
 			// Array to collect children categories
 			$children = array();
 
-			// References to category objects
-			$refs = array();
-
 			// Array to collect active categories
 			$active = array($catid);
 
+			$breadcrumbRefs = array();
+
 			// Array to be returned
 			$this->_categories = array();
+
+			$this->_children = array();
+
 			foreach ($items as $item)
 			{
 				// Skip root category
-				if (trim(strtolower($item->title->value)) == 'root')
+				if (trim(strtolower($item->title->value)) === 'root')
 				{
 					continue;
 				}
 
-				// Base array is default parent for all categories
-				$parent =& $this->_categories;
+				$id       = (int) $item->id->value;
+				$parentId = (int) $item->parent_id->value;
 
-				// Create empty array to populate with parent category's children
-				if ($item->parent_id->value > 0 && !array_key_exists($item->parent_id->value, $children))
+				if ((int) $item->level->value > 1)
 				{
-					$children[$item->parent_id->value] = array();
-				}
-
-				// Change value of parent linking to children array
-				if ($item->parent_id->value)
-				{
-					$parent =& $children[$item->parent_id->value];
-				}
-
-				// Populate category with values
-				$parent[$item->id->value] = new stdclass;
-				$parent[$item->id->value]->active = false;
-
-				$parent[$item->id->value]->id = $item->id->value;
-				$parent[$item->id->value]->name = $item->title->value;
-				$parent[$item->id->value]->alias = $item->alias->value;
-				$parent[$item->id->value]->parent = $item->parent_id->value;
-
-				// Mark selected category
-				$parent[$item->id->value]->selected = false;
-				if ($parent[$item->id->value]->id == $catid)
-				{
-					$parent[$item->id->value]->selected = true;
-				}
-
-				// Create empty array for current category's own children
-				if (!array_key_exists($item->id->value, $children))
-				{
-					$children[$item->id->value] = array();
-				}
-				$parent[$item->id->value]->children =& $children[$item->id->value];
-				$refs[$item->id->value] =& $parent[$item->id->value];
-				if (in_array($item->id->value, $active))
-				{
-					$parent[$item->id->value]->active = true;
-					$id = $item->id->value;
-					do
+					// Ignore subitems without a parent.
+					if (is_null($item->parent_id->value))
 					{
-						if (!array_key_exists($id, $refs)) {
-							break;
+						continue;
+					}
+
+					// It is a child, so let's store as a child of it's parent
+					if (!array_key_exists($parentId, $this->_categories))
+					{
+						$this->_categories[$parentId] = new stdClass;
+					}
+
+					$parent =& $this->_categories[$parentId];
+
+					if (!isset($parent->children))
+					{
+						$parent->children = array();
+					}
+
+					if (!isset($parent->children[$id]))
+					{
+						$parent->children[$id] = new stdClass;
+					}
+					$category =& $parent->children[$id];
+
+					// Populate category with values
+					$category->id          = $id;
+					$category->active      = ($catid == $category->id);
+					$category->selected    = $category->active;
+					$category->name        = $item->title->value;
+					$category->alias       = $item->alias->value;
+					$category->parent      = (int) $parentId;
+					$category->description = '';
+					$category->children    = array();
+
+					$this->_children[] = $category;
+
+					if ($category->active)
+					{
+						$this->_categories[$parentId]->active = true;
+
+						if (!array_key_exists($parentId, $breadcrumbRefs))
+						{
+							$breadcrumbRefs[$parentId] = &$this->_categories[$parentId];
 						}
-						$par = $refs[$id]->parent;
-						$active[] = $par;
-						if (array_key_exists($par, $refs)) {
-							$refs[$par]->active = true;
-							$id = $par;
-						}
-						else {
-							break;
-						}
-					} while ($id);
+
+						$breadcrumbRefs[$id] = &$category;
+					}
+				}
+				else
+				{
+					// It is parent, so let's add it to the parent array
+					if (!array_key_exists($id, $this->_categories))
+					{
+						$this->_categories[$id] = new stdClass;
+						$this->_categories[$id]->children = array();
+					}
+					$category =& $this->_categories[$id];
+
+					$category->id          = $id;
+					if (!isset($category->active)) {
+						$category->active = ($catid == $category->id);
+					}
+					$category->selected    = $category->active;
+					$category->name        = $item->title->value;
+					$category->alias       = $item->alias->value;
+					$category->parent      = (int) $parentId;
+					$category->description = '';
+
+					if ($category->active)
+					{
+						$breadcrumbRefs[$id] = &$category;
+					}
 				}
 			}
 
-			$this->_children = $children;
-
-			// Build breadcrumbs array
-			$selected = $catid;
-			if (!is_null($selected))
+			if (!empty($catid))
 			{
-				$this->_breadcrumbs = array($refs[$selected]);
-				while ($refs[$selected]->parent) {
-					$selected = $refs[$selected]->parent;
-					array_unshift($this->_breadcrumbs, $refs[$selected]);
-				}
+				$this->_breadcrumbs = $breadcrumbRefs;
 			}
 		}
 
+		// Add the Home item
 		$input = new JInput;
 		$view = $input->get('view', null);
-		$popular = new stdClass();
-		$popular->active = $view == 'dashboard' ? true : false;
-		$popular->id = 0;
-		$popular->name = JText::_('COM_APPS_HOME');
-		$popular->alias = 'home';
-		$popular->description = JText::_('COM_APPS_EXTENSIONS_DASHBOARD');
-		$popular->parent = 0;
-		$popular->selected = $view == 'dashboard' ? true : false;
-		$popular->children = array();
-		array_unshift($this->_categories, $popular);
+		$home = new stdClass();
+		$home->active      = $view == 'dashboard' ? true : false;
+		$home->id          = 0;
+		$home->name        = JText::_('COM_APPS_HOME');
+		$home->alias       = 'home';
+		$home->description = JText::_('COM_APPS_EXTENSIONS_DASHBOARD');
+		$home->parent      = 0;
+		$home->selected    = ($view == 'dashboard' ? true : false);
+		$home->children    = array();
+		array_unshift($this->_categories, $home);
 
 		return $this->_categories;
 	}
