@@ -1,7 +1,7 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_contact
+ * @package     InstallFromWebServer
+ * @subpackage  Site
  *
  * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -12,8 +12,6 @@ defined('_JEXEC') or die;
 /**
  * Apps Component Controller
  *
- * @package     Joomla.Site
- * @subpackage  com_contact
  * @since       1.0.5
  */
 class AppsController extends JControllerLegacy
@@ -25,6 +23,7 @@ class AppsController extends JControllerLegacy
 	 * @param   array    An array of safe url parameters and their variable types, for valid values see {@link JFilterInput::clean()}.
 	 *
 	 * @return  JController This object to support chaining.
+	 *
 	 * @since   1.0.5
 	 */
 	public function display($cachable = false, $urlparams = false)
