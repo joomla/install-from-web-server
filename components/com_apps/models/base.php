@@ -30,14 +30,39 @@ class AppsModelBase extends JModelList
 	 */
 	protected $_extension = 'com_apps';
 
+	/**
+	 * The com_jed base URL.
+	 *
+	 * @var	string
+	 */
 	private $_baseURL = 'index.php?format=json&option=com_apps';
 
+	/**
+	 * The Categories array
+	 *
+	 * @var	array
+	 */
 	private $_categories = array();
 
+	/**
+	 * The Children array
+	 *
+	 * @var	array
+	 */
 	private $_children = array();
 
+	/**
+	 * The Breadcrumbs array
+	 *
+	 * @var	array
+	 */
 	private $_breadcrumbs = array();
 
+	/**
+	 * The Plugin Versions array
+	 *
+	 * @var	array
+	 */
 	private $_pv = array(
 		'latest' => '1.1.0',
 		'works'	 => '1.0.5',
