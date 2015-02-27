@@ -1,9 +1,9 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_contact
+ * @package     InstallFromWebServer
+ * @subpackage  Site
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -12,23 +12,21 @@ defined('_JEXEC') or die;
 /**
  * This models supports retrieving lists of contact categories.
  *
- * @package     Joomla.Site
- * @subpackage  com_apps
- * @since       1.6
+ * @since  1.0.0
  */
 class AppsModelDashboard extends JModelList
 {
 	/**
 	 * Model context string.
 	 *
-	 * @var		string
+	 * @var string
 	 */
 	public $_context = 'com_apps.dashboard';
 
 	/**
 	 * The category context (allows other extensions to derived from this model).
 	 *
-	 * @var		string
+	 * @var	string
 	 */
 	protected $_extension = 'com_apps';
 
@@ -51,9 +49,9 @@ class AppsModelDashboard extends JModelList
 	/**
 	 * Method to auto-populate the model state.
 	 *
-	 * Note. Calling getState in this method will result in recursion.
+	 * @note Calling getState in this method will result in recursion.
 	 *
-	 * @since   1.6
+	 * @since   1.0.0
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -80,15 +78,17 @@ class AppsModelDashboard extends JModelList
 	 *
 	 * @param   string  $id	A prefix for the store id.
 	 *
-	 * @return  string  A store id.
+	 * @return  string  A store id
+	 *
+	 * @since   1.0.0
 	 */
 	protected function getStoreId($id = '')
 	{
 		// Compile the store id.
-		$id	.= ':'.$this->getState('filter.extension');
-		$id	.= ':'.$this->getState('filter.published');
-		$id	.= ':'.$this->getState('filter.access');
-		$id	.= ':'.$this->getState('filter.parentId');
+		$id .= ':'.$this->getState('filter.extension');
+		$id .= ':'.$this->getState('filter.published');
+		$id .= ':'.$this->getState('filter.access');
+		$id .= ':'.$this->getState('filter.parentId');
 
 		return parent::getStoreId($id);
 	}
@@ -96,28 +96,34 @@ class AppsModelDashboard extends JModelList
 	/**
 	 * redefine the function an add some properties to make the styling more easy
 	 *
-	 * @return mixed An array of data items on success, false on failure.
+	 * @return  mixed  An array of data items on success, false on failure.
+	 *
+	 * @since   1.0.0
 	 */
 	public function getItems()
 	{
 		if (!count($this->_items))
 		{
-			$app = JFactory::getApplication();
-			$menu = $app->getMenu();
+			$menu   = JFactory::getApplication()->getMenu();
 			$active = $menu->getActive();
 			$params = new JRegistry;
+
 			if ($active)
 			{
 				$params->loadString($active->params);
 			}
-			$options = array();
+
+			$options               = array();
 			$options['countItems'] = $params->get('show_cat_items_cat', 1) || !$params->get('show_empty_categories_cat', 0);
-			$categories = JCategories::getInstance('Contact', $options);
-			$this->_parent = $categories->get($this->getState('filter.parentId', 'root'));
+			$categories            = JCategories::getInstance('Contact', $options);
+			$this->_parent         = $categories->get($this->getState('filter.parentId', 'root'));
+
 			if (is_object($this->_parent))
 			{
 				$this->_items = $this->_parent->getChildren();
-			} else {
+			}
+			else
+			{
 				$this->_items = false;
 			}
 		}
@@ -131,13 +137,13 @@ class AppsModelDashboard extends JModelList
 		{
 			$this->getItems();
 		}
+
 		return $this->_parent;
 	}
 
 	private function getBaseModel()
 	{
-		$base_model = JModelLegacy::getInstance('Base', 'AppsModel');
-		return $base_model;
+		return JModelLegacy::getInstance('Base', 'AppsModel');
 	}
 
 	private function getCatID()
@@ -147,20 +153,17 @@ class AppsModelDashboard extends JModelList
 
 	public function getCategories()
 	{
-		$base_model = $this->getBaseModel();
-		return $base_model->getCategories($this->getCatID());
+		return $this->getBaseModel()->getCategories($this->getCatID());
 	}
 
 	public function getBreadcrumbs()
 	{
-		$base_model = $this->getBaseModel();
-		return $base_model->getBreadcrumbs($this->getCatID());
+		return $this->getBaseModel()->getBreadcrumbs($this->getCatID());
 	}
 
 	public function getPluginUpToDate()
 	{
-		$base_model = $this->getBaseModel();
-		return $base_model->getPluginUpToDate();
+		return $this->getBaseModel()->getPluginUpToDate();
 	}
 
 	public function getOrderBy()
@@ -171,24 +174,24 @@ class AppsModelDashboard extends JModelList
 	public function getExtensions()
 	{
 		// Get catid, search filter, order column, order direction
-		$cache 						= JFactory::getCache();
-		$cache->setCaching( 1 );
-		$http 						= new JHttp;
-		$componentParams 	= JComponentHelper::getParams('com_apps');
-		$api_url 					= new JUri;
-		$default_limit		= $componentParams->get('default_limit', 8);
-		$input 						= new JInput;
-		$catid 						= $input->get('id', null, 'int');
-		$order 						= $input->get('ordering', $this->getOrderBy());
-		$orderCol 				= $this->state->get('list.ordering', $order);
-		$orderDirn 				= $orderCol == 'core_title' ? 'ASC' : 'DESC';
-		$release					= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
-		$limitstart 			= $input->get('limitstart', 0, 'int');
-		$limit 						= $input->get('limit', $default_limit, 'int');
-		$dashboard_limit	= $componentParams->get('extensions_perrow') * 6; // 6 rows of extensions
-		$search 					= str_replace('_', ' ', urldecode(trim($input->get('filter_search', null))));
+		$http            = new JHttp;
+		$componentParams = JComponentHelper::getParams('com_apps');
+		$api_url         = new JUri;
+		$default_limit   = $componentParams->get('default_limit', 8);
+		$input           = new JInput;
+		$catid           = $input->get('id', null, 'int');
+		$order           = $input->get('ordering', $this->getOrderBy());
+		$orderCol        = $this->state->get('list.ordering', $order);
+		$orderDirn       = $orderCol == 'core_title' ? 'ASC' : 'DESC';
+		$release         = preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
+		$limitstart      = $input->get('limitstart', 0, 'int');
+		$limit           = $input->get('limit', $default_limit, 'int');
+		$dashboard_limit = $componentParams->get('extensions_perrow') * 6; // 6 rows of extensions
+		$search          = str_replace('_', ' ', urldecode(trim($input->get('filter_search', null))));
+		$release         = intval($release / 5) * 5;
+		$cache           = JFactory::getCache();
 
-		$release = intval($release / 5) * 5;
+		$cache->setCaching(1);
 
 		$api_url->setScheme('http');
 		$api_url->setHost('extensions.joomla.org/index.php');
@@ -205,7 +208,9 @@ class AppsModelDashboard extends JModelList
 		$api_url->setvar('dir', $orderDirn);
 
 		if ($search)
-		$api_url->setvar('searchall', $search);
+		{
+			$api_url->setvar('searchall', $search);
+		}
 
 		$extensions_json = $cache->call(array($http, 'get'), $api_url);
 
@@ -216,22 +221,26 @@ class AppsModelDashboard extends JModelList
 		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
 
 		// Populate array
-		$extensions = array(0=>array(), 1=>array());
-		foreach ($items as $item) {
-			//print_r($item);
-			$item->image = $this->getBaseModel()->getMainImageUrl($item);
-			//$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
+		$extensions = array(
+			'0' => array(),
+			'1' =>array(),
+		);
 
-			if ($search) {
+		foreach ($items as $item)
+		{
+			$item->image = $this->getBaseModel()->getMainImageUrl($item);
+
+			if ($search)
+			{
 				$extensions[1 - $item->foundintitle][] = $item;
 			}
-			else {
+			else
+			{
 				$extensions[0][] = $item;
 			}
 		}
 
 		return array_merge($extensions[0], $extensions[1]);
-
 	}
 
 	public function getCount()
