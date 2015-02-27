@@ -9,8 +9,7 @@
 
 defined('_JEXEC') or die;
 
-$app                   = JFactory::getApplication();
-$catid                 = $app->input->get('id', null, 'int');
+$catid                 = JFactory::getApplication()->input->get('id', null, 'int');
 $category_sidebar      = new JLayoutFile('joomla.apps.category_sidebar');
 $extensions_imagegrid  = new JLayoutFile('joomla.apps.extensions_imagegrid');
 $extensions_singlegrid = new JLayoutFile('joomla.apps.extensions_singlegrid');
@@ -19,14 +18,14 @@ $simple_search         = new JLayoutFile('joomla.apps.simple_search');
 $current               = ($this->pagination->limitstart / $this->pagination->limit) + count($this->extensions);
 
 $extension_data = array(
-	'extensions' => $this->extensions,
+	'extensions'  => $this->extensions,
 	'breadcrumbs' => $this->breadcrumbs,
-	'params' => $this->params,
-	'total' => $this->total
+	'params'      => $this->params,
+	'total'       => $this->total,
 );
 
 $order_data = array(
-	'orderby' => $this->orderby
+	'orderby' => $this->orderby,
 );
 
 ?>
