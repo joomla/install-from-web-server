@@ -224,7 +224,7 @@ class AppsModelCategory extends JModelList
 		// Populate array
 		$extensions = array(
 			'0' => array(),
-			'1' =>array()
+			'1' => array(),
 		);
 
 		foreach ($items as $item)
@@ -233,9 +233,7 @@ class AppsModelCategory extends JModelList
 
 			if ($search)
 			{
-				$id = (1 - $item->foundintitle);
-				$extensions[$id][] = $item;
-				unset($id);
+				$extensions[1 - $item->foundintitle][] = $item;
 			}
 			else
 			{
