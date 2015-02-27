@@ -17,9 +17,9 @@ $advanced_search       = new JLayoutFile('joomla.apps.advanced_search');
 $simple_search         = new JLayoutFile('joomla.apps.simple_search');
 
 $extension_data = array(
-	'extensions' => $this->extensions,
+	'extensions'  => $this->extensions,
 	'breadcrumbs' => $this->breadcrumbs,
-	'params' => $this->params
+	'params'      => $this->params
 );
 ?>
 <div class="com-apps-container">
