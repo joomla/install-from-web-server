@@ -1,34 +1,32 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_apps
+ * @package     InstallFromWebServer
+ * @subpackage  Site
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die;
 
 /**
- * This models supports retrieving lists of contact categories.
+ * This models supports retrieving lists of JED categories.
  *
- * @package     Joomla.Site
- * @subpackage  com_apps
- * @since       1.6
+ * @since  1.0.0
  */
 class AppsModelBase extends JModelList
 {
 	/**
 	 * Model context string.
 	 *
-	 * @var		string
+	 * @var	string
 	 */
 	public $_context = 'com_apps.base';
 
 	/**
 	 * The category context (allows other extensions to derived from this model).
 	 *
-	 * @var		string
+	 * @var	string
 	 */
 	protected $_extension = 'com_apps';
 
@@ -41,8 +39,8 @@ class AppsModelBase extends JModelList
 	private $_breadcrumbs = array();
 
 	private $_pv = array(
-		'latest'	=>	'1.1.0',
-		'works'		=>	'1.0.5',
+		'latest' => '1.1.0',
+		'works'	 => '1.0.5',
 	);
 
 	public static function getMainUrl()
@@ -65,8 +63,15 @@ class AppsModelBase extends JModelList
 		$componentParams = JComponentHelper::getParams('com_apps');
 		$default_image   = $componentParams->get('default_image_path');
 		$cdn             = trim($componentParams->get('cdn'), '/') . "/";
-		$image           = (isset($item->logo->value[0]->path) && $item->logo->value[0]->path)
-			? $item->logo->value[0]->path : $item->images->value[0]->path;
+
+		if (isset($item->logo->value[0]->path) && $item->logo->value[0]->path)
+		{
+			$image = $item->logo->value[0]->path;
+		}
+		else
+		{
+			$image = $item->images->value[0]->path;
+		}
 
 		return $image;
 	}
@@ -175,12 +180,15 @@ class AppsModelBase extends JModelList
 						$this->_categories[$id] = new stdClass;
 						$this->_categories[$id]->children = array();
 					}
-					$category =& $this->_categories[$id];
 
-					$category->id          = $id;
-					if (!isset($category->active)) {
+					$category     =& $this->_categories[$id];
+					$category->id = $id;
+
+					if (!isset($category->active))
+					{
 						$category->active = ($catid == $category->id);
 					}
+
 					$category->selected    = $category->active;
 					$category->name        = $item->title->value;
 					$category->alias       = $item->alias->value;
@@ -202,9 +210,9 @@ class AppsModelBase extends JModelList
 
 		// Add the Home item
 		$input = new JInput;
-		$view = $input->get('view', null);
+		$view  = $input->get('view', null);
 
-		$home = new stdClass();
+		$home              = new stdClass();
 		$home->active      = $view == 'dashboard' ? true : false;
 		$home->id          = 0;
 		$home->name        = JText::_('COM_APPS_HOME');
@@ -244,6 +252,7 @@ class AppsModelBase extends JModelList
 		$input  = new JInput;
 		$remote = preg_replace('/[^\d\.]/', '', base64_decode($input->get('pv', '', 'base64')));
 		$local  = $this->_pv;
+
 		if (version_compare($remote, $local['latest']) >= 0)
 		{
 			return 1;
