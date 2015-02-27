@@ -1,50 +1,38 @@
 <?php
-class AppsHelper
-{
-	static function getAJAXUrl($fragment)
-	{
-		$componentParams = JComponentHelper::getParams('com_apps');
-		$route_prefix    = $componentParams->get('route_prefix', 'index.php?option=com_apps&format=json');
+class AppsHelper {
 
-		if (!$route_prefix)
-		{
+	static function getAJAXUrl($fragment) {
+		$componentParams 	= JComponentHelper::getParams('com_apps');
+		$route_prefix		= $componentParams->get('route_prefix', 'index.php?option=com_apps&format=json');
+		
+		if (!$route_prefix) {
 			return $fragment;
 		}
-
-		$uri   = JURI::getInstance($route_prefix);
+		
+		$uri = JURI::getInstance($route_prefix);
 		$query = $uri->getQuery();
 		$query .= '&' . $fragment;
 		$uri->setQuery($query);
 		$url = $uri->toString();
-
+		
 		return $url;
 	}
-
-	static function getJEDUrl($item)
-	{
+	
+	static function getJEDUrl($item) {
 		$url = 'http://extensions.joomla.org/';
-
-		if (!isset($item->link_id))
-		{
-			return $url;
-		}
+		
+		if (!isset($item->link_id)) { return $url; }
 
 		$url .= 'index.php?option=com_mtree&task=viewlink&link_id=' . $item->link_id;
-
 		return $url;
 	}
-
-	static function getJEDCatUrl($catid = 0)
-	{
+	
+	static function getJEDCatUrl($catid = 0) {
 		$url = 'http://extensions.joomla.org/';
-
-		if (!$catid)
-		{
-			return $url;
-		}
+		
+		if (!$catid) { return $url; }
 
 		$url .= 'index.php?option=com_mtree&task=viewcat&cat_id=' . $catid;
-
 		return $url;
 	}
 }
