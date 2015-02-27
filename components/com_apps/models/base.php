@@ -43,21 +43,49 @@ class AppsModelBase extends JModelList
 		'works'	 => '1.0.5',
 	);
 
+	/**
+	 * Static method to get the main URL
+	 *
+	 * @since  1.0.0
+	 */
 	public static function getMainUrl()
 	{
 		return $this->_baseURL . '&view=dashboard';
 	}
 
+	/**
+	 * Static method to get the category URL
+	 *
+	 * @param  int  ID of the Category
+	 *
+	 * @since  1.0.0
+	 */
 	public static function getCategoryUrl($categoryId)
 	{
-		return $this->_baseURL . '&view=category&id=' . $categoryId;
+		return $this->_baseURL . '&view=category&id=' . (int)$categoryId;
 	}
 
-	public static function getEntryListUrl( $categoryId, $limit = 30, $start = 0)
+	/**
+	 * Static method to get the entry list URL
+	 *
+	 * @param  int  ID of the Category
+	 * @param  int  Limit value
+	 * @param  int  start value
+	 *
+	 * @since  1.0.0
+	 */
+	public static function getEntryListUrl($categoryId, $limit = 30, $start = 0)
 	{
 
 	}
 
+	/**
+	 * Method to get the main image URL
+	 *
+	 * @param  Item objekt
+	 *
+	 * @since  1.0.0
+	 */
 	public function getMainImageUrl($item)
 	{
 		$componentParams = JComponentHelper::getParams('com_apps');
@@ -76,11 +104,25 @@ class AppsModelBase extends JModelList
 		return $image;
 	}
 
+	/**
+	 * Static method to get the item URL
+	 *
+	 * @param  int  ID of the item
+	 *
+	 * @since  1.0.0
+	 */
 	public static function getEntryUrl($entryId)
 	{
 		return $this->_baseURL . '&view=extension&id=' . $entryId;
 	}
 
+	/**
+	 * Method to get the Categories
+	 *
+	 * @param  int  Category ID
+	 *
+	 * @since  1.0.0
+	 */
 	public function getCategories($catid)
 	{
 		if (empty($this->_categories))
@@ -90,9 +132,13 @@ class AppsModelBase extends JModelList
 
 			$cache->setCaching(1);
 
-			$categories_json = $cache->call(array($http, 'get'), 'http://extensions.joomla.org/index.php?option=com_jed&view=category&layout=list&format=json&order=order&limit=-1');
-			$items           = json_decode($categories_json->body);
-			$this->_total    = count($items);
+			$categories_json = $cache->call(
+				array($http, 'get'),
+				'http://extensions.joomla.org/index.php?option=com_jed&view=category&layout=list&format=json&order=order&limit=-1',
+			);
+
+			$items        = json_decode($categories_json->body);
+			$this->_total = count($items);
 
 			// Properties to be populated
 			$properties = array('id', 'title', 'alias', 'parent');
@@ -227,6 +273,13 @@ class AppsModelBase extends JModelList
 		return $this->_categories;
 	}
 
+	/**
+	 * Method to get the Breadcrumbs for a Category
+	 *
+	 * @param  int  Category ID
+	 *
+	 * @since  1.0.0
+	 */
 	public function getBreadcrumbs($catid)
 	{
 		if (!count($this->_breadcrumbs))
@@ -237,6 +290,13 @@ class AppsModelBase extends JModelList
 		return $this->_breadcrumbs;
 	}
 
+	/**
+	 * Method to get the Children for a Category
+	 *
+	 * @param  int  Category ID
+	 *
+	 * @since  1.0.0
+	 */
 	public function getChildren($catid)
 	{
 		if (!count($this->_children))
@@ -247,6 +307,11 @@ class AppsModelBase extends JModelList
 		return $this->_children;
 	}
 
+	/**
+	 * Method to check if the Plugin is up to date
+	 *
+	 * @since  1.0.0
+	 */
 	public function getPluginUpToDate()
 	{
 		$input  = new JInput;
