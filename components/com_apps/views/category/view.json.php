@@ -31,7 +31,7 @@ class AppsViewCategory extends JViewLegacy
 	 *
 	 * @return  void
 	 *
-	 * @since   1.0.5
+	 * @since   1.0.0
 	 */
 	public function display($tpl = null)
 	{
