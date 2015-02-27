@@ -12,7 +12,7 @@ defined('_JEXEC') or die;
 /**
  * Apps Component Controller
  *
- * @since       1.0.5
+ * @since  1.0.5
  */
 class AppsController extends JControllerLegacy
 {
