@@ -174,24 +174,24 @@ class AppsModelCategory extends JModelList
 	public function getExtensions()
 	{
 		// Get catid, search filter, order column, order direction
-		$http            = new JHttp;
-		$componentParams = JComponentHelper::getParams('com_apps');
-		$api_url         = new JUri;
-		$default_limit   = $componentParams->get('default_limit', 8);
-		$input           = new JInput;
-		$catid           = $input->get('id', null, 'int');
-		$order           = $input->get('ordering', $this->getOrderBy());
-		$orderCol        = $this->state->get('list.ordering', $order);
-		$orderDirn       = $orderCol == 'core_title' ? 'ASC' : 'DESC';
-		$release         = preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
-		$limitstart      = $input->get('limitstart', 0, 'int');
-		$limit           = $input->get('limit', $default_limit, 'int');
-		$dashboard_limit = $componentParams->get('extensions_perrow') * 6; // 6 rows of extensions
-		$search          = str_replace('_', ' ', urldecode(trim($input->get('filter_search', null))));
-		$release         = intval($release / 5) * 5;
-		$cache           = JFactory::getCache();
+		$cache 						= JFactory::getCache();
+		$cache->setCaching( 1 );
+		$http 						= new JHttp;
+		$componentParams 	= JComponentHelper::getParams('com_apps');
+		$api_url 					= new JUri;
+		$default_limit		= $componentParams->get('default_limit', 8);
+		$input 						= new JInput;
+		$catid 						= $input->get('id', null, 'int');
+		$order 						= $input->get('ordering', $this->getOrderBy());
+		$orderCol 				= $this->state->get('list.ordering', $order);
+		$orderDirn 				= $orderCol == 'core_title' ? 'ASC' : 'DESC';
+		$release					= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
+		$limitstart 			= $input->get('limitstart', 0, 'int');
+		$limit 						= $input->get('limit', $default_limit, 'int');
+		$dashboard_limit	= $componentParams->get('extensions_perrow') * 6; // 6 rows of extensions
+		$search 					= str_replace('_', ' ', urldecode(trim($input->get('filter_search', null))));
 
-		$cache->setCaching(1);
+		$release = intval($release / 5) * 5;
 
 		$api_url->setScheme('http');
 		$api_url->setHost('extensions.joomla.org/index.php');
@@ -209,9 +209,7 @@ class AppsModelCategory extends JModelList
 		$api_url->setvar('dir', $orderDirn);
 
 		if ($search)
-		{
-			$api_url->setvar('searchall', $search);
-		}
+		$api_url->setvar('searchall', $search);
 
 		$extensions_json = $cache->call(array($http, 'get'), $api_url);
 
@@ -222,26 +220,22 @@ class AppsModelCategory extends JModelList
 		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
 
 		// Populate array
-		$extensions = array(
-			'0' => array(),
-			'1' => array(),
-		);
-
-		foreach ($items as $item)
-		{
+		$extensions = array(0=>array(), 1=>array());
+		foreach ($items as $item) {
+			//print_r($item);
 			$item->image = $this->getBaseModel()->getMainImageUrl($item);
+			//$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
 
-			if ($search)
-			{
+			if ($search) {
 				$extensions[1 - $item->foundintitle][] = $item;
 			}
-			else
-			{
+			else {
 				$extensions[0][] = $item;
 			}
 		}
 
 		return array_merge($extensions[0], $extensions[1]);
+
 	}
 
 	private function getAllChildren($children, $catid)
