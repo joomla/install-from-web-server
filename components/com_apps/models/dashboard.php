@@ -205,7 +205,7 @@ class AppsModelDashboard extends JModelList
 		$api_url->setvar('dir', $orderDirn);
 
 		if ($search) {
-			$api_url->setvar('searchall', $search);
+			$api_url->setvar('searchall', urlencode($search));
 		}
 
 		$extensions_json = $cache->call(array($http, 'get'), $api_url);
