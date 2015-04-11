@@ -1,9 +1,9 @@
 <?php
 /**
- * @package     InstallFromWebServer
- * @subpackage  Site
+ * @package     Joomla.Site
+ * @subpackage  com_contact
  *
- * @copyright   Copyright (C) 2005 - 2015 Open Source Matters, Inc. All rights reserved.
+ * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -12,21 +12,23 @@ defined('_JEXEC') or die;
 /**
  * This models supports retrieving lists of contact categories.
  *
- * @since 1.0.0
+ * @package     Joomla.Site
+ * @subpackage  com_apps
+ * @since       1.6
  */
 class AppsModelCategory extends JModelList
 {
 	/**
 	 * Model context string.
 	 *
-	 * @var	string
+	 * @var		string
 	 */
 	public $_context = 'com_apps.category';
 
 	/**
 	 * The category context (allows other extensions to derived from this model).
 	 *
-	 * @var	string
+	 * @var		string
 	 */
 	protected $_extension = 'com_apps';
 
@@ -49,9 +51,9 @@ class AppsModelCategory extends JModelList
 	/**
 	 * Method to auto-populate the model state.
 	 *
-	 * @note   Calling getState in this method will result in recursion.
+	 * Note. Calling getState in this method will result in recursion.
 	 *
-	 * @since  1.0.0
+	 * @since   1.6
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
@@ -65,8 +67,8 @@ class AppsModelCategory extends JModelList
 		$params = $app->getParams();
 		$this->setState('params', $params);
 
-		$this->setState('filter.published', 1);
-		$this->setState('filter.access', true);
+		$this->setState('filter.published',	1);
+		$this->setState('filter.access',	true);
 	}
 
 	/**
@@ -76,54 +78,46 @@ class AppsModelCategory extends JModelList
 	 * different modules that might need different sets of data or different
 	 * ordering requirements.
 	 *
-	 * @param   string  $id	 A prefix for the store id.
+	 * @param   string  $id	A prefix for the store id.
 	 *
-	 * @return  string  A store id
-	 *
-	 * @since   1.0.0
+	 * @return  string  A store id.
 	 */
 	protected function getStoreId($id = '')
 	{
 		// Compile the store id.
-		$id .= ':'.$this->getState('filter.extension');
-		$id .= ':'.$this->getState('filter.published');
-		$id .= ':'.$this->getState('filter.access');
-		$id .= ':'.$this->getState('filter.parentId');
+		$id	.= ':'.$this->getState('filter.extension');
+		$id	.= ':'.$this->getState('filter.published');
+		$id	.= ':'.$this->getState('filter.access');
+		$id	.= ':'.$this->getState('filter.parentId');
 
 		return parent::getStoreId($id);
 	}
 
 	/**
-	 * Methode that return the Items
+	 * redefine the function an add some properties to make the styling more easy
 	 *
-	 * @return  mixed  An array of data items on success, false on failure.
-	 *
-	 * @since 1.0.0
+	 * @return mixed An array of data items on success, false on failure.
 	 */
 	public function getItems()
 	{
 		if (!count($this->_items))
 		{
-			$menu   = JFactory::getApplication()->getMenu();
+			$app = JFactory::getApplication();
+			$menu = $app->getMenu();
 			$active = $menu->getActive();
 			$params = new JRegistry;
-
 			if ($active)
 			{
 				$params->loadString($active->params);
 			}
-
-			$options               = array();
+			$options = array();
 			$options['countItems'] = $params->get('show_cat_items_cat', 1) || !$params->get('show_empty_categories_cat', 0);
-			$categories            = JCategories::getInstance('Contact', $options);
-			$this->_parent         = $categories->get($this->getState('filter.parentId', 'root'));
-
+			$categories = JCategories::getInstance('Contact', $options);
+			$this->_parent = $categories->get($this->getState('filter.parentId', 'root'));
 			if (is_object($this->_parent))
 			{
 				$this->_items = $this->_parent->getChildren();
-			}
-			else
-			{
+			} else {
 				$this->_items = false;
 			}
 		}
@@ -142,7 +136,8 @@ class AppsModelCategory extends JModelList
 
 	private function getBaseModel()
 	{
-		return JModelLegacy::getInstance('Base', 'AppsModel');;
+		$base_model = JModelLegacy::getInstance('Base', 'AppsModel');
+		return $base_model;
 	}
 
 	private function getCatID()
@@ -153,17 +148,20 @@ class AppsModelCategory extends JModelList
 
 	public function getCategories()
 	{
-		return $this->getBaseModel()->getCategories($this->getCatID());
+		$base_model = $this->getBaseModel();
+		return $base_model->getCategories($this->getCatID());
 	}
 
 	public function getBreadcrumbs()
 	{
-		return $this->getBaseModel()->getBreadcrumbs($this->getCatID());
+		$base_model = $this->getBaseModel();
+		return $base_model->getBreadcrumbs($this->getCatID());
 	}
 
 	public function getPluginUpToDate()
 	{
-		return $this->getBaseModel()->getPluginUpToDate();
+		$base_model = $this->getBaseModel();
+		return $base_model->getPluginUpToDate();
 	}
 
 	public function getOrderBy()
@@ -241,17 +239,12 @@ class AppsModelCategory extends JModelList
 	private function getAllChildren($children, $catid)
 	{
 		$allchildren = array();
-
-		if (is_array($children[$catid]) and count($children[$catid]))
-		{
+		if (is_array($children[$catid]) and count($children[$catid])) {
 			$allchildren = array_merge($allchildren, array_keys($children[$catid]));
-
-			foreach ($children[$catid] as $key => $value)
-			{
+			foreach ($children[$catid] as $key => $value) {
 				$allchildren = array_merge($allchildren, $this->getAllChildren($children, $key));
 			}
 		}
-
 		return $allchildren;
 	}
 
@@ -260,17 +253,16 @@ class AppsModelCategory extends JModelList
 		return $this->_total;
 	}
 
-	public function getPagination()
-	{
-		$componentParams = JComponentHelper::getParams('com_apps');
-		$default_limit   = $componentParams->get('default_limit', 8);
-		$input           = new JInput;
+	public function getPagination() {
+		$componentParams 	= JComponentHelper::getParams('com_apps');
+		$default_limit		= $componentParams->get('default_limit', 8);
+		$input 				= new JInput;
 
-		$pagination             = new stdClass;
-		$pagination->limit      = $input->get('limit', $default_limit, 'int');
+		$pagination = new stdClass;
+		$pagination->limit 		= $input->get('limit', $default_limit, 'int');
 		$pagination->limitstart = $input->get('limitstart', 0, 'int');
-		$pagination->total      = $this->getCount();
-		$pagination->next       = $pagination->limitstart + $pagination->limit;
+		$pagination->total		= $this->getCount();
+		$pagination->next		= $pagination->limitstart + $pagination->limit;
 
 		return $pagination;
 
