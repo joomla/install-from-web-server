@@ -171,22 +171,22 @@ class AppsModelDashboard extends JModelList
 	public function getExtensions()
 	{
 		// Get catid, search filter, order column, order direction
-		$cache 						= JFactory::getCache();
+		$cache           = JFactory::getCache();
 		$cache->setCaching( 1 );
-		$http 						= new JHttp;
-		$componentParams 	= JComponentHelper::getParams('com_apps');
-		$api_url 					= new JUri;
-		$default_limit		= $componentParams->get('default_limit', 8);
-		$input 						= new JInput;
-		$catid 						= $input->get('id', null, 'int');
-		$order 						= $input->get('ordering', $this->getOrderBy());
-		$orderCol 				= $this->state->get('list.ordering', $order);
-		$orderDirn 				= $orderCol == 'core_title' ? 'ASC' : 'DESC';
-		$release					= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
-		$limitstart 			= $input->get('limitstart', 0, 'int');
-		$limit 						= $input->get('limit', $default_limit, 'int');
-		$dashboard_limit	= $componentParams->get('extensions_perrow') * 6; // 6 rows of extensions
-		$search 					= str_replace('_', ' ', urldecode(trim($input->get('filter_search', null))));
+		$http            = new JHttp;
+		$componentParams = JComponentHelper::getParams('com_apps');
+		$api_url         = new JUri;
+		$default_limit   = $componentParams->get('default_limit', 8);
+		$input           = new JInput;
+		$catid           = $input->get('id', null, 'int');
+		$order           = $input->get('ordering', $this->getOrderBy());
+		$orderCol        = $this->state->get('list.ordering', $order);
+		$orderDirn       = $orderCol == 'core_title' ? 'ASC' : 'DESC';
+		$release         = preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
+		$limitstart      = $input->get('limitstart', 0, 'int');
+		$limit           = $input->get('limit', $default_limit, 'int');
+		$dashboard_limit = $componentParams->get('extensions_perrow') * 6; // 6 rows of extensions
+		$search          = str_replace('_', ' ', urldecode(trim($input->get('filter_search', null))));
 
 		$release = intval($release / 5) * 5;
 
@@ -204,8 +204,9 @@ class AppsModelDashboard extends JModelList
 		$api_url->setvar('order', $orderCol);
 		$api_url->setvar('dir', $orderDirn);
 
-		if ($search)
-		$api_url->setvar('searchall', $search);
+		if ($search) {
+			$api_url->setvar('searchall', urlencode($search));
+		}
 
 		$extensions_json = $cache->call(array($http, 'get'), $api_url);
 
