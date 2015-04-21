@@ -214,15 +214,10 @@ class AppsModelCategory extends JModelList
 		$items = json_decode($extensions_json->body);
 		$items = $items->data;
 
-		// Get CDN URL
-		$cdn = preg_replace('#/$#', '', trim($componentParams->get('cdn'))) . "/";
-
 		// Populate array
 		$extensions = array(0=>array(), 1=>array());
 		foreach ($items as $item) {
-			//print_r($item);
 			$item->image = $this->getBaseModel()->getMainImageUrl($item);
-			//$item->downloadurl = $options->get($componentParams->get('fieldid_download_url'));
 
 			if ($search) {
 				$extensions[1 - $item->foundintitle][] = $item;
