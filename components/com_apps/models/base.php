@@ -68,6 +68,9 @@ class AppsModelBase extends JModelList
 		$image           = (isset($item->logo->value[0]->path) && $item->logo->value[0]->path)
 			? $item->logo->value[0]->path : $item->images->value[0]->path;
 
+		// Replace legacy JED url with the CDN url
+		$image = str_replace('http://extensions.joomla.org/', $cdn, $image);
+
 		return $image;
 	}
 
