@@ -70,6 +70,10 @@ class AppsModelBase extends JModelList
 
 		// Replace legacy JED url with the CDN url
 		$image = str_replace('http://extensions.joomla.org/', $cdn, $image);
+		
+		// Replace API Image path with resizeDown path
+		$image = str_replace('logo/', '', $image);
+		$image = substr_replace($image, '_resizeDown302px133px16.', -4,1);
 
 		return $image;
 	}
