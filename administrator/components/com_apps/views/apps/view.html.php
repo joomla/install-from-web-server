@@ -42,8 +42,8 @@ class AppsViewApps extends JViewLegacy
 	 */
 	protected function addToolBar() 
 	{
-			JToolbarHelper::title(JText::_('COM_APPS_ADMINISTRATION'), '');
-			JToolBarHelper::preferences('com_apps');
+		JToolbarHelper::title(JText::_('COM_APPS_ADMINISTRATION'), '');
+		JToolBarHelper::preferences('com_apps');
 	}
 
 	/**
