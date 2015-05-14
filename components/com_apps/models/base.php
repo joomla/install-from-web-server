@@ -88,6 +88,7 @@ class AppsModelBase extends JModelList
 		{
 			$cache = JFactory::getCache();
 			$http  = new JHttp;
+			$http->setOption('timeout', 60);
 
 			$cache->setCaching(1);
 
