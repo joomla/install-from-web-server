@@ -175,6 +175,7 @@ class AppsModelCategory extends JModelList
 		$cache 						= JFactory::getCache();
 		$cache->setCaching( 1 );
 		$http 						= new JHttp;
+		$http->setOption('timeout', 60);
 		$componentParams 	= JComponentHelper::getParams('com_apps');
 		$api_url 					= new JUri;
 		$default_limit		= $componentParams->get('default_limit', 8);
