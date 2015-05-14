@@ -167,6 +167,7 @@ class AppsModelExtension extends JModelList
 		$cache 						= JFactory::getCache();
 		$cache->setCaching( 1 );
 		$http 						= new JHttp;
+		$http->setOption('timeout', 60);
 		$api_url 					= new JUri;
 		$input 						= new JInput;
 		$id 							= $input->get('id', null, 'int');
