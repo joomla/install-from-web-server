@@ -1,39 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<extension type="component" version="3.1" method="upgrade">
-	<name>Apps</name>
+<extension type="component" version="3.3" method="upgrade">
+	<name>COM_APPS</name>
 	<author>Joomla! Project</author>
 	<creationDate>April 2006</creationDate>
-	<copyright>(C) 2005 - 2013 Open Source Matters. All rights reserved.
-	</copyright>
-	<license>GNU General Public License version 2 or later; see
-		LICENSE.txt</license>
+	<copyright>(C) 2005 - 2015 Open Source Matters. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>admin@joomla.org</authorEmail>
 	<authorUrl>www.joomla.org</authorUrl>
 	<version>1.0.0</version>
-
-
+	<description>COM_APPS_XML_DESCRIPTION</description>
 	<files folder="site">
 		<filename>apps.php</filename>
 		<filename>controller.php</filename>
-		<filename>index.html</filename>
 		<folder>views</folder>
 		<folder>models</folder>
 		<folder>controllers</folder>
 		<folder>css</folder>
 	</files>
-
 	<administration>
 		<files folder="admin">
 			<filename>apps.php</filename>
 			<filename>config.xml</filename>
 			<filename>controller.php</filename>
-			<filename>index.html</filename>
 			<folder>views</folder>
 			<folder>controllers</folder>
 		</files>
 		<languages folder="admin">
 			<language tag="en-GB">language/en-GB.com_apps.ini</language>
 		</languages>
-		<menu img="components/com_apps/media/images/logo_16x16.png" link="option=com_apps">Apps Server</menu>
+		<menu img="components/com_apps/media/images/logo_16x16.png" link="option=com_apps">COM_APPS</menu>
 	</administration>
 </extension>

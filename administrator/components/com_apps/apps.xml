@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="2.5.0" method="upgrade">
- <name>Apps</name>
- <author>Joomla! Development Team</author>
- <creationDate>2013-08-22</creationDate>
- <copyright>Copyright 2013 Joomla!.</copyright>
- <license>GNU General Public License version 2 or later.</license>
- <authorEmail>joomla@joomla.com</authorEmail>
- <authorUrl>www.joomla.com</authorUrl>
- <version>1.0</version>
- <description>Description</description>
-
- <files>
-  <filename>index.html</filename>
-  <filename>apps.php</filename>
- </files>
-
- <administration>
-  <files>
-   <filename>index.html</filename>
-   <filename>apps.php</filename>
-  </files>
-
-  <menu img="components/com_apps/media/images/logo_16x16.png"
-   link="option=com_apps">Apps</menu>
- </administration>
+<extension type="component" version="3.3" method="upgrade">
+	<name>COM_APPS</name>
+	<author>Joomla! Project</author>
+	<creationDate>2013-08-22</creationDate>
+	<copyright>(C) 2005 - 2015 Open Source Matters. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
+	<authorEmail>admin@joomla.org</authorEmail>
+	<authorUrl>www.joomla.org</authorUrl>
+	<version>1.0.5</version>
+	<description>COM_APPS_XML_DESCRIPTION</description>
+	<files>
+		<filename>apps.php</filename>
+	</files>
+	<administration>
+		<files>
+		<filename>apps.php</filename>
+		</files>
+	<menu img="components/com_apps/media/images/logo_16x16.png" link="option=com_apps">COM_APPS</menu>
+	</administration>
 </extension>
