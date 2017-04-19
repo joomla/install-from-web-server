@@ -173,65 +173,98 @@ class AppsModelCategory extends JModelList
 
 	public function getExtensions()
 	{
-		// Get catid, search filter, order column, order direction
-		$cache 						= JFactory::getCache();
-		$cache->setCaching( 1 );
-		$http 						= new JHttp;
-		$http->setOption('timeout', 60);
-		$componentParams 	= JComponentHelper::getParams('com_apps');
-		$api_url 					= new JUri;
-		$default_limit		= $componentParams->get('default_limit', 8);
-		$input 						= new JInput;
-		$catid 						= $input->get('id', null, 'int');
-		$order 						= $input->get('ordering', $this->getOrderBy());
-		$orderCol 				= $this->state->get('list.ordering', $order);
-		$orderDirn 				= $orderCol == 'core_title' ? 'ASC' : 'DESC';
-		$release					= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
-		$limitstart 			= $input->get('limitstart', 0, 'int');
-		$limit 						= $input->get('limit', $default_limit, 'int');
-		$dashboard_limit	= $componentParams->get('extensions_perrow') * 6; // 6 rows of extensions
-		$search 					= str_replace('_', ' ', urldecode(trim($input->get('filter_search', null))));
+		/** @var JCacheControllerCallback $cache */
+		$cache = JFactory::getCache('com_apps', 'callback');
 
-		$release = intval($release / 5) * 5;
+		// These calls are always cached
+		$cache->setCaching(true);
 
-		$api_url->setScheme('http');
-		$api_url->setHost('extensions.joomla.org/index.php');
-		$api_url->setvar('option', 'com_jed');
-		$api_url->setvar('controller', 'filter');
-		$api_url->setvar('view', 'extension');
-		$api_url->setvar('format', 'json');
-		$api_url->setvar('limit', $limit);
-		$api_url->setvar('limitstart', $limitstart);
-		$api_url->setvar('filter[approved]', '1');
-		$api_url->setvar('filter[published]', '1');
-		$api_url->setvar('filter[core_catid]', $catid);
-		$api_url->setvar('extend', '0');
-		$api_url->setvar('order', $orderCol);
-		$api_url->setvar('dir', $orderDirn);
+		// Extract some default values from the component params
+		$componentParams = JComponentHelper::getParams('com_apps');
+
+		$defaultLimit = $componentParams->get('default_limit', 8);
+
+		// Extract params from the request
+		$input = JFactory::getApplication()->input;
+
+		$catid      = $input->getInt('id', 0);
+		$limit      = $input->getInt('limit', $defaultLimit);
+		$limitstart = $input->getInt('limitstart', 0);
+		$order      = $input->get('ordering', $this->getOrderBy());
+		$search     = str_replace('_', ' ', urldecode(trim($input->get('filter_search', null))));
+
+		// Params based on the model state
+		$orderCol  = $this->getState('list.ordering', $order);
+		$orderDirn = $orderCol == 'core_title' ? 'ASC' : 'DESC';
+
+		// Build the request URL here, since this will vary based on params we will use the URL as part of our cache key
+		$url = new JUri;
+
+		$url->setScheme('https');
+		$url->setHost('extensions.joomla.org');
+		$url->setPath('/index.php');
+		$url->setVar('option', 'com_jed');
+		$url->setVar('controller', 'filter');
+		$url->setVar('view', 'extension');
+		$url->setVar('format', 'json');
+		$url->setVar('limit', $limit);
+		$url->setVar('limitstart', $limitstart);
+		$url->setVar('filter[approved]', '1');
+		$url->setVar('filter[published]', '1');
+		$url->setVar('filter[core_catid]', $catid);
+		$url->setVar('extend', '0');
+		$url->setVar('order', $orderCol);
+		$url->setVar('dir', $orderDirn);
 
 		if ($search)
-		$api_url->setvar('searchall', $search);
+		{
+			$url->setVar('searchall', $search);
+		}
 
-		$extensions_json = $cache->call(array($http, 'get'), $api_url);
+		try
+		{
+			// We explicitly define our own ID to keep JCache from calculating it separately
+			$items = $cache->get(array($this, 'fetchCategoryExtensions'), array($url), md5(__METHOD__ . $url->toString()));
+		}
+		catch (JCacheException $e)
+		{
+			// Cache failure, let's try an HTTP request without caching
+			$items = $this->fetchCategoryExtensions($url);
+		}
+		catch (RuntimeException $e)
+		{
+			// Other failure, this isn't good
+			JLog::add(
+				'Could not retrieve category extension data from the JED: ' . $e->getMessage(),
+				JLog::ERROR,
+				'com_apps'
+			);
 
-		$items = json_decode($extensions_json->body);
-		$items = $items->data;
+			// Throw a "sanitised" Exception but nest the caught Exception for debugging
+			throw new RuntimeException('Could not retrieve category extension data from the JED.', $e->getCode(), $e);
+		}
+
+		$baseModel = $this->getBaseModel();
+		$items     = $items->data;
 
 		// Populate array
-		$extensions = array(0=>array(), 1=>array());
-		foreach ($items as $item) {
-			$item->image = $this->getBaseModel()->getMainImageUrl($item);
+		$extensions = array(0 => array(), 1 => array());
 
-			if ($search) {
+		foreach ($items as $item)
+		{
+			$item->image = $baseModel->getMainImageUrl($item);
+
+			if ($search)
+			{
 				$extensions[1 - $item->foundintitle][] = $item;
 			}
-			else {
+			else
+			{
 				$extensions[0][] = $item;
 			}
 		}
 
 		return array_merge($extensions[0], $extensions[1]);
-
 	}
 
 	private function getAllChildren($children, $catid)
@@ -264,5 +297,44 @@ class AppsModelCategory extends JModelList
 
 		return $pagination;
 
+	}
+
+	/**
+	 * Fetches the category data from the JED
+	 *
+	 * @param   JUri  $uri  The URI to request data from
+	 *
+	 * @return  array
+	 *
+	 * @throws  RuntimeException if the HTTP query fails
+	 */
+	public function fetchCategoryExtensions(JUri $uri)
+	{
+		try
+		{
+			$http = $this->getBaseModel()->getHttpClient();
+		}
+		catch (RuntimeException $e)
+		{
+			throw new RuntimeException('Cannot fetch HTTP client to connect to JED', $e->getCode(), $e);
+		}
+
+		$response = $http->get($uri->toString());
+
+		// Make sure we've gotten an expected good response
+		if ($response->code !== 200)
+		{
+			throw new RuntimeException('Unexpected response from the JED', $response->code);
+		}
+
+		// The body should be a JSON string, if we have issues decoding it assume we have a bad response
+		$categoryData = json_decode($response->body);
+
+		if (json_last_error())
+		{
+			throw new RuntimeException('Unexpected response from the JED, JSON could not be decoded with error: ' . json_last_error_msg(), 500);
+		}
+
+		return $categoryData;
 	}
 }

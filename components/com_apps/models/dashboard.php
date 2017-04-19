@@ -262,7 +262,6 @@ class AppsModelDashboard extends JModelList
 		}
 
 		return array_merge($extensions[0], $extensions[1]);
-
 	}
 
 	public function getCount()
@@ -271,7 +270,7 @@ class AppsModelDashboard extends JModelList
 	}
 
 	/**
-	 * Fetches the category data from the JED
+	 * Fetches the dashboard extensions from the JED
 	 *
 	 * @param   JUri  $uri  The URI to request data from
 	 *
