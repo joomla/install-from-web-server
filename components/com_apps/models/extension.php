@@ -132,10 +132,12 @@ class AppsModelExtension extends JModelList
 		return $this->_parent;
 	}
 
+	/**
+	 * @return  bool|AppsModelBase
+	 */
 	private function getBaseModel()
 	{
-		$base_model = JModelLegacy::getInstance('Base', 'AppsModel');
-		return $base_model;
+		return JModelLegacy::getInstance('Base', 'AppsModel');
 	}
 
 	private function getCatID()

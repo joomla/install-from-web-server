@@ -135,7 +135,7 @@ class AppsModelDashboard extends JModelList
 	}
 
 	/**
-	 * @return bool|AppsModelBase
+	 * @return  bool|AppsModelBase
 	 */
 	private function getBaseModel()
 	{
