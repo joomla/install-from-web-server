@@ -82,6 +82,9 @@ class AppsModelBase extends JModelList
 		return $categoryData;
 	}
 
+	/**
+	 * @return  JHttp
+	 */
 	public function getHttpClient()
 	{
 		$version = new JVersion;
