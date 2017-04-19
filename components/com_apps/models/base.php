@@ -45,6 +45,54 @@ class AppsModelBase extends JModelList
 		'works'		=>	'1.0.5',
 	);
 
+	/**
+	 * Fetches the category data from the JED
+	 *
+	 * @return  array
+	 *
+	 * @throws  RuntimeException if the HTTP query fails
+	 */
+	public function fetchCategoriesFromJed()
+	{
+		try
+		{
+			$http = $this->getHttpClient();
+		}
+		catch (RuntimeException $e)
+		{
+			throw new RuntimeException('Cannot fetch HTTP client to connect to JED', $e->getCode(), $e);
+		}
+
+		$response = $http->get('https://extensions.joomla.org/index.php?option=com_jed&view=category&layout=list&format=json&order=order&limit=-1');
+
+		// Make sure we've gotten an expected good response
+		if ($response->code !== 200)
+		{
+			throw new RuntimeException('Unexpected response from the JED', $response->code);
+		}
+
+		// The body should be a JSON string, if we have issues decoding it assume we have a bad response
+		$categoryData = json_decode($response->body);
+
+		if (json_last_error())
+		{
+			throw new RuntimeException('Unexpected response from the JED, JSON could not be decoded with error: ' . json_last_error_msg(), 500);
+		}
+
+		return $categoryData;
+	}
+
+	public function getHttpClient()
+	{
+		$version = new JVersion;
+
+		$http = JHttpFactory::getHttp();
+		$http->setOption('timeout', 60);
+		$http->setOption('userAgent', $version->getUserAgent('com_apps', true));
+
+		return $http;
+	}
+
 	public static function getMainUrl()
 	{
 		return $this->_baseURL . '&view=dashboard';
@@ -70,7 +118,7 @@ class AppsModelBase extends JModelList
 
 		// Replace legacy JED url with the CDN url
 		$image = str_replace('http://extensions.joomla.org/', $cdn, $image);
-		
+
 		// Replace API Image path with resizeDown path
 		$image = preg_replace('#(logo|images)/(.*)\.#', '$2' . '_resizeDown302px133px16.', $image, 1);
 
@@ -86,24 +134,36 @@ class AppsModelBase extends JModelList
 	{
 		if (empty($this->_categories))
 		{
-			$cache = JFactory::getCache();
-			$http  = new JHttp;
-			$http->setOption('timeout', 60);
+			/** @var JCacheControllerCallback $cache */
+			$cache = JFactory::getCache('com_apps', 'callback');
 
-			$cache->setCaching(1);
+			// These calls are always cached
+			$cache->setCaching(true);
 
-			$categories_json = $cache->call(array($http, 'get'), 'http://extensions.joomla.org/index.php?option=com_jed&view=category&layout=list&format=json&order=order&limit=-1');
-			$items           = json_decode($categories_json->body);
-			$this->_total    = count($items);
+			try
+			{
+				// We explicitly define our own ID to keep JCache from calculating it separately
+				$items = $cache->get(array($this, 'fetchCategoriesFromJed'), array(), md5(__METHOD__));
+			}
+			catch (JCacheException $e)
+			{
+				// Cache failure, let's try an HTTP request without caching
+				$items = $this->fetchCategoriesFromJed();
+			}
+			catch (RuntimeException $e)
+			{
+				// Other failure, this isn't good
+				JLog::add(
+					'Could not retrieve category data from the JED: ' . $e->getMessage(),
+					JLog::ERROR,
+					'com_apps'
+				);
 
-			// Properties to be populated
-			$properties = array('id', 'title', 'alias', 'parent');
+				// Throw a "sanitised" Exception but nest the caught Exception for debugging
+				throw new RuntimeException('Could not retrieve category data from the JED.', $e->getCode(), $e);
+			}
 
-			// Array to collect children categories
-			$children = array();
-
-			// Array to collect active categories
-			$active = array($catid);
+			$this->_total = count($items);
 
 			$breadcrumbRefs = array();
 
