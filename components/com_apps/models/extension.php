@@ -165,65 +165,130 @@ class AppsModelExtension extends JModelList
 
 	public function getExtension()
 	{
-		// Get extension id
-		$cache 						= JFactory::getCache();
-		$cache->setCaching( 1 );
-		$http 						= new JHttp;
-		$http->setOption('timeout', 60);
-		$api_url 					= new JUri;
-		$input 						= new JInput;
-		$id 							= $input->get('id', null, 'int');
-		$release 					= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
-		$release 					= intval($release / 5) * 5;
+		/** @var JCacheControllerCallback $cache */
+		$cache = JFactory::getCache('com_apps', 'callback');
 
-		$api_url->setScheme('http');
-		$api_url->setHost('extensions.joomla.org/index.php');
-		$api_url->setvar('option', 'com_jed');
-		$api_url->setvar('controller', 'filter');
-		$api_url->setvar('view', 'extension');
-		$api_url->setvar('format', 'json');
-		$api_url->setvar('filter[approved]', '1');
-		$api_url->setvar('filter[published]', '1');
-		$api_url->setvar('extend', '0');
-		$api_url->setvar('filter[id]', $id);
+		// These calls are always cached
+		$cache->setCaching(true);
 
-		$extension_json = $cache->call(array($http, 'get'), $api_url);
+		// Extract params from the request
+		$input = JFactory::getApplication()->input;
+
+		$id = $input->getInt('id', 0);
+
+		try
+		{
+			// We explicitly define our own ID to keep JCache from calculating it separately
+			$items = $cache->get(array($this, 'fetchExtension'), array($id), md5(__METHOD__ . $id));
+		}
+		catch (JCacheException $e)
+		{
+			// Cache failure, let's try an HTTP request without caching
+			$items = $this->fetchExtension($id);
+		}
+		catch (RuntimeException $e)
+		{
+			// Other failure, this isn't good
+			JLog::add(
+				'Could not retrieve extension data from the JED: ' . $e->getMessage(),
+				JLog::ERROR,
+				'com_apps'
+			);
+
+			// Throw a "sanitised" Exception but nest the caught Exception for debugging
+			throw new RuntimeException('Could not retrieve extension data from the JED.', $e->getCode(), $e);
+		}
 
 		// Create item
-		$items = json_decode($extension_json->body);
-		$item = $items->data[0];
-		$this->_catid = $item->core_catid->value;
-		$item->image = $this->getBaseModel()->getMainImageUrl($item);
+		$item              = $items->data[0];
+		$this->_catid      = $item->core_catid->value;
+		$item->image       = $this->getBaseModel()->getMainImageUrl($item);
 		$item->downloadurl = $item->download_integration_url->value;
-		if (preg_match('/\.xml\s*$/', $item->downloadurl)) {
-			$app = JFactory::getApplication();
-			$product = addslashes(base64_decode($app->input->get('product', '', 'base64')));
-			$release = preg_replace('/[^\d\.]/', '', base64_decode($app->input->get('release', '', 'base64')));
-			$dev_level = (int) base64_decode($app->input->get('dev_level', '', 'base64'));
+
+		if (preg_match('/\.xml\s*$/', $item->downloadurl))
+		{
+			$product   = addslashes(base64_decode($input->getBase64('product', '')));
+			$release   = preg_replace('/[^\d\.]/', '', base64_decode($input->getBase64('release', '')));
+			$dev_level = (int) base64_decode($input->getBase64('dev_level', ''));
 
 			$updatefile = JPATH_ROOT . '/libraries/joomla/updater/update.php';
-			$fh = fopen($updatefile, 'r');
-			$theData = fread($fh, filesize($updatefile));
+			$fh         = fopen($updatefile, 'r');
+			$theData    = fread($fh, filesize($updatefile));
 			fclose($fh);
 
 			$theData = str_replace('<?php', '', $theData);
-			$theData = str_replace('$ver->PRODUCT', "'".$product."'", $theData);
-			$theData = str_replace('$ver->RELEASE', "'".$release."'", $theData);
-			$theData = str_replace('$ver->DEV_LEVEL', "'".$dev_level."'", $theData);
+			$theData = str_replace('$ver->PRODUCT', "'" . $product . "'", $theData);
+			$theData = str_replace('$ver->RELEASE', "'" . $release . "'", $theData);
+			$theData = str_replace('$ver->DEV_LEVEL', "'" . $dev_level . "'", $theData);
 
 			eval($theData);
 
 			$update = new JUpdate;
 			$update->loadFromXML($item->downloadurl);
 			$package_url_node = $update->get('downloadurl', false);
-			if (isset($package_url_node->_data)) {
+
+			if (isset($package_url_node->_data))
+			{
 				$item->downloadurl = $package_url_node->_data;
- 			}
+			}
 		}
+
 		$item->download_type = $this->getTypeEnum($item->download_integration_type->value);
 
 		return array($item);
+	}
 
+	/**
+	 * Fetches the extension data from the JED
+	 *
+	 * @param   integer  $id  The extension ID
+	 *
+	 * @return  array
+	 *
+	 * @throws  RuntimeException if the HTTP query fails
+	 */
+	public function fetchExtension($id)
+	{
+		$url = new JUri;
+
+		$url->setScheme('https');
+		$url->setHost('extensions.joomla.org');
+		$url->setPath('/index.php');
+		$url->setVar('option', 'com_jed');
+		$url->setVar('controller', 'filter');
+		$url->setVar('view', 'extension');
+		$url->setVar('format', 'json');
+		$url->setVar('filter[approved]', '1');
+		$url->setVar('filter[published]', '1');
+		$url->setVar('filter[id]', $id);
+		$url->setVar('extend', '0');
+
+		try
+		{
+			$http = $this->getBaseModel()->getHttpClient();
+		}
+		catch (RuntimeException $e)
+		{
+			throw new RuntimeException('Cannot fetch HTTP client to connect to JED', $e->getCode(), $e);
+		}
+
+		$response = $http->get($url->toString());
+
+		// Make sure we've gotten an expected good response
+		if ($response->code !== 200)
+		{
+			throw new RuntimeException('Unexpected response from the JED', $response->code);
+		}
+
+		// The body should be a JSON string, if we have issues decoding it assume we have a bad response
+		$categoryData = json_decode($response->body);
+
+		if (json_last_error())
+		{
+			throw new RuntimeException('Unexpected response from the JED, JSON could not be decoded with error: ' . json_last_error_msg(), 500);
+		}
+
+		return $categoryData;
 	}
 
 	private function getTypeEnum($text) {
