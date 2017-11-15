@@ -9,6 +9,15 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Cache\Exception\CacheExceptionInterface;
+use Joomla\CMS\Categories\Categories;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Registry\Registry;
+
 /**
  * This models supports retrieving lists of contact categories.
  *
@@ -16,7 +25,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_apps
  * @since       1.6
  */
-class AppsModelExtension extends JModelList
+class AppsModelExtension extends ListModel
 {
 	/**
 	 * Model context string.
@@ -55,7 +64,7 @@ class AppsModelExtension extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$this->setState('filter.extension', $this->_extension);
 
 		// Get the parent id if defined.
@@ -100,22 +109,27 @@ class AppsModelExtension extends JModelList
 	{
 		if (!count($this->_items))
 		{
-			$app = JFactory::getApplication();
-			$menu = $app->getMenu();
+			$app    = Factory::getApplication();
+			$menu   = $app->getMenu();
 			$active = $menu->getActive();
-			$params = new JRegistry;
+			$params = new Registry;
+
 			if ($active)
 			{
 				$params->loadString($active->params);
 			}
-			$options = array();
+
+			$options               = [];
 			$options['countItems'] = $params->get('show_cat_items_cat', 1) || !$params->get('show_empty_categories_cat', 0);
-			$categories = JCategories::getInstance('Contact', $options);
-			$this->_parent = $categories->get($this->getState('filter.parentId', 'root'));
+			$categories            = Categories::getInstance('Contact', $options);
+			$this->_parent         = $categories->get($this->getState('filter.parentId', 'root'));
+
 			if (is_object($this->_parent))
 			{
 				$this->_items = $this->_parent->getChildren();
-			} else {
+			}
+			else
+			{
 				$this->_items = false;
 			}
 		}
@@ -132,10 +146,12 @@ class AppsModelExtension extends JModelList
 		return $this->_parent;
 	}
 
+	/**
+	 * @return  bool|AppsModelBase
+	 */
 	private function getBaseModel()
 	{
-		$base_model = JModelLegacy::getInstance('Base', 'AppsModel');
-		return $base_model;
+		return BaseDatabaseModel::getInstance('Base', 'AppsModel');
 	}
 
 	private function getCatID()
@@ -145,83 +161,144 @@ class AppsModelExtension extends JModelList
 
 	public function getCategories()
 	{
-		$base_model = $this->getBaseModel();
-		return $base_model->getCategories($this->getCatID());
+		return $this->getBaseModel()->getCategories($this->getCatID());
 	}
 
 	public function getBreadcrumbs()
 	{
-		$base_model = $this->getBaseModel();
-		return $base_model->getBreadcrumbs($this->getCatID());
+		return $this->getBaseModel()->getBreadcrumbs($this->getCatID());
 	}
 
 	public function getPluginUpToDate()
 	{
-		$base_model = $this->getBaseModel();
-		return $base_model->getPluginUpToDate();
+		return $this->getBaseModel()->getPluginUpToDate();
 	}
 
 	public function getExtension()
 	{
-		// Get extension id
-		$cache 						= JFactory::getCache();
-		$cache->setCaching( 1 );
-		$http 						= new JHttp;
-		$http->setOption('timeout', 60);
-		$api_url 					= new JUri;
-		$input 						= new JInput;
-		$id 							= $input->get('id', null, 'int');
-		$release 					= preg_replace('/[^\d]/', '', base64_decode($input->get('release', '', 'base64')));
-		$release 					= intval($release / 5) * 5;
+		/** @var \Joomla\CMS\Cache\Controller\CallbackController $cache */
+		$cache = Factory::getCache('com_apps', 'callback');
 
-		$api_url->setScheme('http');
-		$api_url->setHost('extensions.joomla.org/index.php');
-		$api_url->setvar('option', 'com_jed');
-		$api_url->setvar('controller', 'filter');
-		$api_url->setvar('view', 'extension');
-		$api_url->setvar('format', 'json');
-		$api_url->setvar('filter[approved]', '1');
-		$api_url->setvar('filter[published]', '1');
-		$api_url->setvar('extend', '0');
-		$api_url->setvar('filter[id]', $id);
+		// These calls are always cached
+		$cache->setCaching(true);
 
-		$extension_json = $cache->call(array($http, 'get'), $api_url);
+		// Extract params from the request
+		$input = Factory::getApplication()->input;
+
+		$id = $input->getInt('id', 0);
+
+		try
+		{
+			// We explicitly define our own ID to keep the cache API from calculating it separately
+			$items = $cache->get(array($this, 'fetchExtension'), array($id), md5(__METHOD__ . $id));
+		}
+		catch (CacheExceptionInterface $e)
+		{
+			// Cache failure, let's try an HTTP request without caching
+			$items = $this->fetchExtension($id);
+		}
+		catch (RuntimeException $e)
+		{
+			// Other failure, this isn't good
+			Log::add(
+				'Could not retrieve extension data from the JED: ' . $e->getMessage(),
+				Log::ERROR,
+				'com_apps'
+			);
+
+			// Throw a "sanitised" Exception but nest the caught Exception for debugging
+			throw new RuntimeException('Could not retrieve extension data from the JED.', $e->getCode(), $e);
+		}
 
 		// Create item
-		$items = json_decode($extension_json->body);
-		$item = $items->data[0];
-		$this->_catid = $item->core_catid->value;
-		$item->image = $this->getBaseModel()->getMainImageUrl($item);
+		$item              = $items->data[0];
+		$this->_catid      = $item->core_catid->value;
+		$item->image       = $this->getBaseModel()->getMainImageUrl($item);
 		$item->downloadurl = $item->download_integration_url->value;
-		if (preg_match('/\.xml\s*$/', $item->downloadurl)) {
-			$app = JFactory::getApplication();
-			$product = addslashes(base64_decode($app->input->get('product', '', 'base64')));
-			$release = preg_replace('/[^\d\.]/', '', base64_decode($app->input->get('release', '', 'base64')));
-			$dev_level = (int) base64_decode($app->input->get('dev_level', '', 'base64'));
 
-			$updatefile = JPATH_ROOT . '/libraries/joomla/updater/update.php';
-			$fh = fopen($updatefile, 'r');
-			$theData = fread($fh, filesize($updatefile));
+		if (preg_match('/\.xml\s*$/', $item->downloadurl))
+		{
+			$product   = addslashes(base64_decode($input->getBase64('product', '')));
+			$release   = preg_replace('/[^\d\.]/', '', base64_decode($input->getBase64('release', '')));
+			$dev_level = (int) base64_decode($input->getBase64('dev_level', ''));
+
+			$updatefile = dirname(__DIR__) . '/helpers/update.php';
+			$fh         = fopen($updatefile, 'r');
+			$theData    = fread($fh, filesize($updatefile));
 			fclose($fh);
 
 			$theData = str_replace('<?php', '', $theData);
-			$theData = str_replace('$ver->PRODUCT', "'".$product."'", $theData);
-			$theData = str_replace('$ver->RELEASE', "'".$release."'", $theData);
-			$theData = str_replace('$ver->DEV_LEVEL', "'".$dev_level."'", $theData);
+			$theData = str_replace('JVersion::PRODUCT', "'" . $product . "'", $theData);
+			$theData = str_replace('JVersion::DEV_LEVEL', "'" . $dev_level . "'", $theData);
 
 			eval($theData);
 
 			$update = new JUpdate;
 			$update->loadFromXML($item->downloadurl);
 			$package_url_node = $update->get('downloadurl', false);
-			if (isset($package_url_node->_data)) {
+
+			if (isset($package_url_node->_data))
+			{
 				$item->downloadurl = $package_url_node->_data;
- 			}
+			}
 		}
+
 		$item->download_type = $this->getTypeEnum($item->download_integration_type->value);
 
 		return array($item);
+	}
 
+	/**
+	 * Fetches the extension data from the JED
+	 *
+	 * @param   integer  $id  The extension ID
+	 *
+	 * @return  array
+	 *
+	 * @throws  RuntimeException if the HTTP query fails
+	 */
+	public function fetchExtension($id)
+	{
+		$url = new Uri;
+
+		$url->setScheme('https');
+		$url->setHost('extensions.joomla.org');
+		$url->setPath('/index.php');
+		$url->setVar('option', 'com_jed');
+		$url->setVar('controller', 'filter');
+		$url->setVar('view', 'extension');
+		$url->setVar('format', 'json');
+		$url->setVar('filter[approved]', '1');
+		$url->setVar('filter[published]', '1');
+		$url->setVar('filter[id]', $id);
+		$url->setVar('extend', '0');
+
+		try
+		{
+			$http = $this->getBaseModel()->getHttpClient();
+		}
+		catch (RuntimeException $e)
+		{
+			throw new RuntimeException('Cannot fetch HTTP client to connect to JED', $e->getCode(), $e);
+		}
+
+		$response = $http->get($url->toString());
+
+		// Make sure we've gotten an expected good response
+		if ($response->code !== 200)
+		{
+			throw new RuntimeException('Unexpected response from the JED', $response->code);
+		}
+
+		// The body should be a JSON string, if we have issues decoding it assume we have a bad response
+		$categoryData = json_decode($response->body);
+
+		if (json_last_error())
+		{
+			throw new RuntimeException('Unexpected response from the JED, JSON could not be decoded with error: ' . json_last_error_msg(), 500);
+		}
+
+		return $categoryData;
 	}
 
 	private function getTypeEnum($text) {

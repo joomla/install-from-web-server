@@ -9,6 +9,17 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Cache\Exception\CacheExceptionInterface;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Http\Http;
+use Joomla\CMS\Http\HttpFactory;
+use Joomla\CMS\Input\Input;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Version;
+
 /**
  * This models supports retrieving lists of contact categories.
  *
@@ -16,7 +27,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_apps
  * @since       1.6
  */
-class AppsModelBase extends JModelList
+class AppsModelBase extends ListModel
 {
 	/**
 	 * Model context string.
@@ -45,6 +56,55 @@ class AppsModelBase extends JModelList
 		'works'		=>	'1.0.5',
 	);
 
+	/**
+	 * Fetches the category data from the JED
+	 *
+	 * @return  array
+	 *
+	 * @throws  RuntimeException if the HTTP query fails
+	 */
+	public function fetchCategoriesFromJed()
+	{
+		try
+		{
+			$http = $this->getHttpClient();
+		}
+		catch (RuntimeException $e)
+		{
+			throw new RuntimeException('Cannot fetch HTTP client to connect to JED', $e->getCode(), $e);
+		}
+
+		$response = $http->get('https://extensions.joomla.org/index.php?option=com_jed&view=category&layout=list&format=json&order=order&limit=-1');
+
+		// Make sure we've gotten an expected good response
+		if ($response->code !== 200)
+		{
+			throw new RuntimeException('Unexpected response from the JED', $response->code);
+		}
+
+		// The body should be a JSON string, if we have issues decoding it assume we have a bad response
+		$categoryData = json_decode($response->body);
+
+		if (json_last_error())
+		{
+			throw new RuntimeException('Unexpected response from the JED, JSON could not be decoded with error: ' . json_last_error_msg(), 500);
+		}
+
+		return $categoryData;
+	}
+
+	/**
+	 * @return  Http
+	 */
+	public function getHttpClient(): Http
+	{
+		$http = HttpFactory::getHttp();
+		$http->setOption('timeout', 60);
+		$http->setOption('userAgent', (new Version)->getUserAgent('com_apps', true));
+
+		return $http;
+	}
+
 	public static function getMainUrl()
 	{
 		return $this->_baseURL . '&view=dashboard';
@@ -62,7 +122,7 @@ class AppsModelBase extends JModelList
 
 	public function getMainImageUrl($item)
 	{
-		$componentParams = JComponentHelper::getParams('com_apps');
+		$componentParams = ComponentHelper::getParams('com_apps');
 		$default_image   = $componentParams->get('default_image_path');
 		$cdn             = trim($componentParams->get('cdn'), '/') . "/";
 		$image           = (isset($item->logo->value[0]->path) && $item->logo->value[0]->path)
@@ -70,7 +130,7 @@ class AppsModelBase extends JModelList
 
 		// Replace legacy JED url with the CDN url
 		$image = str_replace('http://extensions.joomla.org/', $cdn, $image);
-		
+
 		// Replace API Image path with resizeDown path
 		$image = preg_replace('#(logo|images)/(.*)\.#', '$2' . '_resizeDown302px133px16.', $image, 1);
 
@@ -86,24 +146,36 @@ class AppsModelBase extends JModelList
 	{
 		if (empty($this->_categories))
 		{
-			$cache = JFactory::getCache();
-			$http  = new JHttp;
-			$http->setOption('timeout', 60);
+			/** @var \Joomla\CMS\Cache\Controller\CallbackController $cache */
+			$cache = Factory::getCache('com_apps', 'callback');
 
-			$cache->setCaching(1);
+			// These calls are always cached
+			$cache->setCaching(true);
 
-			$categories_json = $cache->call(array($http, 'get'), 'http://extensions.joomla.org/index.php?option=com_jed&view=category&layout=list&format=json&order=order&limit=-1');
-			$items           = json_decode($categories_json->body);
-			$this->_total    = count($items);
+			try
+			{
+				// We explicitly define our own ID to keep the cache API from calculating it separately
+				$items = $cache->get(array($this, 'fetchCategoriesFromJed'), array(), md5(__METHOD__));
+			}
+			catch (CacheExceptionInterface $e)
+			{
+				// Cache failure, let's try an HTTP request without caching
+				$items = $this->fetchCategoriesFromJed();
+			}
+			catch (RuntimeException $e)
+			{
+				// Other failure, this isn't good
+				Log::add(
+					'Could not retrieve category data from the JED: ' . $e->getMessage(),
+					Log::ERROR,
+					'com_apps'
+				);
 
-			// Properties to be populated
-			$properties = array('id', 'title', 'alias', 'parent');
+				// Throw a "sanitised" Exception but nest the caught Exception for debugging
+				throw new RuntimeException('Could not retrieve category data from the JED.', $e->getCode(), $e);
+			}
 
-			// Array to collect children categories
-			$children = array();
-
-			// Array to collect active categories
-			$active = array($catid);
+			$this->_total = count($items);
 
 			$breadcrumbRefs = array();
 
@@ -208,15 +280,15 @@ class AppsModelBase extends JModelList
 		}
 
 		// Add the Home item
-		$input = new JInput;
+		$input = new Input;
 		$view = $input->get('view', null);
 
-		$home = new stdClass();
+		$home = new stdClass;
 		$home->active      = $view == 'dashboard' ? true : false;
 		$home->id          = 0;
-		$home->name        = JText::_('COM_APPS_HOME');
+		$home->name        = Text::_('COM_APPS_HOME');
 		$home->alias       = 'home';
-		$home->description = JText::_('COM_APPS_EXTENSIONS_DASHBOARD');
+		$home->description = Text::_('COM_APPS_EXTENSIONS_DASHBOARD');
 		$home->parent      = 0;
 		$home->selected    = ($view == 'dashboard' ? true : false);
 		$home->children    = array();
@@ -248,9 +320,9 @@ class AppsModelBase extends JModelList
 
 	public function getPluginUpToDate()
 	{
-		$input  = new JInput;
-		$remote = preg_replace('/[^\d\.]/', '', base64_decode($input->get('pv', '', 'base64')));
+		$remote = preg_replace('/[^\d\.]/', '', base64_decode(Factory::getApplication()->input->get('pv', '', 'base64')));
 		$local  = $this->_pv;
+
 		if (version_compare($remote, $local['latest']) >= 0)
 		{
 			return 1;
