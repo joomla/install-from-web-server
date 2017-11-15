@@ -9,6 +9,17 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Cache\Exception\CacheExceptionInterface;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Http\Http;
+use Joomla\CMS\Http\HttpFactory;
+use Joomla\CMS\Input\Input;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Version;
+
 /**
  * This models supports retrieving lists of contact categories.
  *
@@ -16,7 +27,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_apps
  * @since       1.6
  */
-class AppsModelBase extends JModelList
+class AppsModelBase extends ListModel
 {
 	/**
 	 * Model context string.
@@ -83,15 +94,13 @@ class AppsModelBase extends JModelList
 	}
 
 	/**
-	 * @return  JHttp
+	 * @return  Http
 	 */
-	public function getHttpClient()
+	public function getHttpClient(): Http
 	{
-		$version = new JVersion;
-
-		$http = JHttpFactory::getHttp();
+		$http = HttpFactory::getHttp();
 		$http->setOption('timeout', 60);
-		$http->setOption('userAgent', $version->getUserAgent('com_apps', true));
+		$http->setOption('userAgent', (new Version)->getUserAgent('com_apps', true));
 
 		return $http;
 	}
@@ -113,7 +122,7 @@ class AppsModelBase extends JModelList
 
 	public function getMainImageUrl($item)
 	{
-		$componentParams = JComponentHelper::getParams('com_apps');
+		$componentParams = ComponentHelper::getParams('com_apps');
 		$default_image   = $componentParams->get('default_image_path');
 		$cdn             = trim($componentParams->get('cdn'), '/') . "/";
 		$image           = (isset($item->logo->value[0]->path) && $item->logo->value[0]->path)
@@ -137,18 +146,18 @@ class AppsModelBase extends JModelList
 	{
 		if (empty($this->_categories))
 		{
-			/** @var JCacheControllerCallback $cache */
-			$cache = JFactory::getCache('com_apps', 'callback');
+			/** @var \Joomla\CMS\Cache\Controller\CallbackController $cache */
+			$cache = Factory::getCache('com_apps', 'callback');
 
 			// These calls are always cached
 			$cache->setCaching(true);
 
 			try
 			{
-				// We explicitly define our own ID to keep JCache from calculating it separately
+				// We explicitly define our own ID to keep the cache API from calculating it separately
 				$items = $cache->get(array($this, 'fetchCategoriesFromJed'), array(), md5(__METHOD__));
 			}
-			catch (JCacheException $e)
+			catch (CacheExceptionInterface $e)
 			{
 				// Cache failure, let's try an HTTP request without caching
 				$items = $this->fetchCategoriesFromJed();
@@ -156,9 +165,9 @@ class AppsModelBase extends JModelList
 			catch (RuntimeException $e)
 			{
 				// Other failure, this isn't good
-				JLog::add(
+				Log::add(
 					'Could not retrieve category data from the JED: ' . $e->getMessage(),
-					JLog::ERROR,
+					Log::ERROR,
 					'com_apps'
 				);
 
@@ -271,15 +280,15 @@ class AppsModelBase extends JModelList
 		}
 
 		// Add the Home item
-		$input = new JInput;
+		$input = new Input;
 		$view = $input->get('view', null);
 
-		$home = new stdClass();
+		$home = new stdClass;
 		$home->active      = $view == 'dashboard' ? true : false;
 		$home->id          = 0;
-		$home->name        = JText::_('COM_APPS_HOME');
+		$home->name        = Text::_('COM_APPS_HOME');
 		$home->alias       = 'home';
-		$home->description = JText::_('COM_APPS_EXTENSIONS_DASHBOARD');
+		$home->description = Text::_('COM_APPS_EXTENSIONS_DASHBOARD');
 		$home->parent      = 0;
 		$home->selected    = ($view == 'dashboard' ? true : false);
 		$home->children    = array();
@@ -311,9 +320,9 @@ class AppsModelBase extends JModelList
 
 	public function getPluginUpToDate()
 	{
-		$input  = new JInput;
-		$remote = preg_replace('/[^\d\.]/', '', base64_decode($input->get('pv', '', 'base64')));
+		$remote = preg_replace('/[^\d\.]/', '', base64_decode(Factory::getApplication()->input->get('pv', '', 'base64')));
 		$local  = $this->_pv;
+
 		if (version_compare($remote, $local['latest']) >= 0)
 		{
 			return 1;

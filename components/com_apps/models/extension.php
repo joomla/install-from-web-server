@@ -9,6 +9,15 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Cache\Exception\CacheExceptionInterface;
+use Joomla\CMS\Categories\Categories;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Registry\Registry;
+
 /**
  * This models supports retrieving lists of contact categories.
  *
@@ -16,7 +25,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_apps
  * @since       1.6
  */
-class AppsModelExtension extends JModelList
+class AppsModelExtension extends ListModel
 {
 	/**
 	 * Model context string.
@@ -55,7 +64,7 @@ class AppsModelExtension extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$this->setState('filter.extension', $this->_extension);
 
 		// Get the parent id if defined.
@@ -100,22 +109,27 @@ class AppsModelExtension extends JModelList
 	{
 		if (!count($this->_items))
 		{
-			$app = JFactory::getApplication();
-			$menu = $app->getMenu();
+			$app    = Factory::getApplication();
+			$menu   = $app->getMenu();
 			$active = $menu->getActive();
-			$params = new JRegistry;
+			$params = new Registry;
+
 			if ($active)
 			{
 				$params->loadString($active->params);
 			}
-			$options = array();
+
+			$options               = [];
 			$options['countItems'] = $params->get('show_cat_items_cat', 1) || !$params->get('show_empty_categories_cat', 0);
-			$categories = JCategories::getInstance('Contact', $options);
-			$this->_parent = $categories->get($this->getState('filter.parentId', 'root'));
+			$categories            = Categories::getInstance('Contact', $options);
+			$this->_parent         = $categories->get($this->getState('filter.parentId', 'root'));
+
 			if (is_object($this->_parent))
 			{
 				$this->_items = $this->_parent->getChildren();
-			} else {
+			}
+			else
+			{
 				$this->_items = false;
 			}
 		}
@@ -137,7 +151,7 @@ class AppsModelExtension extends JModelList
 	 */
 	private function getBaseModel()
 	{
-		return JModelLegacy::getInstance('Base', 'AppsModel');
+		return BaseDatabaseModel::getInstance('Base', 'AppsModel');
 	}
 
 	private function getCatID()
@@ -147,41 +161,38 @@ class AppsModelExtension extends JModelList
 
 	public function getCategories()
 	{
-		$base_model = $this->getBaseModel();
-		return $base_model->getCategories($this->getCatID());
+		return $this->getBaseModel()->getCategories($this->getCatID());
 	}
 
 	public function getBreadcrumbs()
 	{
-		$base_model = $this->getBaseModel();
-		return $base_model->getBreadcrumbs($this->getCatID());
+		return $this->getBaseModel()->getBreadcrumbs($this->getCatID());
 	}
 
 	public function getPluginUpToDate()
 	{
-		$base_model = $this->getBaseModel();
-		return $base_model->getPluginUpToDate();
+		return $this->getBaseModel()->getPluginUpToDate();
 	}
 
 	public function getExtension()
 	{
-		/** @var JCacheControllerCallback $cache */
-		$cache = JFactory::getCache('com_apps', 'callback');
+		/** @var \Joomla\CMS\Cache\Controller\CallbackController $cache */
+		$cache = Factory::getCache('com_apps', 'callback');
 
 		// These calls are always cached
 		$cache->setCaching(true);
 
 		// Extract params from the request
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 
 		$id = $input->getInt('id', 0);
 
 		try
 		{
-			// We explicitly define our own ID to keep JCache from calculating it separately
+			// We explicitly define our own ID to keep the cache API from calculating it separately
 			$items = $cache->get(array($this, 'fetchExtension'), array($id), md5(__METHOD__ . $id));
 		}
-		catch (JCacheException $e)
+		catch (CacheExceptionInterface $e)
 		{
 			// Cache failure, let's try an HTTP request without caching
 			$items = $this->fetchExtension($id);
@@ -189,9 +200,9 @@ class AppsModelExtension extends JModelList
 		catch (RuntimeException $e)
 		{
 			// Other failure, this isn't good
-			JLog::add(
+			Log::add(
 				'Could not retrieve extension data from the JED: ' . $e->getMessage(),
-				JLog::ERROR,
+				Log::ERROR,
 				'com_apps'
 			);
 
@@ -211,15 +222,14 @@ class AppsModelExtension extends JModelList
 			$release   = preg_replace('/[^\d\.]/', '', base64_decode($input->getBase64('release', '')));
 			$dev_level = (int) base64_decode($input->getBase64('dev_level', ''));
 
-			$updatefile = JPATH_ROOT . '/libraries/joomla/updater/update.php';
+			$updatefile = dirname(__DIR__) . '/helpers/update.php';
 			$fh         = fopen($updatefile, 'r');
 			$theData    = fread($fh, filesize($updatefile));
 			fclose($fh);
 
 			$theData = str_replace('<?php', '', $theData);
-			$theData = str_replace('$ver->PRODUCT', "'" . $product . "'", $theData);
-			$theData = str_replace('$ver->RELEASE', "'" . $release . "'", $theData);
-			$theData = str_replace('$ver->DEV_LEVEL', "'" . $dev_level . "'", $theData);
+			$theData = str_replace('JVersion::PRODUCT', "'" . $product . "'", $theData);
+			$theData = str_replace('JVersion::DEV_LEVEL', "'" . $dev_level . "'", $theData);
 
 			eval($theData);
 
@@ -249,7 +259,7 @@ class AppsModelExtension extends JModelList
 	 */
 	public function fetchExtension($id)
 	{
-		$url = new JUri;
+		$url = new Uri;
 
 		$url->setScheme('https');
 		$url->setHost('extensions.joomla.org');

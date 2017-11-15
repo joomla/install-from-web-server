@@ -9,6 +9,16 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Cache\Exception\CacheExceptionInterface;
+use Joomla\CMS\Categories\Categories;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Registry\Registry;
+
 /**
  * This models supports retrieving lists of contact categories.
  *
@@ -16,7 +26,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_apps
  * @since       1.6
  */
-class AppsModelDashboard extends JModelList
+class AppsModelDashboard extends ListModel
 {
 	/**
 	 * Model context string.
@@ -57,7 +67,7 @@ class AppsModelDashboard extends JModelList
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
-		$app = JFactory::getApplication();
+		$app = Factory::getApplication();
 		$this->setState('filter.extension', $this->_extension);
 
 		// Get the parent id if defined.
@@ -102,22 +112,27 @@ class AppsModelDashboard extends JModelList
 	{
 		if (!count($this->_items))
 		{
-			$app = JFactory::getApplication();
-			$menu = $app->getMenu();
+			$app    = Factory::getApplication();
+			$menu   = $app->getMenu();
 			$active = $menu->getActive();
-			$params = new JRegistry;
+			$params = new Registry;
+
 			if ($active)
 			{
 				$params->loadString($active->params);
 			}
-			$options = array();
+
+			$options               = [];
 			$options['countItems'] = $params->get('show_cat_items_cat', 1) || !$params->get('show_empty_categories_cat', 0);
-			$categories = JCategories::getInstance('Contact', $options);
-			$this->_parent = $categories->get($this->getState('filter.parentId', 'root'));
+			$categories            = Categories::getInstance('Contact', $options);
+			$this->_parent         = $categories->get($this->getState('filter.parentId', 'root'));
+
 			if (is_object($this->_parent))
 			{
 				$this->_items = $this->_parent->getChildren();
-			} else {
+			}
+			else
+			{
 				$this->_items = false;
 			}
 		}
@@ -139,7 +154,7 @@ class AppsModelDashboard extends JModelList
 	 */
 	private function getBaseModel()
 	{
-		return JModelLegacy::getInstance('Base', 'AppsModel');
+		return BaseDatabaseModel::getInstance('Base', 'AppsModel');
 	}
 
 	private function getCatID()
@@ -149,20 +164,17 @@ class AppsModelDashboard extends JModelList
 
 	public function getCategories()
 	{
-		$base_model = $this->getBaseModel();
-		return $base_model->getCategories($this->getCatID());
+		return $this->getBaseModel()->getCategories($this->getCatID());
 	}
 
 	public function getBreadcrumbs()
 	{
-		$base_model = $this->getBaseModel();
-		return $base_model->getBreadcrumbs($this->getCatID());
+		return $this->getBaseModel()->getBreadcrumbs($this->getCatID());
 	}
 
 	public function getPluginUpToDate()
 	{
-		$base_model = $this->getBaseModel();
-		return $base_model->getPluginUpToDate();
+		return $this->getBaseModel()->getPluginUpToDate();
 	}
 
 	public function getOrderBy()
@@ -172,19 +184,19 @@ class AppsModelDashboard extends JModelList
 
 	public function getExtensions()
 	{
-		/** @var JCacheControllerCallback $cache */
-		$cache = JFactory::getCache('com_apps', 'callback');
+		/** @var \Joomla\CMS\Cache\Controller\CallbackController $cache */
+		$cache = Factory::getCache('com_apps', 'callback');
 
 		// These calls are always cached
 		$cache->setCaching(true);
 
 		// Extract some default values from the component params
-		$componentParams = JComponentHelper::getParams('com_apps');
+		$componentParams = ComponentHelper::getParams('com_apps');
 
 		$defaultLimit = $componentParams->get('default_limit', 8);
 
 		// Extract params from the request
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 
 		$limit      = $input->getInt('limit', $defaultLimit);
 		$limitstart = $input->getInt('limitstart', 0);
@@ -196,7 +208,7 @@ class AppsModelDashboard extends JModelList
 		$orderDirn = $orderCol == 'core_title' ? 'ASC' : 'DESC';
 
 		// Build the request URL here, since this will vary based on params we will use the URL as part of our cache key
-		$url = new JUri;
+		$url = new Uri;
 
 		$url->setScheme('https');
 		$url->setHost('extensions.joomla.org');
@@ -223,7 +235,7 @@ class AppsModelDashboard extends JModelList
 			// We explicitly define our own ID to keep JCache from calculating it separately
 			$items = $cache->get(array($this, 'fetchDashboardExtensions'), array($url), md5(__METHOD__ . $url->toString()));
 		}
-		catch (JCacheException $e)
+		catch (CacheExceptionInterface $e)
 		{
 			// Cache failure, let's try an HTTP request without caching
 			$items = $this->fetchDashboardExtensions($url);
@@ -231,9 +243,9 @@ class AppsModelDashboard extends JModelList
 		catch (RuntimeException $e)
 		{
 			// Other failure, this isn't good
-			JLog::add(
+			Log::add(
 				'Could not retrieve dashboard extension data from the JED: ' . $e->getMessage(),
-				JLog::ERROR,
+				Log::ERROR,
 				'com_apps'
 			);
 
@@ -272,13 +284,13 @@ class AppsModelDashboard extends JModelList
 	/**
 	 * Fetches the dashboard extensions from the JED
 	 *
-	 * @param   JUri  $uri  The URI to request data from
+	 * @param   Uri  $uri  The URI to request data from
 	 *
 	 * @return  array
 	 *
 	 * @throws  RuntimeException if the HTTP query fails
 	 */
-	public function fetchDashboardExtensions(JUri $uri)
+	public function fetchDashboardExtensions(Uri $uri)
 	{
 		try
 		{
