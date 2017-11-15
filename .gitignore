@@ -1,22 +1,57 @@
-# IDE & System Related Files #
+# IDE/System based files and folders #
 .buildpath
 .project
 .settings
 .DS_Store
 .idea
 
-# Local System Files (i.e. cache, logs, etc.) #
-/administrator/cache
+# Ignore everything by default then whitelist paths
+/administrator/*
+!/administrator/components
+/administrator/components/*
+!/administrator/components/com_apps
+!/administrator/language
+/administrator/language/*
+!/administrator/language/en-GB
+/administrator/language/en-GB/*
+!/administrator/language/en-GB/en-GB.com_apps.ini
+/bin
+/build
 /cache
-/logs
+/cgi-bin
+/cli/*
+!/components
+/components/*
+!/components/com_apps
+/images
+/includes
+!/jedapps
+/language/*
+!/language/en-GB
+/language/en-GB/*
+!/language/en-GB/en-GB.com_apps.ini
+/layouts/*
+!/layouts/joomla
+/layouts/joomla/*
+!/layouts/joomla/apps
+/libraries
+/modules
+/plugins
+/templates
+/tests
 /tmp
-/configuration.php
 /.htaccess
-/web.config
-
-# Test Related Files #
+/.travis.yml
+/CONTRIBUTING.md
+/LICENSE.txt
+/README.txt
+/build.xml
+/configuration.php
+/htaccess.txt
+/index.php
+/phpunit.xml.dist
 /phpunit.xml
-/tests/system/webdriver/tests/logs/
-
-# phpDocumentor Logs #
-phpdoc-*
+/robots.txt
+/robots.txt.dist
+/travisci-phpunit.xml
+/web.config.txt
