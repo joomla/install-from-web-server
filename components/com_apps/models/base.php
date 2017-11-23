@@ -120,12 +120,21 @@ class AppsModelBase extends ListModel
 	{
 		$componentParams = ComponentHelper::getParams('com_apps');
 		$default_image   = $componentParams->get('default_image_path');
-		$cdn             = trim($componentParams->get('cdn'), '/') . "/";
-		$image           = (isset($item->logo->value[0]->path) && $item->logo->value[0]->path)
-			? $item->logo->value[0]->path : $item->images->value[0]->path;
+		$cdn             = trim($componentParams->get('cdn', 'https://extensions.joomla.org/'), '/') . "/";
+
+		$image = '';
+
+		if (isset($item->logo->value[0]->path) && $item->logo->value[0]->path)
+		{
+			$image = $item->logo->value[0]->path;
+		}
+		elseif (isset($item->images->value[0]->path) && $item->images->value[0]->path)
+		{
+			$image = $item->images->value[0]->path;
+		}
 
 		// Replace legacy JED url with the CDN url
-		$image = str_replace('http://extensions.joomla.org/', $cdn, $image);
+		$image = str_replace(['http://extensions.joomla.org/', 'https://extensions.joomla.org/'], $cdn, $image);
 
 		// Replace API Image path with resizeDown path
 		$image = preg_replace('#(logo|images)/(.*)\.#', '$2' . '_resizeDown302px133px16.', $image, 1);
@@ -305,7 +314,7 @@ class AppsModelBase extends ListModel
 		return $this->_breadcrumbs;
 	}
 
-	public function getChildren($catid)
+	public function getChildren($catid = null)
 	{
 		if (!count($this->_children))
 		{

@@ -70,6 +70,11 @@ class AppsModelDashboard extends BaseDatabaseModel
 		return $this->getBaseModel()->getPluginUpToDate();
 	}
 
+	public function getOrderBy(): string
+	{
+		return $this->getState('list.ordering', 'score');
+	}
+
 	public function getExtensions(): array
 	{
 		/** @var \Joomla\CMS\Cache\Controller\CallbackController $cache */
@@ -93,7 +98,7 @@ class AppsModelDashboard extends BaseDatabaseModel
 		$url->setVar('filter[approved]', '1');
 		$url->setVar('filter[published]', '1');
 		$url->setVar('extend', '0');
-		$url->setVar('order', $this->getState('list.ordering'));
+		$url->setVar('order', $this->getOrderBy());
 		$url->setVar('dir', $this->getState('list.direction'));
 
 		if ($search = $this->getState('filter.search'))

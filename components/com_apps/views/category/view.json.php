@@ -1,63 +1,86 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_apps
+ * Joomla! Install From Web Server
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright  Copyright (C) 2013 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later
  */
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Response\JsonResponse;
+
 /**
- * HTML Dashboard View class for the Apps component
+ * Dashboard view class
  *
- * @package     Joomla.Site
- * @subpackage  com_apps
- * @since       1.5
+ * @since  1.0
  */
-class AppsViewCategory extends JViewLegacy
+class AppsViewCategory extends HtmlView
 {
-	protected $state;
+	/**
+	 * @var    array
+	 * @since  1.0
+	 */
+	protected $breadcrumbs = [];
 
-	protected $form;
+	/**
+	 * @var    array
+	 * @since  1.0
+	 */
+	protected $categories = [];
 
-	protected $item;
+	/**
+	 * @var    array
+	 * @since  1.0
+	 */
+	protected $extensions = [];
 
-	protected $return_page;
+	/**
+	 * @var    string
+	 * @since  1.0
+	 */
+	protected $orderby = '';
 
+	/**
+	 * Execute and display a template script.
+	 *
+	 * @param   string $tpl The name of the template file to parse; automatically searches through the template paths.
+	 *
+	 * @return  mixed  A string if successful, otherwise an Error object.
+	 *
+	 * @since   1.0
+	 */
 	public function display($tpl = null)
 	{
-		JResponse::allowCache(true);
-		$app = JFactory::getApplication();
-		
-		if ($app->input->get('callback', '', 'cmd')) {
-			$document = JFactory::getDocument();
-			$document->setMimeEncoding('application/javascript');
+		$app = Factory::getApplication();
+		$app->allowCache(true);
+
+		if ($app->input->getCmd('callback', ''))
+		{
+			$this->document->setMimeEncoding('application/javascript');
 		}
 
-		$this->categories	= $this->get('Categories');
-		$this->extensions	= $this->get('Extensions');
-		$this->breadcrumbs	= $this->get('Breadcrumbs');
-		$this->orderby		= $this->get('OrderBy');
-		$this->total		= $this->get('Count');
-		$this->pagination	= $this->get('Pagination');
-		$this->params 		= new JRegistry();
-		
-		$response = array();
-		$response['body'] = array(
-			'html' => iconv("UTF-8", "UTF-8//IGNORE", $this->loadTemplate($tpl)),
-			'pluginuptodate' => $this->get('PluginUpToDate'),
+		$this->categories  = $this->get('Categories');
+		$this->extensions  = $this->get('Extensions');
+		$this->breadcrumbs = $this->get('Breadcrumbs');
+		$this->orderby     = $this->get('OrderBy');
+
+		$json = new JsonResponse(
+			[
+				'html'           => iconv("UTF-8", "UTF-8//IGNORE", $this->loadTemplate($tpl)),
+				'pluginuptodate' => $this->get('PluginUpToDate'),
+			]
 		);
-		$response['error'] = false;
-		$response['message'] = '';
-		$json = new JResponseJson($response['body'], $response['message'], $response['error']);
-		
-		if ($app->input->get('callback', '', 'cmd')) {
-			echo str_replace(array('\n', '\t'), '', $app->input->get('callback') . '(' . $json . ')');
-		} else {
-			echo str_replace(array('\n', '\t'), '', $json);
+
+		if ($app->input->getCmd('callback', ''))
+		{
+			echo str_replace(['\n', '\t'], '', $app->input->get('callback') . '(' . $json . ')');
+		}
+		else
+		{
+			echo str_replace(['\n', '\t'], '', $json);
 		}
 	}
-
 }

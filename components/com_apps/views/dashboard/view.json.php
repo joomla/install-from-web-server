@@ -23,6 +23,12 @@ class AppsViewDashboard extends HtmlView
 	 * @var    array
 	 * @since  1.0
 	 */
+	protected $breadcrumbs = [];
+
+	/**
+	 * @var    array
+	 * @since  1.0
+	 */
 	protected $categories = [];
 
 	/**
@@ -30,6 +36,12 @@ class AppsViewDashboard extends HtmlView
 	 * @since  1.0
 	 */
 	protected $extensions = [];
+
+	/**
+	 * @var    string
+	 * @since  1.0
+	 */
+	protected $orderby = '';
 
 	/**
 	 * Execute and display a template script.
