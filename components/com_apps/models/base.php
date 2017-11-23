@@ -295,11 +295,9 @@ abstract class AppsModelBase extends BaseDatabaseModel
 	 */
 	public function getMainImageUrl($item): string
 	{
-		$componentParams = ComponentHelper::getParams('com_apps');
-		$default_image   = $componentParams->get('default_image_path', '');
-		$cdn             = trim($componentParams->get('cdn', 'https://extensions.joomla.org/'), '/') . "/";
+		$cdn = trim(ComponentHelper::getParams('com_apps')->get('cdn', 'https://extensions.joomla.org/'), '/') . "/";
 
-		$image = $default_image;
+		$image = '';
 
 		if (isset($item->logo->value[0]->path) && $item->logo->value[0]->path)
 		{
