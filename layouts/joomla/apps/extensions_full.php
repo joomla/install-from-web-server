@@ -11,7 +11,7 @@ defined('JPATH_BASE') or die;
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
-$extension_data = $displayData['extensions'][0];
+$extension_data = $displayData['extension'];
 $breadcrumbs    = $displayData['breadcrumbs'];
 $tags           = $extension_data->includes->value;
 ?>

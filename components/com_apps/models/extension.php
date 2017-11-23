@@ -1,10 +1,9 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_contact
+ * Joomla! Install From Web Server
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright  Copyright (C) 2013 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later
  */
 
 defined('_JEXEC') or die;
@@ -14,32 +13,16 @@ use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Registry\Registry;
 
 /**
- * This models supports retrieving lists of contact categories.
+ * Extension model.
  *
- * @package     Joomla.Site
- * @subpackage  com_apps
- * @since       1.6
+ * @since  1.0
  */
-class AppsModelExtension extends ListModel
+class AppsModelExtension extends BaseDatabaseModel
 {
-	/**
-	 * Model context string.
-	 *
-	 * @var		string
-	 */
-	public $_context = 'com_apps.extension';
-
-	/**
-	 * The category context (allows other extensions to derived from this model).
-	 *
-	 * @var		string
-	 */
-	protected $_extension = 'com_apps';
 
 	private $_parent = null;
 
@@ -62,92 +45,22 @@ class AppsModelExtension extends ListModel
 	 *
 	 * @since   1.6
 	 */
-	protected function populateState($ordering = null, $direction = null)
+	protected function populateState()
 	{
 		$app = Factory::getApplication();
-		$this->setState('filter.extension', $this->_extension);
 
-		// Get the parent id if defined.
-		$parentId = $app->input->getInt('id');
-		$this->setState('filter.parentId', $parentId);
-
-		$params = $app->getParams();
-		$this->setState('params', $params);
-
-		$this->setState('filter.published',	1);
-		$this->setState('filter.access',	true);
+		$this->setState('filter.id', $app->input->getUint('id'));
+		$this->setState('filter.product', $app->input->getBase64('product', ''));
+		$this->setState('filter.release', $app->input->getBase64('release', ''));
+		$this->setState('filter.dev_level', $app->input->getBase64('dev_level', ''));
 	}
 
 	/**
-	 * Method to get a store id based on model configuration state.
+	 * Retrieve the base model.
 	 *
-	 * This is necessary because the model is used by the component and
-	 * different modules that might need different sets of data or different
-	 * ordering requirements.
+	 * @return  boolean|AppsModelBase
 	 *
-	 * @param   string  $id	A prefix for the store id.
-	 *
-	 * @return  string  A store id.
-	 */
-	protected function getStoreId($id = '')
-	{
-		// Compile the store id.
-		$id	.= ':'.$this->getState('filter.extension');
-		$id	.= ':'.$this->getState('filter.published');
-		$id	.= ':'.$this->getState('filter.access');
-		$id	.= ':'.$this->getState('filter.parentId');
-
-		return parent::getStoreId($id);
-	}
-
-	/**
-	 * redefine the function an add some properties to make the styling more easy
-	 *
-	 * @return mixed An array of data items on success, false on failure.
-	 */
-	public function getItems()
-	{
-		if (!count($this->_items))
-		{
-			$app    = Factory::getApplication();
-			$menu   = $app->getMenu();
-			$active = $menu->getActive();
-			$params = new Registry;
-
-			if ($active)
-			{
-				$params->loadString($active->params);
-			}
-
-			$options               = [];
-			$options['countItems'] = $params->get('show_cat_items_cat', 1) || !$params->get('show_empty_categories_cat', 0);
-			$categories            = Categories::getInstance('Contact', $options);
-			$this->_parent         = $categories->get($this->getState('filter.parentId', 'root'));
-
-			if (is_object($this->_parent))
-			{
-				$this->_items = $this->_parent->getChildren();
-			}
-			else
-			{
-				$this->_items = false;
-			}
-		}
-
-		return $this->_items;
-	}
-
-	public function getParent()
-	{
-		if (!is_object($this->_parent))
-		{
-			$this->getItems();
-		}
-		return $this->_parent;
-	}
-
-	/**
-	 * @return  bool|AppsModelBase
+	 * @since   1.0
 	 */
 	private function getBaseModel()
 	{
@@ -174,6 +87,13 @@ class AppsModelExtension extends ListModel
 		return $this->getBaseModel()->getPluginUpToDate();
 	}
 
+	/**
+	 * Fetch the extension data.
+	 *
+	 * @return  stdClass
+	 *
+	 * @since   1.0
+	 */
 	public function getExtension()
 	{
 		/** @var \Joomla\CMS\Cache\Controller\CallbackController $cache */
@@ -182,15 +102,12 @@ class AppsModelExtension extends ListModel
 		// These calls are always cached
 		$cache->setCaching(true);
 
-		// Extract params from the request
-		$input = Factory::getApplication()->input;
-
-		$id = $input->getInt('id', 0);
+		$id = $this->getState('filter.id');
 
 		try
 		{
 			// We explicitly define our own ID to keep the cache API from calculating it separately
-			$items = $cache->get(array($this, 'fetchExtension'), array($id), md5(__METHOD__ . $id));
+			$items = $cache->get([$this, 'fetchExtension'], [$id], md5(__METHOD__ . $id));
 		}
 		catch (CacheExceptionInterface $e)
 		{
@@ -218,9 +135,8 @@ class AppsModelExtension extends ListModel
 
 		if (preg_match('/\.xml\s*$/', $item->downloadurl))
 		{
-			$product   = addslashes(base64_decode($input->getBase64('product', '')));
-			$release   = preg_replace('/[^\d\.]/', '', base64_decode($input->getBase64('release', '')));
-			$dev_level = (int) base64_decode($input->getBase64('dev_level', ''));
+			$product   = addslashes(base64_decode($this->getState('filter.product')));
+			$dev_level = (int) base64_decode($this->getState('filter.dev_level'));
 
 			$updatefile = dirname(__DIR__) . '/helpers/update.php';
 			$fh         = fopen($updatefile, 'r');
@@ -245,7 +161,7 @@ class AppsModelExtension extends ListModel
 
 		$item->download_type = $this->getTypeEnum($item->download_integration_type->value);
 
-		return array($item);
+		return $item;
 	}
 
 	/**
