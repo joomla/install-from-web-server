@@ -1,175 +1,68 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_contact
+ * Joomla! Install From Web Server
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright  Copyright (C) 2013 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later
  */
 
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Cache\Exception\CacheExceptionInterface;
-use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Uri\Uri;
-use Joomla\Registry\Registry;
 
 /**
- * This models supports retrieving lists of contact categories.
+ * Dashboard model.
  *
- * @package     Joomla.Site
- * @subpackage  com_apps
- * @since       1.6
+ * @since  1.0
  */
-class AppsModelDashboard extends ListModel
+class AppsModelDashboard extends BaseDatabaseModel
 {
-	/**
-	 * Model context string.
-	 *
-	 * @var		string
-	 */
-	public $_context = 'com_apps.dashboard';
-
-	/**
-	 * The category context (allows other extensions to derived from this model).
-	 *
-	 * @var		string
-	 */
-	protected $_extension = 'com_apps';
-
-	private $_parent = null;
-
-	private $_items = null;
-
-	private $_remotedb = null;
-
-	public $_extensionstitle = null;
-
-	private $_categories = null;
-
-	private $_breadcrumbs = array();
-
-	private $_total = null;
-
-	private $_orderby = 'score';
-
 	/**
 	 * Method to auto-populate the model state.
 	 *
 	 * Note. Calling getState in this method will result in recursion.
 	 *
-	 * @since   1.6
+	 * @since   1.0
 	 */
-	protected function populateState($ordering = null, $direction = null)
+	protected function populateState()
 	{
 		$app = Factory::getApplication();
-		$this->setState('filter.extension', $this->_extension);
 
-		// Get the parent id if defined.
-		$parentId = $app->input->getInt('id');
-		$this->setState('filter.parentId', $parentId);
+		$ordering = $app->input->get('ordering', 'score');
 
-		$params = $app->getParams();
-		$this->setState('params', $params);
+		$this->setState('list.limit', $app->input->getUint('limit', ComponentHelper::getParams('com_apps')->get('default_limit', 8)));
+		$this->setState('list.start', $app->input->getUint('limitstart', 0));
+		$this->setState('list.ordering', $ordering);
+		$this->setState('list.direction', $ordering == 'core_title' ? 'ASC' : 'DESC');
 
-		$this->setState('filter.published',	1);
-		$this->setState('filter.access',	true);
+		$this->setState('filter.search', str_replace('_', ' ', urldecode(trim($app->input->get('filter_search', null)))));
 	}
 
 	/**
-	 * Method to get a store id based on model configuration state.
+	 * Retrieve the base model.
 	 *
-	 * This is necessary because the model is used by the component and
-	 * different modules that might need different sets of data or different
-	 * ordering requirements.
+	 * @return  boolean|AppsModelBase
 	 *
-	 * @param   string  $id	A prefix for the store id.
-	 *
-	 * @return  string  A store id.
-	 */
-	protected function getStoreId($id = '')
-	{
-		// Compile the store id.
-		$id	.= ':'.$this->getState('filter.extension');
-		$id	.= ':'.$this->getState('filter.published');
-		$id	.= ':'.$this->getState('filter.access');
-		$id	.= ':'.$this->getState('filter.parentId');
-
-		return parent::getStoreId($id);
-	}
-
-	/**
-	 * redefine the function an add some properties to make the styling more easy
-	 *
-	 * @return mixed An array of data items on success, false on failure.
-	 */
-	public function getItems()
-	{
-		if (!count($this->_items))
-		{
-			$app    = Factory::getApplication();
-			$menu   = $app->getMenu();
-			$active = $menu->getActive();
-			$params = new Registry;
-
-			if ($active)
-			{
-				$params->loadString($active->params);
-			}
-
-			$options               = [];
-			$options['countItems'] = $params->get('show_cat_items_cat', 1) || !$params->get('show_empty_categories_cat', 0);
-			$categories            = Categories::getInstance('Contact', $options);
-			$this->_parent         = $categories->get($this->getState('filter.parentId', 'root'));
-
-			if (is_object($this->_parent))
-			{
-				$this->_items = $this->_parent->getChildren();
-			}
-			else
-			{
-				$this->_items = false;
-			}
-		}
-
-		return $this->_items;
-	}
-
-	public function getParent()
-	{
-		if (!is_object($this->_parent))
-		{
-			$this->getItems();
-		}
-		return $this->_parent;
-	}
-
-	/**
-	 * @return  bool|AppsModelBase
+	 * @since   1.0
 	 */
 	private function getBaseModel()
 	{
 		return BaseDatabaseModel::getInstance('Base', 'AppsModel');
 	}
 
-	private function getCatID()
-	{
-		return null;
-	}
-
 	public function getCategories()
 	{
-		return $this->getBaseModel()->getCategories($this->getCatID());
+		return $this->getBaseModel()->getCategories();
 	}
 
 	public function getBreadcrumbs()
 	{
-		return $this->getBaseModel()->getBreadcrumbs($this->getCatID());
+		return $this->getBaseModel()->getBreadcrumbs();
 	}
 
 	public function getPluginUpToDate()
@@ -177,35 +70,13 @@ class AppsModelDashboard extends ListModel
 		return $this->getBaseModel()->getPluginUpToDate();
 	}
 
-	public function getOrderBy()
-	{
-		return $this->_orderby;
-	}
-
-	public function getExtensions()
+	public function getExtensions(): array
 	{
 		/** @var \Joomla\CMS\Cache\Controller\CallbackController $cache */
 		$cache = Factory::getCache('com_apps', 'callback');
 
 		// These calls are always cached
 		$cache->setCaching(true);
-
-		// Extract some default values from the component params
-		$componentParams = ComponentHelper::getParams('com_apps');
-
-		$defaultLimit = $componentParams->get('default_limit', 8);
-
-		// Extract params from the request
-		$input = Factory::getApplication()->input;
-
-		$limit      = $input->getInt('limit', $defaultLimit);
-		$limitstart = $input->getInt('limitstart', 0);
-		$order      = $input->get('ordering', $this->getOrderBy());
-		$search     = str_replace('_', ' ', urldecode(trim($input->get('filter_search', null))));
-
-		// Params based on the model state
-		$orderCol  = $this->getState('list.ordering', $order);
-		$orderDirn = $orderCol == 'core_title' ? 'ASC' : 'DESC';
 
 		// Build the request URL here, since this will vary based on params we will use the URL as part of our cache key
 		$url = new Uri;
@@ -217,23 +88,23 @@ class AppsModelDashboard extends ListModel
 		$url->setVar('controller', 'filter');
 		$url->setVar('view', 'extension');
 		$url->setVar('format', 'json');
-		$url->setVar('limit', $limit);
-		$url->setVar('limitstart', $limitstart);
+		$url->setVar('limit', $this->getState('list.limit'));
+		$url->setVar('limitstart', $this->getState('list.start'));
 		$url->setVar('filter[approved]', '1');
 		$url->setVar('filter[published]', '1');
 		$url->setVar('extend', '0');
-		$url->setVar('order', $orderCol);
-		$url->setVar('dir', $orderDirn);
+		$url->setVar('order', $this->getState('list.ordering'));
+		$url->setVar('dir', $this->getState('list.direction'));
 
-		if ($search)
+		if ($search = $this->getState('filter.search'))
 		{
 			$url->setVar('searchall', urlencode($search));
 		}
 
 		try
 		{
-			// We explicitly define our own ID to keep JCache from calculating it separately
-			$items = $cache->get(array($this, 'fetchDashboardExtensions'), array($url), md5(__METHOD__ . $url->toString()));
+			// We explicitly define our own ID to keep the caching API from calculating it separately
+			$items = $cache->get([$this, 'fetchDashboardExtensions'], [$url], md5(__METHOD__ . $url->toString()));
 		}
 		catch (CacheExceptionInterface $e)
 		{
@@ -257,7 +128,7 @@ class AppsModelDashboard extends ListModel
 		$items     = $items->data;
 
 		// Populate array
-		$extensions = array(0 => array(), 1 => array());
+		$extensions = [0 => [], 1 => []];
 
 		foreach ($items as $item)
 		{
@@ -276,18 +147,14 @@ class AppsModelDashboard extends ListModel
 		return array_merge($extensions[0], $extensions[1]);
 	}
 
-	public function getCount()
-	{
-		return $this->_total;
-	}
-
 	/**
 	 * Fetches the dashboard extensions from the JED
 	 *
 	 * @param   Uri  $uri  The URI to request data from
 	 *
-	 * @return  array
+	 * @return  stdClass
 	 *
+	 * @since   1.0
 	 * @throws  RuntimeException if the HTTP query fails
 	 */
 	public function fetchDashboardExtensions(Uri $uri)

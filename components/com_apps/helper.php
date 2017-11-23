@@ -1,39 +1,72 @@
 <?php
-class AppsHelper {
+/**
+ * Joomla! Install From Web Server
+ *
+ * @copyright  Copyright (C) 2013 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later
+ */
 
-	static function getAJAXUrl($fragment) {
-		$componentParams 	= JComponentHelper::getParams('com_apps');
-		$route_prefix		= $componentParams->get('route_prefix', 'index.php?option=com_apps&format=json');
+defined('_JEXEC') or die;
 
-		if (!$route_prefix) {
-			return $fragment;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Uri\Uri;
+
+/**
+ * Helper class for the Install From Web component.
+ *
+ * @since  1.0
+ */
+class AppsHelper
+{
+	/**
+	 * Retrieve the Install From Web AJAX URL for a request.
+	 *
+	 * @param   array  $variables  The query variables to append to the base URI
+	 *
+	 * @return  string
+	 *
+	 * @since   1.0
+	 */
+	public static function getAJAXUrl(array $variables = []): string
+	{
+		$route_prefix = ComponentHelper::getParams('com_apps')->get('route_prefix', 'index.php?option=com_apps&format=json');
+
+		$uri = Uri::getInstance($route_prefix);
+
+		foreach ($variables as $key => $value)
+		{
+			$uri->setVar($key, $value);
 		}
 
-		$uri = JURI::getInstance($route_prefix);
-		$query = $uri->getQuery();
-		$query .= '&' . $fragment;
-		$uri->setQuery($query);
-		$url = $uri->toString();
-
-		return $url;
+		return $uri->toString();
 	}
 
-	static function getJEDUrl($item) {
-		$url = 'http://extensions.joomla.org/';
+	public static function getJEDUrl($item)
+	{
+		$url = 'https://extensions.joomla.org/';
 
-		if (!isset($item->id->value)) { return $url; }
+		if (!isset($item->id->value))
+		{
+			return $url;
+		}
 
 		$url .= 'index.php?option=com_jed&view=extension&layout=default&id=' . $item->id->value;
+
 		return $url;
 	}
 
-	static function getJEDCatUrl($catid = 0) {
-		$url = 'http://extensions.joomla.org/';
+	public static function getJEDCatUrl($catid = 0)
+	{
+		$url = 'https://extensions.joomla.org/';
 
-		if (!$catid) { return $url; }
+		if (!$catid)
+		{
+			return $url;
+		}
 
 		//$url .= 'index.php?option=com_jed&view=category&layout=list&id=' . $catid;
 		$url .= 'index.php?option=com_jed&controller=filter&view=extension&layout=list&Itemid=145&filter[core_catid]=' . $catid;
+
 		return $url;
 	}
 }

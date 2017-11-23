@@ -9,27 +9,24 @@
 
 defined('_JEXEC') or die;
 
-$category_sidebar 		= new JLayoutFile('joomla.apps.category_sidebar');
-$extensions_imagegrid 	= new JLayoutFile('joomla.apps.extensions_imagegrid');
-$extensions_singlegrid 	= new JLayoutFile('joomla.apps.extensions_singlegrid');
-$advanced_search	 	= new JLayoutFile('joomla.apps.advanced_search');
-$simple_search			= new JLayoutFile('joomla.apps.simple_search');
-$extension_data			= array('extensions' => $this->extensions, 'breadcrumbs' => $this->breadcrumbs, 'params' => $this->params);
-$order_data			= array('orderby' => $this->orderby);
+use Joomla\CMS\Layout\FileLayout;
+
+/** @var AppsViewDashboard $this */
+
 ?>
 <div class="com-apps-container">
-<div class="row-fluid">
-	<div class="span3">
-		<?php echo $category_sidebar->render($this->categories); ?>
-	</div> 
-	<div class="span9">
-		<div class="row-fluid">
-			<div class="span12">
-				<?php echo $simple_search->render($order_data); ?>
-			</div>
+	<div class="row-fluid">
+		<div class="span3">
+			<?php echo (new FileLayout('joomla.apps.category_sidebar'))->render($this->categories); ?>
 		</div>
+		<div class="span9">
+			<div class="row-fluid">
+				<div class="span12">
+					<?php echo (new FileLayout('joomla.apps.simple_search'))->render(['orderby' => $this->orderby]); ?>
+				</div>
+			</div>
 
-		<?php echo $extensions_imagegrid->render($extension_data); ?>
+			<?php echo (new FileLayout('joomla.apps.extensions_imagegrid'))->render(['extensions' => $this->extensions, 'breadcrumbs' => $this->breadcrumbs]); ?>
+		</div>
 	</div>
-</div>
 </div>

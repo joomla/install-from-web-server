@@ -1,10 +1,9 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_apps
+ * Joomla! Install From Web Server
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright  Copyright (C) 2013 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later
  */
 
 defined('_JEXEC') or die;
@@ -14,35 +13,18 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Http\Http;
 use Joomla\CMS\Http\HttpFactory;
-use Joomla\CMS\Input\Input;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Version;
 
 /**
- * This models supports retrieving lists of contact categories.
+ * Base model for the install from web server.
  *
- * @package     Joomla.Site
- * @subpackage  com_apps
- * @since       1.6
+ * @since  1.0
  */
 class AppsModelBase extends ListModel
 {
-	/**
-	 * Model context string.
-	 *
-	 * @var		string
-	 */
-	public $_context = 'com_apps.base';
-
-	/**
-	 * The category context (allows other extensions to derived from this model).
-	 *
-	 * @var		string
-	 */
-	protected $_extension = 'com_apps';
-
 	private $_baseURL = 'index.php?format=json&option=com_apps';
 
 	private $_categories = array();
@@ -55,6 +37,20 @@ class AppsModelBase extends ListModel
 		'latest'	=>	'1.1.0',
 		'works'		=>	'1.0.5',
 	);
+
+	/**
+	 * Method to auto-populate the model state.
+	 *
+	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 * @since   1.0
+	 */
+	protected function populateState($ordering = null, $direction = null)
+	{
+		$app = Factory::getApplication();
+
+		$this->setState('view', $app->input->getCmd('view'));
+	}
 
 	/**
 	 * Fetches the category data from the JED
@@ -142,7 +138,7 @@ class AppsModelBase extends ListModel
 		return $this->_baseURL . '&view=extension&id=' . $entryId;
 	}
 
-	public function getCategories($catid)
+	public function getCategories($catid = null)
 	{
 		if (empty($this->_categories))
 		{
@@ -155,7 +151,7 @@ class AppsModelBase extends ListModel
 			try
 			{
 				// We explicitly define our own ID to keep the cache API from calculating it separately
-				$items = $cache->get(array($this, 'fetchCategoriesFromJed'), array(), md5(__METHOD__));
+				$items = $cache->get([$this, 'fetchCategoriesFromJed'], [], md5(__METHOD__));
 			}
 			catch (CacheExceptionInterface $e)
 			{
@@ -175,14 +171,12 @@ class AppsModelBase extends ListModel
 				throw new RuntimeException('Could not retrieve category data from the JED.', $e->getCode(), $e);
 			}
 
-			$this->_total = count($items);
-
-			$breadcrumbRefs = array();
+			$breadcrumbRefs = [];
 
 			// Array to be returned
-			$this->_categories = array();
+			$this->_categories = [];
 
-			$this->_children = array();
+			$this->_children = [];
 
 			foreach ($items as $item)
 			{
@@ -213,24 +207,25 @@ class AppsModelBase extends ListModel
 
 					if (!isset($parent->children))
 					{
-						$parent->children = array();
+						$parent->children = [];
 					}
 
 					if (!isset($parent->children[$id]))
 					{
 						$parent->children[$id] = new stdClass;
 					}
+
 					$category =& $parent->children[$id];
 
 					// Populate category with values
 					$category->id          = $id;
-					$category->active      = ($catid == $category->id);
+					$category->active      = $catid == $category->id;
 					$category->selected    = $category->active;
 					$category->name        = $item->title->value;
 					$category->alias       = $item->alias->value;
 					$category->parent      = (int) $parentId;
 					$category->description = '';
-					$category->children    = array();
+					$category->children    = [];
 
 					$this->_children[] = $category;
 
@@ -251,15 +246,18 @@ class AppsModelBase extends ListModel
 					// It is parent, so let's add it to the parent array
 					if (!array_key_exists($id, $this->_categories))
 					{
-						$this->_categories[$id] = new stdClass;
-						$this->_categories[$id]->children = array();
+						$this->_categories[$id]           = new stdClass;
+						$this->_categories[$id]->children = [];
 					}
 					$category =& $this->_categories[$id];
 
-					$category->id          = $id;
-					if (!isset($category->active)) {
-						$category->active = ($catid == $category->id);
+					$category->id = $id;
+
+					if (!isset($category->active))
+					{
+						$category->active = $catid == $category->id;
 					}
+
 					$category->selected    = $category->active;
 					$category->name        = $item->title->value;
 					$category->alias       = $item->alias->value;
@@ -280,25 +278,24 @@ class AppsModelBase extends ListModel
 		}
 
 		// Add the Home item
-		$input = new Input;
-		$view = $input->get('view', null);
+		$view  = $this->getState('view');
 
-		$home = new stdClass;
-		$home->active      = $view == 'dashboard' ? true : false;
+		$home              = new stdClass;
+		$home->active      = $view == 'dashboard';
 		$home->id          = 0;
 		$home->name        = Text::_('COM_APPS_HOME');
 		$home->alias       = 'home';
 		$home->description = Text::_('COM_APPS_EXTENSIONS_DASHBOARD');
 		$home->parent      = 0;
-		$home->selected    = ($view == 'dashboard' ? true : false);
-		$home->children    = array();
+		$home->selected    = $view == 'dashboard';
+		$home->children    = [];
 
 		array_unshift($this->_categories, $home);
 
 		return $this->_categories;
 	}
 
-	public function getBreadcrumbs($catid)
+	public function getBreadcrumbs($catid = null)
 	{
 		if (!count($this->_breadcrumbs))
 		{
