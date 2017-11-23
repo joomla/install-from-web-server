@@ -41,6 +41,15 @@ class AppsHelper
 		return $uri->toString();
 	}
 
+	/**
+	 * Retrieve the JED URL for an extension.
+	 *
+	 * @param   stdClass  $item  The extension to process
+	 *
+	 * @return  string
+	 *
+	 * @since   1.0
+	 */
 	public static function getJEDUrl($item)
 	{
 		$url = 'https://extensions.joomla.org/';
@@ -55,6 +64,15 @@ class AppsHelper
 		return $url;
 	}
 
+	/**
+	 * Retrieve the JED URL for an extension category.
+	 *
+	 * @param   integer  $catid  The JED category ID
+	 *
+	 * @return  string
+	 *
+	 * @since   1.0
+	 */
 	public static function getJEDCatUrl($catid = 0)
 	{
 		$url = 'https://extensions.joomla.org/';
@@ -64,7 +82,6 @@ class AppsHelper
 			return $url;
 		}
 
-		//$url .= 'index.php?option=com_jed&view=category&layout=list&id=' . $catid;
 		$url .= 'index.php?option=com_jed&controller=filter&view=extension&layout=list&Itemid=145&filter[core_catid]=' . $catid;
 
 		return $url;
