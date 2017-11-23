@@ -96,7 +96,7 @@ $layouts = ['grid', 'list'];
 							<ul class="thumbnails">
 						<?php endif; ?>
 
-						<?php echo (new FileLayout('joomla.apps.extensions_singlegrid_' . $layout))->render(['spanclass' => $spanclass, 'extension' => $extension]); ?>
+						<?php echo (new FileLayout('apps.extensions_singlegrid_' . $layout))->render(['spanclass' => $spanclass, 'extension' => $extension]); ?>
 
 						<?php $i++; ?>
 					<?php endforeach; ?>

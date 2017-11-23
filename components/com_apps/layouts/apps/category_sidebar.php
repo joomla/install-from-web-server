@@ -10,7 +10,7 @@ defined('JPATH_BASE') or die;
 
 use Joomla\CMS\Layout\FileLayout;
 
-$category_sidebar = new FileLayout('joomla.apps.category_sidebar_ul');
+$category_sidebar = new FileLayout('apps.category_sidebar_ul');
 ?>
 <div class="com-apps-sidebar">
 	<div class="scroll-pane well">

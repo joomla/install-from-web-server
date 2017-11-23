@@ -16,16 +16,16 @@ use Joomla\CMS\Layout\FileLayout;
 <div class="com-apps-container">
 	<div class="row-fluid">
 		<div class="span3">
-			<?php echo (new FileLayout('joomla.apps.category_sidebar'))->render($this->categories); ?>
+			<?php echo (new FileLayout('apps.category_sidebar'))->render($this->categories); ?>
 		</div>
 		<div class="span9">
 			<div class="row-fluid">
 				<div class="span12">
-					<?php echo (new FileLayout('joomla.apps.simple_search'))->render(); ?>
+					<?php echo (new FileLayout('apps.simple_search'))->render(); ?>
 				</div>
 			</div>
 
-			<?php echo (new FileLayout('joomla.apps.extensions_full'))->render(['extension' => $this->extension, 'breadcrumbs' => $this->breadcrumbs]); ?>
+			<?php echo (new FileLayout('apps.extensions_full'))->render(['extension' => $this->extension, 'breadcrumbs' => $this->breadcrumbs]); ?>
 		</div>
 	</div>
 </div>
