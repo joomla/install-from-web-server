@@ -9,82 +9,119 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Cache\Exception\CacheExceptionInterface;
-use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Log\Log;
-use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Uri\Uri;
-use Joomla\Registry\Registry;
+
+JLoader::register('AppsModelBase', __DIR__ . '/base.php');
 
 /**
  * Extension model.
  *
  * @since  1.0
  */
-class AppsModelExtension extends BaseDatabaseModel
+class AppsModelExtension extends AppsModelBase
 {
-
-	private $_parent = null;
-
-	private $_catid = null;
-
-	private $_items = null;
-
-	private $_remotedb = null;
-
-	public $_extensionstitle = null;
-
-	private $_categories = null;
-
-	private $_breadcrumbs = array();
+	/**
+	 * The active category ID
+	 *
+	 * @var    integer|null
+	 * @since  1.0
+	 */
+	private $catid;
 
 	/**
-	 * Method to auto-populate the model state.
+	 * Fetches the extension data from the JED
 	 *
-	 * Note. Calling getState in this method will result in recursion.
+	 * @param   integer  $id  The extension ID
 	 *
-	 * @since   1.6
+	 * @return  array
+	 *
+	 * @since   1.0
+	 * @throws  RuntimeException if the HTTP query fails
 	 */
-	protected function populateState()
+	public function fetchExtension($id)
 	{
-		$app = Factory::getApplication();
+		$url = new Uri;
 
-		$this->setState('filter.id', $app->input->getUint('id'));
-		$this->setState('filter.product', $app->input->getBase64('product', ''));
-		$this->setState('filter.release', $app->input->getBase64('release', ''));
-		$this->setState('filter.dev_level', $app->input->getBase64('dev_level', ''));
+		$url->setScheme('https');
+		$url->setHost('extensions.joomla.org');
+		$url->setPath('/index.php');
+		$url->setVar('option', 'com_jed');
+		$url->setVar('controller', 'filter');
+		$url->setVar('view', 'extension');
+		$url->setVar('format', 'json');
+		$url->setVar('filter[approved]', '1');
+		$url->setVar('filter[published]', '1');
+		$url->setVar('filter[id]', $id);
+		$url->setVar('extend', '0');
+
+		try
+		{
+			$http = $this->getHttpClient();
+		}
+		catch (RuntimeException $e)
+		{
+			throw new RuntimeException('Cannot fetch HTTP client to connect to JED', $e->getCode(), $e);
+		}
+
+		$response = $http->get($url->toString());
+
+		// Make sure we've gotten an expected good response
+		if ($response->code !== 200)
+		{
+			throw new RuntimeException('Unexpected response from the JED', $response->code);
+		}
+
+		// The body should be a JSON string, if we have issues decoding it assume we have a bad response
+		$categoryData = json_decode($response->body);
+
+		if (json_last_error())
+		{
+			throw new RuntimeException('Unexpected response from the JED, JSON could not be decoded with error: ' . json_last_error_msg(), 500);
+		}
+
+		return $categoryData;
 	}
 
 	/**
-	 * Retrieve the base model.
+	 * Fetch the breadcrumb tree
 	 *
-	 * @return  boolean|AppsModelBase
+	 * @param   integer|null  $catid  The active category ID
+	 *
+	 * @return  array
 	 *
 	 * @since   1.0
 	 */
-	private function getBaseModel()
+	public function getBreadcrumbs($catid = null): array
 	{
-		return BaseDatabaseModel::getInstance('Base', 'AppsModel');
+		return parent::getBreadcrumbs($this->getCatID());
 	}
 
+	/**
+	 * Get the active category ID
+	 *
+	 * @return  integer|null
+	 *
+	 * @since   1.0
+	 */
 	private function getCatID()
 	{
-		return $this->_catid;
+		return $this->catid;
 	}
 
-	public function getCategories()
+	/**
+	 * Fetch the JED categories
+	 *
+	 * @param   integer|null  $catid  The active category ID
+	 *
+	 * @return  array
+	 *
+	 * @since   1.0
+	 */
+	public function getCategories($catid = null): array
 	{
-		return $this->getBaseModel()->getCategories($this->getCatID());
-	}
-
-	public function getBreadcrumbs()
-	{
-		return $this->getBaseModel()->getBreadcrumbs($this->getCatID());
-	}
-
-	public function getPluginUpToDate()
-	{
-		return $this->getBaseModel()->getPluginUpToDate();
+		return parent::getCategories($this->getCatID());
 	}
 
 	/**
@@ -129,8 +166,8 @@ class AppsModelExtension extends BaseDatabaseModel
 
 		// Create item
 		$item              = $items->data[0];
-		$this->_catid      = $item->core_catid->value;
-		$item->image       = $this->getBaseModel()->getMainImageUrl($item);
+		$this->catid       = $item->core_catid->value;
+		$item->image       = $this->getMainImageUrl($item);
 		$item->downloadurl = $item->download_integration_url->value;
 
 		if (preg_match('/\.xml\s*$/', $item->downloadurl))
@@ -165,60 +202,17 @@ class AppsModelExtension extends BaseDatabaseModel
 	}
 
 	/**
-	 * Fetches the extension data from the JED
+	 * Get the type value
 	 *
-	 * @param   integer  $id  The extension ID
+	 * @param   string  $text  Text to lookup
 	 *
-	 * @return  array
+	 * @return  false|int|string
 	 *
-	 * @throws  RuntimeException if the HTTP query fails
+	 * @since   1.0
 	 */
-	public function fetchExtension($id)
+	private function getTypeEnum($text)
 	{
-		$url = new Uri;
-
-		$url->setScheme('https');
-		$url->setHost('extensions.joomla.org');
-		$url->setPath('/index.php');
-		$url->setVar('option', 'com_jed');
-		$url->setVar('controller', 'filter');
-		$url->setVar('view', 'extension');
-		$url->setVar('format', 'json');
-		$url->setVar('filter[approved]', '1');
-		$url->setVar('filter[published]', '1');
-		$url->setVar('filter[id]', $id);
-		$url->setVar('extend', '0');
-
-		try
-		{
-			$http = $this->getBaseModel()->getHttpClient();
-		}
-		catch (RuntimeException $e)
-		{
-			throw new RuntimeException('Cannot fetch HTTP client to connect to JED', $e->getCode(), $e);
-		}
-
-		$response = $http->get($url->toString());
-
-		// Make sure we've gotten an expected good response
-		if ($response->code !== 200)
-		{
-			throw new RuntimeException('Unexpected response from the JED', $response->code);
-		}
-
-		// The body should be a JSON string, if we have issues decoding it assume we have a bad response
-		$categoryData = json_decode($response->body);
-
-		if (json_last_error())
-		{
-			throw new RuntimeException('Unexpected response from the JED, JSON could not be decoded with error: ' . json_last_error_msg(), 500);
-		}
-
-		return $categoryData;
-	}
-
-	private function getTypeEnum($text) {
-		$options = array();
+		$options    = [];
 		$options[0] = 'None';
 		$options[1] = 'Free Direct Download link:';
 		$options[2] = 'Free but Registration required at link:';
@@ -227,4 +221,22 @@ class AppsModelExtension extends BaseDatabaseModel
 		return array_search($text, $options);
 	}
 
+	/**
+	 * Method to auto-populate the model state.
+	 *
+	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 * @since   1.0
+	 */
+	protected function populateState()
+	{
+		parent::populateState();
+
+		$app = Factory::getApplication();
+
+		$this->setState('filter.id', $app->input->getUint('id'));
+		$this->setState('filter.product', $app->input->getBase64('product', ''));
+		$this->setState('filter.release', $app->input->getBase64('release', ''));
+		$this->setState('filter.dev_level', $app->input->getBase64('dev_level', ''));
+	}
 }

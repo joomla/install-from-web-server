@@ -12,71 +12,93 @@ use Joomla\CMS\Cache\Exception\CacheExceptionInterface;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Log\Log;
-use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Uri\Uri;
+
+JLoader::register('AppsModelBase', __DIR__ . '/base.php');
 
 /**
  * Category model.
  *
  * @since  1.0
  */
-class AppsModelCategory extends BaseDatabaseModel
+class AppsModelCategory extends AppsModelBase
 {
 	/**
-	 * Method to auto-populate the model state.
+	 * Fetches the category data from the JED
 	 *
-	 * Note. Calling getState in this method will result in recursion.
+	 * @param   Uri  $uri  The URI to request data from
+	 *
+	 * @return  stdClass
 	 *
 	 * @since   1.0
+	 * @throws  RuntimeException if the HTTP query fails
 	 */
-	protected function populateState()
+	public function fetchCategoryExtensions(Uri $uri)
 	{
-		$app = Factory::getApplication();
+		try
+		{
+			$http = $this->getHttpClient();
+		}
+		catch (RuntimeException $e)
+		{
+			throw new RuntimeException('Cannot fetch HTTP client to connect to JED', $e->getCode(), $e);
+		}
 
-		$ordering = $app->input->get('ordering', 't2.link_rating');
+		$response = $http->get($uri->toString());
 
-		$this->setState('list.limit', $app->input->getUint('limit', ComponentHelper::getParams('com_apps')->get('default_limit', 8)));
-		$this->setState('list.start', $app->input->getUint('limitstart', 0));
-		$this->setState('list.ordering', $ordering);
-		$this->setState('list.direction', $ordering == 'core_title' ? 'ASC' : 'DESC');
+		// Make sure we've gotten an expected good response
+		if ($response->code !== 200)
+		{
+			throw new RuntimeException('Unexpected response from the JED', $response->code);
+		}
 
-		$this->setState('filter.id', $app->input->getUint('id'));
-		$this->setState('filter.search', str_replace('_', ' ', urldecode(trim($app->input->get('filter_search', null)))));
+		// The body should be a JSON string, if we have issues decoding it assume we have a bad response
+		$categoryData = json_decode($response->body);
+
+		if (json_last_error())
+		{
+			throw new RuntimeException('Unexpected response from the JED, JSON could not be decoded with error: ' . json_last_error_msg(), 500);
+		}
+
+		return $categoryData;
 	}
 
 	/**
-	 * Retrieve the base model.
+	 * Fetch the breadcrumb tree
 	 *
-	 * @return  boolean|AppsModelBase
+	 * @param   integer|null  $catid  The active category ID
+	 *
+	 * @return  array
 	 *
 	 * @since   1.0
 	 */
-	private function getBaseModel()
+	public function getBreadcrumbs($catid = null): array
 	{
-		return BaseDatabaseModel::getInstance('Base', 'AppsModel');
+		return parent::getBreadcrumbs($this->getState('filter.id'));
 	}
 
-	public function getCategories()
+	/**
+	 * Fetch the JED categories
+	 *
+	 * @param   integer|null  $catid  The active category ID
+	 *
+	 * @return  array
+	 *
+	 * @since   1.0
+	 */
+	public function getCategories($catid = null): array
 	{
-		return $this->getBaseModel()->getCategories($this->getState('filter.id'));
+		return parent::getCategories($this->getState('filter.id'));
 	}
 
-	public function getBreadcrumbs()
-	{
-		return $this->getBaseModel()->getBreadcrumbs($this->getState('filter.id'));
-	}
-
-	public function getPluginUpToDate()
-	{
-		return $this->getBaseModel()->getPluginUpToDate();
-	}
-
-	public function getOrderBy(): string
-	{
-		return $this->getState('list.ordering', 'score');
-	}
-
-	public function getExtensions()
+	/**
+	 * Get the category extensions
+	 *
+	 * @return  array
+	 *
+	 * @since   1.0
+	 */
+	public function getExtensions(): array
 	{
 		/** @var \Joomla\CMS\Cache\Controller\CallbackController $cache */
 		$cache = Factory::getCache('com_apps', 'callback');
@@ -131,15 +153,14 @@ class AppsModelCategory extends BaseDatabaseModel
 			throw new RuntimeException('Could not retrieve category extension data from the JED.', $e->getCode(), $e);
 		}
 
-		$baseModel = $this->getBaseModel();
-		$items     = $items->data;
+		$items = $items->data;
 
 		// Populate array
 		$extensions = [0 => [], 1 => []];
 
 		foreach ($items as $item)
 		{
-			$item->image = $baseModel->getMainImageUrl($item);
+			$item->image = $this->getMainImageUrl($item);
 
 			if ($search)
 			{
@@ -155,42 +176,38 @@ class AppsModelCategory extends BaseDatabaseModel
 	}
 
 	/**
-	 * Fetches the category data from the JED
+	 * Get the order by value
 	 *
-	 * @param   Uri  $uri  The URI to request data from
-	 *
-	 * @return  stdClass
+	 * @return  string
 	 *
 	 * @since   1.0
-	 * @throws  RuntimeException if the HTTP query fails
 	 */
-	public function fetchCategoryExtensions(Uri $uri)
+	public function getOrderBy(): string
 	{
-		try
-		{
-			$http = $this->getBaseModel()->getHttpClient();
-		}
-		catch (RuntimeException $e)
-		{
-			throw new RuntimeException('Cannot fetch HTTP client to connect to JED', $e->getCode(), $e);
-		}
+		return $this->getState('list.ordering', 'score');
+	}
 
-		$response = $http->get($uri->toString());
+	/**
+	 * Method to auto-populate the model state.
+	 *
+	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 * @since   1.0
+	 */
+	protected function populateState()
+	{
+		parent::populateState();
 
-		// Make sure we've gotten an expected good response
-		if ($response->code !== 200)
-		{
-			throw new RuntimeException('Unexpected response from the JED', $response->code);
-		}
+		$app = Factory::getApplication();
 
-		// The body should be a JSON string, if we have issues decoding it assume we have a bad response
-		$categoryData = json_decode($response->body);
+		$ordering = $app->input->get('ordering', 't2.link_rating');
 
-		if (json_last_error())
-		{
-			throw new RuntimeException('Unexpected response from the JED, JSON could not be decoded with error: ' . json_last_error_msg(), 500);
-		}
+		$this->setState('list.limit', $app->input->getUint('limit', ComponentHelper::getParams('com_apps')->get('default_limit', 8)));
+		$this->setState('list.start', $app->input->getUint('limitstart', 0));
+		$this->setState('list.ordering', $ordering);
+		$this->setState('list.direction', $ordering == 'core_title' ? 'ASC' : 'DESC');
 
-		return $categoryData;
+		$this->setState('filter.id', $app->input->getUint('id'));
+		$this->setState('filter.search', str_replace('_', ' ', urldecode(trim($app->input->get('filter_search', null)))));
 	}
 }

@@ -23,7 +23,7 @@ use Joomla\CMS\Version;
  *
  * @since  1.0
  */
-class AppsModelBase extends BaseDatabaseModel
+abstract class AppsModelBase extends BaseDatabaseModel
 {
 	/**
 	 * The breadcrumb tree
@@ -350,7 +350,7 @@ class AppsModelBase extends BaseDatabaseModel
 	 *
 	 * @since   1.0
 	 */
-	protected function populateState($ordering = null, $direction = null)
+	protected function populateState()
 	{
 		$app = Factory::getApplication();
 
