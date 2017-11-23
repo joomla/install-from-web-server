@@ -103,7 +103,7 @@ $tags           = $extension_data->includes->value;
 		<?php if ($extension_data->download_type > 1): ?>
 			<input id="joomlaapsinstallatinput" type="hidden" name="installat" value="" />
 			<input id="joomlaapsinstallfrominput" type="hidden" name="installfrom" value="<?php echo $extension_data->downloadurl; ?>" />
-			<input type="hidden" name="installapp" value="<?php echo $extension_data->link_id; ?>" />
+			<input type="hidden" name="installapp" value="<?php echo $extension_data->link_id ?? null; ?>" />
 		<?php endif; ?>
 		<div class="item-buttons form-actions">
 			<?php if ($extension_data->downloadurl && is_numeric($extension_data->download_type)): ?>
