@@ -92,9 +92,14 @@ class AppsModelDashboard extends AppsModelBase
 		$url->setVar('limitstart', $this->getState('list.start'));
 		$url->setVar('filter[approved]', '1');
 		$url->setVar('filter[published]', '1');
+		$url->setVar('filter[tags][]', '');
 		$url->setVar('extend', '0');
-		$url->setVar('order', $this->getOrderBy());
 		$url->setVar('dir', $this->getState('list.direction'));
+
+		if ($order = $this->getOrderBy())
+		{
+			$url->setVar('order', $order);
+		}
 
 		if ($search = $this->getState('filter.search'))
 		{
@@ -135,7 +140,8 @@ class AppsModelDashboard extends AppsModelBase
 
 			if ($search)
 			{
-				$extensions[1 - $item->foundintitle][] = $item;
+				$inTitle = $item->foundintitle ?? 0;
+				$extensions[1 - $inTitle][] = $item;
 			}
 			else
 			{
@@ -155,7 +161,7 @@ class AppsModelDashboard extends AppsModelBase
 	 */
 	public function getOrderBy(): string
 	{
-		return $this->getState('list.ordering', 'score');
+		return $this->getState('list.ordering', '');
 	}
 
 	/**
@@ -171,7 +177,7 @@ class AppsModelDashboard extends AppsModelBase
 
 		$app = Factory::getApplication();
 
-		$ordering = $app->input->get('ordering', 'score');
+		$ordering = $app->input->get('ordering', '');
 
 		$this->setState('list.limit', $app->input->getUint('limit', ComponentHelper::getParams('com_apps')->get('default_limit', 8)));
 		$this->setState('list.start', $app->input->getUint('limitstart', 0));

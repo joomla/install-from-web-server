@@ -16,15 +16,11 @@ $app     = Factory::getApplication();
 $search  = str_replace('_', ' ', $app->input->getString('filter_search'));
 $view    = $app->input->getCmd('view');
 $list    = $app->input->getCmd('list', 'grid');
-$orderby = $app->input->get('ordering', 'score');
-
-if (array_key_exists('orderby', $displayData))
-{
-	$orderby = $displayData['orderby'];
-}
+$orderby = $displayData['orderby'] ?? $app->input->get('ordering', '');
 
 // Sorting Options
 $orderingOptions = [
+	HTMLHelper::_('select.option', '', Text::_('COM_APPS_SORT_BY_JED_DEFAULT')),
 	HTMLHelper::_('select.option', 'num_reviews', Text::_('COM_APPS_SORT_BY_REVIEWS')),
 	HTMLHelper::_('select.option', 'score', Text::_('COM_APPS_SORT_BY_SCORE')),
 	HTMLHelper::_('select.option', 'core_title', Text::_('COM_APPS_SORT_BY_NAME')),
