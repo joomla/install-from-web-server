@@ -1,10 +1,9 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_apps
+ * Joomla! Install From Web Server
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright  Copyright (C) 2013 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later
  */
 
 defined('_JEXEC') or die;
@@ -14,53 +13,51 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Http\Http;
 use Joomla\CMS\Http\HttpFactory;
-use Joomla\CMS\Input\Input;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
-use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
 use Joomla\CMS\Version;
 
 /**
- * This models supports retrieving lists of contact categories.
+ * Base model for the install from web server.
  *
- * @package     Joomla.Site
- * @subpackage  com_apps
- * @since       1.6
+ * @since  1.0
  */
-class AppsModelBase extends ListModel
+abstract class AppsModelBase extends BaseDatabaseModel
 {
 	/**
-	 * Model context string.
+	 * The breadcrumb tree
 	 *
-	 * @var		string
+	 * @var    stdClass[]
+	 * @since  1.0
 	 */
-	public $_context = 'com_apps.base';
+	private $breadcrumbs = [];
 
 	/**
-	 * The category context (allows other extensions to derived from this model).
+	 * The JED categories
 	 *
-	 * @var		string
+	 * @var    stdClass[]
+	 * @since  1.0
 	 */
-	protected $_extension = 'com_apps';
+	private $categories = [];
 
-	private $_baseURL = 'index.php?format=json&option=com_apps';
-
-	private $_categories = array();
-
-	private $_children = array();
-
-	private $_breadcrumbs = array();
-
-	private $_pv = array(
-		'latest'	=>	'1.1.0',
-		'works'		=>	'1.0.5',
-	);
+	/**
+	 * The client version data
+	 *
+	 * @var    array
+	 * @since  1.0
+	 */
+	private $versions = [
+		'latest' => '1.1.1',
+		'works'  => '1.0.5',
+	];
 
 	/**
 	 * Fetches the category data from the JED
 	 *
 	 * @return  array
 	 *
+	 * @since   1.0
 	 * @throws  RuntimeException if the HTTP query fails
 	 */
 	public function fetchCategoriesFromJed()
@@ -94,57 +91,36 @@ class AppsModelBase extends ListModel
 	}
 
 	/**
-	 * @return  Http
+	 * Fetch the breadcrumb tree
+	 *
+	 * @param   integer|null  $catid  The active category ID
+	 *
+	 * @return  array
+	 *
+	 * @since   1.0
 	 */
-	public function getHttpClient(): Http
+	public function getBreadcrumbs($catid = null): array
 	{
-		$http = HttpFactory::getHttp();
-		$http->setOption('timeout', 60);
-		$http->setOption('userAgent', (new Version)->getUserAgent('com_apps', true));
+		if (empty($this->breadcrumbs))
+		{
+			$this->getCategories($catid);
+		}
 
-		return $http;
+		return $this->breadcrumbs;
 	}
 
-	public static function getMainUrl()
+	/**
+	 * Fetch the JED categories
+	 *
+	 * @param   integer|null  $catid  The active category ID
+	 *
+	 * @return  array
+	 *
+	 * @since   1.0
+	 */
+	public function getCategories($catid = null): array
 	{
-		return $this->_baseURL . '&view=dashboard';
-	}
-
-	public static function getCategoryUrl($categoryId)
-	{
-		return $this->_baseURL . '&view=category&id=' . $categoryId;
-	}
-
-	public static function getEntryListUrl( $categoryId, $limit = 30, $start = 0)
-	{
-
-	}
-
-	public function getMainImageUrl($item)
-	{
-		$componentParams = ComponentHelper::getParams('com_apps');
-		$default_image   = $componentParams->get('default_image_path');
-		$cdn             = trim($componentParams->get('cdn'), '/') . "/";
-		$image           = (isset($item->logo->value[0]->path) && $item->logo->value[0]->path)
-			? $item->logo->value[0]->path : $item->images->value[0]->path;
-
-		// Replace legacy JED url with the CDN url
-		$image = str_replace('http://extensions.joomla.org/', $cdn, $image);
-
-		// Replace API Image path with resizeDown path
-		$image = preg_replace('#(logo|images)/(.*)\.#', '$2' . '_resizeDown302px133px16.', $image, 1);
-
-		return $image;
-	}
-
-	public static function getEntryUrl($entryId)
-	{
-		return $this->_baseURL . '&view=extension&id=' . $entryId;
-	}
-
-	public function getCategories($catid)
-	{
-		if (empty($this->_categories))
+		if (empty($this->categories))
 		{
 			/** @var \Joomla\CMS\Cache\Controller\CallbackController $cache */
 			$cache = Factory::getCache('com_apps', 'callback');
@@ -155,7 +131,7 @@ class AppsModelBase extends ListModel
 			try
 			{
 				// We explicitly define our own ID to keep the cache API from calculating it separately
-				$items = $cache->get(array($this, 'fetchCategoriesFromJed'), array(), md5(__METHOD__));
+				$items = $cache->get([$this, 'fetchCategoriesFromJed'], [], md5(__METHOD__));
 			}
 			catch (CacheExceptionInterface $e)
 			{
@@ -175,14 +151,7 @@ class AppsModelBase extends ListModel
 				throw new RuntimeException('Could not retrieve category data from the JED.', $e->getCode(), $e);
 			}
 
-			$this->_total = count($items);
-
-			$breadcrumbRefs = array();
-
-			// Array to be returned
-			$this->_categories = array();
-
-			$this->_children = array();
+			$breadcrumbRefs = [];
 
 			foreach ($items as $item)
 			{
@@ -204,43 +173,42 @@ class AppsModelBase extends ListModel
 					}
 
 					// It is a child, so let's store as a child of it's parent
-					if (!array_key_exists($parentId, $this->_categories))
+					if (!array_key_exists($parentId, $this->categories))
 					{
-						$this->_categories[$parentId] = new stdClass;
+						$this->categories[$parentId] = new stdClass;
 					}
 
-					$parent =& $this->_categories[$parentId];
+					$parent =& $this->categories[$parentId];
 
 					if (!isset($parent->children))
 					{
-						$parent->children = array();
+						$parent->children = [];
 					}
 
 					if (!isset($parent->children[$id]))
 					{
 						$parent->children[$id] = new stdClass;
 					}
+
 					$category =& $parent->children[$id];
 
 					// Populate category with values
 					$category->id          = $id;
-					$category->active      = ($catid == $category->id);
+					$category->active      = $catid == $category->id;
 					$category->selected    = $category->active;
 					$category->name        = $item->title->value;
 					$category->alias       = $item->alias->value;
 					$category->parent      = (int) $parentId;
 					$category->description = '';
-					$category->children    = array();
-
-					$this->_children[] = $category;
+					$category->children    = [];
 
 					if ($category->active)
 					{
-						$this->_categories[$parentId]->active = true;
+						$this->categories[$parentId]->active = true;
 
 						if (!array_key_exists($parentId, $breadcrumbRefs))
 						{
-							$breadcrumbRefs[$parentId] = &$this->_categories[$parentId];
+							$breadcrumbRefs[$parentId] = &$this->categories[$parentId];
 						}
 
 						$breadcrumbRefs[$id] = &$category;
@@ -249,17 +217,20 @@ class AppsModelBase extends ListModel
 				else
 				{
 					// It is parent, so let's add it to the parent array
-					if (!array_key_exists($id, $this->_categories))
+					if (!array_key_exists($id, $this->categories))
 					{
-						$this->_categories[$id] = new stdClass;
-						$this->_categories[$id]->children = array();
+						$this->categories[$id]           = new stdClass;
+						$this->categories[$id]->children = [];
 					}
-					$category =& $this->_categories[$id];
+					$category =& $this->categories[$id];
 
-					$category->id          = $id;
-					if (!isset($category->active)) {
-						$category->active = ($catid == $category->id);
+					$category->id = $id;
+
+					if (!isset($category->active))
+					{
+						$category->active = $catid == $category->id;
 					}
+
 					$category->selected    = $category->active;
 					$category->name        = $item->title->value;
 					$category->alias       = $item->alias->value;
@@ -275,53 +246,88 @@ class AppsModelBase extends ListModel
 
 			if (!empty($catid))
 			{
-				$this->_breadcrumbs = $breadcrumbRefs;
+				$this->breadcrumbs = $breadcrumbRefs;
 			}
 		}
 
 		// Add the Home item
-		$input = new Input;
-		$view = $input->get('view', null);
+		$view = $this->getState('view');
 
-		$home = new stdClass;
-		$home->active      = $view == 'dashboard' ? true : false;
+		$home              = new stdClass;
+		$home->active      = $view == 'dashboard';
 		$home->id          = 0;
 		$home->name        = Text::_('COM_APPS_HOME');
 		$home->alias       = 'home';
 		$home->description = Text::_('COM_APPS_EXTENSIONS_DASHBOARD');
 		$home->parent      = 0;
-		$home->selected    = ($view == 'dashboard' ? true : false);
-		$home->children    = array();
+		$home->selected    = $view == 'dashboard';
+		$home->children    = [];
 
-		array_unshift($this->_categories, $home);
+		array_unshift($this->categories, $home);
 
-		return $this->_categories;
+		return $this->categories;
 	}
 
-	public function getBreadcrumbs($catid)
+	/**
+	 * Create an HTTP client
+	 *
+	 * @return  Http
+	 *
+	 * @since   1.0
+	 */
+	public function getHttpClient(): Http
 	{
-		if (!count($this->_breadcrumbs))
+		$http = HttpFactory::getHttp();
+		$http->setOption('timeout', 60);
+		$http->setOption('userAgent', (new Version)->getUserAgent('com_apps', true));
+
+		return $http;
+	}
+
+	/**
+	 * Get the URL for an extension's main image
+	 *
+	 * @param   stdClass  $item  The item to process
+	 *
+	 * @return  string
+	 *
+	 * @since   1.0
+	 */
+	public function getMainImageUrl($item): string
+	{
+		$cdn = trim(ComponentHelper::getParams('com_apps')->get('cdn', 'https://extensions.joomla.org/'), '/') . "/";
+
+		$image = '';
+
+		if (isset($item->logo->value[0]->path) && $item->logo->value[0]->path)
 		{
-			$this->getCategories($catid);
+			$image = $item->logo->value[0]->path;
+		}
+		elseif (isset($item->images->value[0]->path) && $item->images->value[0]->path)
+		{
+			$image = $item->images->value[0]->path;
 		}
 
-		return $this->_breadcrumbs;
+		// Replace legacy JED url with the CDN url
+		$image = str_replace(['http://extensions.joomla.org/', 'https://extensions.joomla.org/'], $cdn, $image);
+
+		// Replace API Image path with resizeDown path
+		$image = preg_replace('#(logo|images)/(.*)\.#', '$2' . '_resizeDown302px133px16.', $image, 1);
+
+		return $image;
 	}
 
-	public function getChildren($catid)
-	{
-		if (!count($this->_children))
-		{
-			$this->getCategories($catid);
-		}
-
-		return $this->_children;
-	}
-
-	public function getPluginUpToDate()
+	/**
+	 * Check if the client plugin is up-to-date
+	 *
+	 * @return  integer
+	 *
+	 * @since   1.0
+	 */
+	public function getPluginUpToDate(): int
 	{
 		$remote = preg_replace('/[^\d\.]/', '', base64_decode(Factory::getApplication()->input->get('pv', '', 'base64')));
-		$local  = $this->_pv;
+		$local  = $this->versions;
 
 		if (version_compare($remote, $local['latest']) >= 0)
 		{
@@ -333,5 +339,19 @@ class AppsModelBase extends ListModel
 		}
 
 		return -1;
+	}
+
+	/**
+	 * Method to auto-populate the model state.
+	 *
+	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 * @since   1.0
+	 */
+	protected function populateState()
+	{
+		$app = Factory::getApplication();
+
+		$this->setState('view', $app->input->getCmd('view'));
 	}
 }

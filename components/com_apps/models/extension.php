@@ -1,252 +1,34 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_contact
+ * Joomla! Install From Web Server
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright  Copyright (C) 2013 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later
  */
 
 defined('_JEXEC') or die;
 
 use Joomla\CMS\Cache\Exception\CacheExceptionInterface;
-use Joomla\CMS\Categories\Categories;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Log\Log;
-use Joomla\CMS\MVC\Model\BaseDatabaseModel;
-use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\CMS\Uri\Uri;
-use Joomla\Registry\Registry;
+
+JLoader::register('AppsModelBase', __DIR__ . '/base.php');
 
 /**
- * This models supports retrieving lists of contact categories.
+ * Extension model.
  *
- * @package     Joomla.Site
- * @subpackage  com_apps
- * @since       1.6
+ * @since  1.0
  */
-class AppsModelExtension extends ListModel
+class AppsModelExtension extends AppsModelBase
 {
 	/**
-	 * Model context string.
+	 * The active category ID
 	 *
-	 * @var		string
+	 * @var    integer|null
+	 * @since  1.0
 	 */
-	public $_context = 'com_apps.extension';
-
-	/**
-	 * The category context (allows other extensions to derived from this model).
-	 *
-	 * @var		string
-	 */
-	protected $_extension = 'com_apps';
-
-	private $_parent = null;
-
-	private $_catid = null;
-
-	private $_items = null;
-
-	private $_remotedb = null;
-
-	public $_extensionstitle = null;
-
-	private $_categories = null;
-
-	private $_breadcrumbs = array();
-
-	/**
-	 * Method to auto-populate the model state.
-	 *
-	 * Note. Calling getState in this method will result in recursion.
-	 *
-	 * @since   1.6
-	 */
-	protected function populateState($ordering = null, $direction = null)
-	{
-		$app = Factory::getApplication();
-		$this->setState('filter.extension', $this->_extension);
-
-		// Get the parent id if defined.
-		$parentId = $app->input->getInt('id');
-		$this->setState('filter.parentId', $parentId);
-
-		$params = $app->getParams();
-		$this->setState('params', $params);
-
-		$this->setState('filter.published',	1);
-		$this->setState('filter.access',	true);
-	}
-
-	/**
-	 * Method to get a store id based on model configuration state.
-	 *
-	 * This is necessary because the model is used by the component and
-	 * different modules that might need different sets of data or different
-	 * ordering requirements.
-	 *
-	 * @param   string  $id	A prefix for the store id.
-	 *
-	 * @return  string  A store id.
-	 */
-	protected function getStoreId($id = '')
-	{
-		// Compile the store id.
-		$id	.= ':'.$this->getState('filter.extension');
-		$id	.= ':'.$this->getState('filter.published');
-		$id	.= ':'.$this->getState('filter.access');
-		$id	.= ':'.$this->getState('filter.parentId');
-
-		return parent::getStoreId($id);
-	}
-
-	/**
-	 * redefine the function an add some properties to make the styling more easy
-	 *
-	 * @return mixed An array of data items on success, false on failure.
-	 */
-	public function getItems()
-	{
-		if (!count($this->_items))
-		{
-			$app    = Factory::getApplication();
-			$menu   = $app->getMenu();
-			$active = $menu->getActive();
-			$params = new Registry;
-
-			if ($active)
-			{
-				$params->loadString($active->params);
-			}
-
-			$options               = [];
-			$options['countItems'] = $params->get('show_cat_items_cat', 1) || !$params->get('show_empty_categories_cat', 0);
-			$categories            = Categories::getInstance('Contact', $options);
-			$this->_parent         = $categories->get($this->getState('filter.parentId', 'root'));
-
-			if (is_object($this->_parent))
-			{
-				$this->_items = $this->_parent->getChildren();
-			}
-			else
-			{
-				$this->_items = false;
-			}
-		}
-
-		return $this->_items;
-	}
-
-	public function getParent()
-	{
-		if (!is_object($this->_parent))
-		{
-			$this->getItems();
-		}
-		return $this->_parent;
-	}
-
-	/**
-	 * @return  bool|AppsModelBase
-	 */
-	private function getBaseModel()
-	{
-		return BaseDatabaseModel::getInstance('Base', 'AppsModel');
-	}
-
-	private function getCatID()
-	{
-		return $this->_catid;
-	}
-
-	public function getCategories()
-	{
-		return $this->getBaseModel()->getCategories($this->getCatID());
-	}
-
-	public function getBreadcrumbs()
-	{
-		return $this->getBaseModel()->getBreadcrumbs($this->getCatID());
-	}
-
-	public function getPluginUpToDate()
-	{
-		return $this->getBaseModel()->getPluginUpToDate();
-	}
-
-	public function getExtension()
-	{
-		/** @var \Joomla\CMS\Cache\Controller\CallbackController $cache */
-		$cache = Factory::getCache('com_apps', 'callback');
-
-		// These calls are always cached
-		$cache->setCaching(true);
-
-		// Extract params from the request
-		$input = Factory::getApplication()->input;
-
-		$id = $input->getInt('id', 0);
-
-		try
-		{
-			// We explicitly define our own ID to keep the cache API from calculating it separately
-			$items = $cache->get(array($this, 'fetchExtension'), array($id), md5(__METHOD__ . $id));
-		}
-		catch (CacheExceptionInterface $e)
-		{
-			// Cache failure, let's try an HTTP request without caching
-			$items = $this->fetchExtension($id);
-		}
-		catch (RuntimeException $e)
-		{
-			// Other failure, this isn't good
-			Log::add(
-				'Could not retrieve extension data from the JED: ' . $e->getMessage(),
-				Log::ERROR,
-				'com_apps'
-			);
-
-			// Throw a "sanitised" Exception but nest the caught Exception for debugging
-			throw new RuntimeException('Could not retrieve extension data from the JED.', $e->getCode(), $e);
-		}
-
-		// Create item
-		$item              = $items->data[0];
-		$this->_catid      = $item->core_catid->value;
-		$item->image       = $this->getBaseModel()->getMainImageUrl($item);
-		$item->downloadurl = $item->download_integration_url->value;
-
-		if (preg_match('/\.xml\s*$/', $item->downloadurl))
-		{
-			$product   = addslashes(base64_decode($input->getBase64('product', '')));
-			$release   = preg_replace('/[^\d\.]/', '', base64_decode($input->getBase64('release', '')));
-			$dev_level = (int) base64_decode($input->getBase64('dev_level', ''));
-
-			$updatefile = dirname(__DIR__) . '/helpers/update.php';
-			$fh         = fopen($updatefile, 'r');
-			$theData    = fread($fh, filesize($updatefile));
-			fclose($fh);
-
-			$theData = str_replace('<?php', '', $theData);
-			$theData = str_replace('JVersion::PRODUCT', "'" . $product . "'", $theData);
-			$theData = str_replace('JVersion::DEV_LEVEL', "'" . $dev_level . "'", $theData);
-
-			eval($theData);
-
-			$update = new JUpdate;
-			$update->loadFromXML($item->downloadurl);
-			$package_url_node = $update->get('downloadurl', false);
-
-			if (isset($package_url_node->_data))
-			{
-				$item->downloadurl = $package_url_node->_data;
-			}
-		}
-
-		$item->download_type = $this->getTypeEnum($item->download_integration_type->value);
-
-		return array($item);
-	}
+	private $catid;
 
 	/**
 	 * Fetches the extension data from the JED
@@ -255,6 +37,7 @@ class AppsModelExtension extends ListModel
 	 *
 	 * @return  array
 	 *
+	 * @since   1.0
 	 * @throws  RuntimeException if the HTTP query fails
 	 */
 	public function fetchExtension($id)
@@ -275,7 +58,7 @@ class AppsModelExtension extends ListModel
 
 		try
 		{
-			$http = $this->getBaseModel()->getHttpClient();
+			$http = $this->getHttpClient();
 		}
 		catch (RuntimeException $e)
 		{
@@ -301,8 +84,135 @@ class AppsModelExtension extends ListModel
 		return $categoryData;
 	}
 
-	private function getTypeEnum($text) {
-		$options = array();
+	/**
+	 * Fetch the breadcrumb tree
+	 *
+	 * @param   integer|null  $catid  The active category ID
+	 *
+	 * @return  array
+	 *
+	 * @since   1.0
+	 */
+	public function getBreadcrumbs($catid = null): array
+	{
+		return parent::getBreadcrumbs($this->getCatID());
+	}
+
+	/**
+	 * Get the active category ID
+	 *
+	 * @return  integer|null
+	 *
+	 * @since   1.0
+	 */
+	private function getCatID()
+	{
+		return $this->catid;
+	}
+
+	/**
+	 * Fetch the JED categories
+	 *
+	 * @param   integer|null  $catid  The active category ID
+	 *
+	 * @return  array
+	 *
+	 * @since   1.0
+	 */
+	public function getCategories($catid = null): array
+	{
+		return parent::getCategories($this->getCatID());
+	}
+
+	/**
+	 * Fetch the extension data.
+	 *
+	 * @return  stdClass
+	 *
+	 * @since   1.0
+	 */
+	public function getExtension()
+	{
+		/** @var \Joomla\CMS\Cache\Controller\CallbackController $cache */
+		$cache = Factory::getCache('com_apps', 'callback');
+
+		// These calls are always cached
+		$cache->setCaching(true);
+
+		$id = $this->getState('filter.id');
+
+		try
+		{
+			// We explicitly define our own ID to keep the cache API from calculating it separately
+			$items = $cache->get([$this, 'fetchExtension'], [$id], md5(__METHOD__ . $id));
+		}
+		catch (CacheExceptionInterface $e)
+		{
+			// Cache failure, let's try an HTTP request without caching
+			$items = $this->fetchExtension($id);
+		}
+		catch (RuntimeException $e)
+		{
+			// Other failure, this isn't good
+			Log::add(
+				'Could not retrieve extension data from the JED: ' . $e->getMessage(),
+				Log::ERROR,
+				'com_apps'
+			);
+
+			// Throw a "sanitised" Exception but nest the caught Exception for debugging
+			throw new RuntimeException('Could not retrieve extension data from the JED.', $e->getCode(), $e);
+		}
+
+		// Create item
+		$item              = $items->data[0];
+		$this->catid       = $item->core_catid->value;
+		$item->image       = $this->getMainImageUrl($item);
+		$item->downloadurl = $item->download_integration_url->value;
+
+		if (preg_match('/\.xml\s*$/', $item->downloadurl))
+		{
+			$product   = addslashes(base64_decode($this->getState('filter.product')));
+			$dev_level = (int) base64_decode($this->getState('filter.dev_level'));
+
+			$updatefile = dirname(__DIR__) . '/helpers/update.php';
+			$fh         = fopen($updatefile, 'r');
+			$theData    = fread($fh, filesize($updatefile));
+			fclose($fh);
+
+			$theData = str_replace('<?php', '', $theData);
+			$theData = str_replace('JVersion::PRODUCT', "'" . $product . "'", $theData);
+			$theData = str_replace('JVersion::DEV_LEVEL', "'" . $dev_level . "'", $theData);
+
+			eval($theData);
+
+			$update = new JUpdate;
+			$update->loadFromXML($item->downloadurl);
+			$package_url_node = $update->get('downloadurl', false);
+
+			if (isset($package_url_node->_data))
+			{
+				$item->downloadurl = $package_url_node->_data;
+			}
+		}
+
+		$item->download_type = $this->getTypeEnum($item->download_integration_type->value);
+
+		return $item;
+	}
+
+	/**
+	 * Get the type value
+	 *
+	 * @param   string  $text  Text to lookup
+	 *
+	 * @return  false|int|string
+	 *
+	 * @since   1.0
+	 */
+	private function getTypeEnum($text)
+	{
+		$options    = [];
 		$options[0] = 'None';
 		$options[1] = 'Free Direct Download link:';
 		$options[2] = 'Free but Registration required at link:';
@@ -311,4 +221,22 @@ class AppsModelExtension extends ListModel
 		return array_search($text, $options);
 	}
 
+	/**
+	 * Method to auto-populate the model state.
+	 *
+	 * Note. Calling getState in this method will result in recursion.
+	 *
+	 * @since   1.0
+	 */
+	protected function populateState()
+	{
+		parent::populateState();
+
+		$app = Factory::getApplication();
+
+		$this->setState('filter.id', $app->input->getUint('id'));
+		$this->setState('filter.product', $app->input->getBase64('product', ''));
+		$this->setState('filter.release', $app->input->getBase64('release', ''));
+		$this->setState('filter.dev_level', $app->input->getBase64('dev_level', ''));
+	}
 }

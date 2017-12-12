@@ -1,16 +1,21 @@
 <?php
 /**
- * @package     Joomla.Site
- * @subpackage  com_apps
+ * Joomla! Install From Web Server
  *
- * @copyright   Copyright (C) 2005 - 2013 Open Source Matters, Inc. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @copyright  Copyright (C) 2013 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later
  */
 
 defined('_JEXEC') or die;
 
-require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'helper.php';
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\BaseController;
 
-$controller = JControllerLegacy::getInstance('Apps');
-$controller->execute(JFactory::getApplication()->input->get('task'));
+if (!version_compare(PHP_VERSION, '7.0', 'ge'))
+{
+	throw new RuntimeException('The Install from Web server component requires PHP 7.0 or greater');
+}
+
+$controller = BaseController::getInstance('Apps');
+$controller->execute(Factory::getApplication()->input->get('task'));
 $controller->redirect();
