@@ -19,9 +19,8 @@ use Joomla\CMS\Layout\FileLayout;
 $app = Factory::getApplication();
 
 /** @var array $breadcrumbs */
-$breadcrumbs       = $displayData['breadcrumbs'];
-$extensions_perrow = ComponentHelper::getParams('com_apps')->get('extensions_perrow', 4);
-$spanclass         = 'col-md-' . (12 / $extensions_perrow);
+$breadcrumbs = $displayData['breadcrumbs'];
+$spanclass   = 'col-md-6 col-lg-4 col-xl-3';
 
 $view = $app->input->getCmd('view');
 
