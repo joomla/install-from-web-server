@@ -32,13 +32,5 @@
 			validate="number"
 			default="128"
 		/>
-		<field
-			name="extensions_perrow"
-			type="number"
-			label="COM_APPS_FIELD_EXTENSIONS_PERROW"
-			filter="int"
-			validate="number"
-			default="4"
-		/>
 	</fieldset>
 </config>
