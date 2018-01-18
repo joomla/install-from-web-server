@@ -8,54 +8,48 @@
 
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 $extension_data = $displayData['extension'];
 $tags = $extension_data->includes->value;
 $commercial = $extension_data->type->value != "free" ? true : false;
 ?>
-<li class="item <?php echo $displayData['spanclass']; ?>">
-<div class="thumbnail">
-	<div class="item-header" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl(['view' => 'extension', 'id' => $extension_data->id->value]); ?>');">
-		<h4 class="muted">
-			<a class="transcode ajaxloaded" href="<?php echo AppsHelper::getAJAXUrl(['view' => 'extension', 'id' => $extension_data->id->value]); ?>"><?php echo trim($extension_data->core_title->value); ?></a>
-		</h4>
+<div class="item list-group-item">
+	<div class="text-center">
+		<h4 class="mb-1"><?php echo trim($extension_data->core_title->value); ?></h4>
 	</div>
-	<div class="item-description" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl(['view' => 'extension', 'id' => $extension_data->id->value]); ?>');">
-		<?php echo mb_strlen(trim($extension_data->core_body->value)) > 400 ? mb_substr(trim($extension_data->core_body->value), 0, mb_stripos(trim($extension_data->core_body->value), ' ', 400)) . '...' : trim($extension_data->core_body->value); ?>
-		<div class="fader">&nbsp;</div>
-	</div>
-	<div class="item-icons">
-		<div class="item-parts">
-			<ul class="item-type center">
+	<div class="row">
+		<div class="col-lg-9" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl(['view' => 'extension', 'id' => $extension_data->id->value]); ?>');">
+			<?php echo HTMLHelper::_('string.truncate', $extension_data->core_body->value, 400, false, true); ?>
+		</div>
+		<div class="col-lg-3">
+			<div class="item-type text-center">
 				<?php if ($commercial) : ?>
-					<span title="<?php echo $extension_data->type->value; ?>" class="label label-jcommercial">$</span>
+					<span title="<?php echo $extension_data->type->value; ?>" class="badge badge-warning">$</span>
 				<?php endif; ?>
 				<?php if (in_array('com', $tags)) : ?>
-					<span title="<?php echo Text::_('COM_APPS_COMPONENT'); ?>" class="label label-jcomponent">C</span>
+					<span title="<?php echo Text::_('COM_APPS_COMPONENT'); ?>" class="badge badge-success">C</span>
 				<?php endif; ?>
 				<?php if (in_array('lang', $tags)) : ?>
-					<span title="<?php echo Text::_('COM_APPS_LANGUAGE'); ?>" class="label label-jlanguage">L</span>
+					<span title="<?php echo Text::_('COM_APPS_LANGUAGE'); ?>" class="badge badge-dark">L</span>
 				<?php endif; ?>
 				<?php if (in_array('mod', $tags)) : ?>
-					<span title="<?php echo Text::_('COM_APPS_MODULE'); ?>" class="label label-jmodule">M</span>
+					<span title="<?php echo Text::_('COM_APPS_MODULE'); ?>" class="badge badge-danger">M</span>
 				<?php endif; ?>
 				<?php if (in_array('plugin', $tags)) : ?>
-					<span title="<?php echo Text::_('COM_APPS_PLUGIN'); ?>" class="label label-jplugin">P</span>
+					<span title="<?php echo Text::_('COM_APPS_PLUGIN'); ?>" class="badge badge-secondary">P</span>
 				<?php endif; ?>
 				<?php if (in_array('esp', $tags)) : ?>
-					<span title="<?php echo Text::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?>" class="label label-jspecial">S</span>
+					<span title="<?php echo Text::_('COM_APPS_EXTENSION_SPECIFIC_ADDON'); ?>" class="badge badge-primary">S</span>
 				<?php endif; ?>
 				<?php if (in_array('tool', $tags)) : ?>
-					<span title="<?php echo Text::_('COM_APPS_TOOL'); ?>" class="label label-jtool">T</span>
+					<span title="<?php echo Text::_('COM_APPS_TOOL'); ?>" class="badge badge-light">T</span>
 				<?php endif; ?>
-			</ul>
-		</div>
-		<div class="item-stars">
-			<p class="rating center">
+			</div>
+			<p class="text-center">
 				<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data) . '#reviews'; ?>"><?php echo Text::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS_LIST', $extension_data->score->value, $extension_data->num_reviews->value); ?></a>
 			</p>
 		</div>
 	</div>
 </div>
-</li>

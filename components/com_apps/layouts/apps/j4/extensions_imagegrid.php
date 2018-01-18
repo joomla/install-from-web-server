@@ -72,7 +72,7 @@ $layouts = ['grid', 'list'];
 					</ol>
 				</nav>
 
-				<div class="row">
+				<div class="<?php echo $layout === 'grid' ? 'row' : 'list-group'; ?>">
 					<?php foreach ($displayData['extensions'] as $extension) : ?>
 						<?php echo $this->sublayout($layout, ['spanclass' => $spanclass, 'extension' => $extension]); ?>
 					<?php endforeach; ?>
