@@ -353,5 +353,8 @@ abstract class AppsModelBase extends BaseDatabaseModel
 		$app = Factory::getApplication();
 
 		$this->setState('view', $app->input->getCmd('view'));
+		$this->setState('filter.product', $app->input->getBase64('product', ''));
+		$this->setState('filter.release', $app->input->getBase64('release', ''));
+		$this->setState('filter.dev_level', $app->input->getBase64('dev_level', ''));
 	}
 }
