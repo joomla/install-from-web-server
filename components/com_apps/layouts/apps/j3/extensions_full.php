@@ -108,26 +108,26 @@ $tags           = $extension_data->includes->value;
 		<div class="item-buttons form-actions">
 			<?php if ($extension_data->downloadurl && is_numeric($extension_data->download_type)): ?>
 				<?php if ($extension_data->download_type == 0): ?>
-					<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->downloadurl; ?>"><span class="icon-download"></span> <?php echo Text::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
+					<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->downloadurl; ?>"><span class="icon-download" aria-hidden="true" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
 				<?php elseif ($extension_data->download_type == 1): ?>
-					<a class="install btn btn-success" href="#" onclick="return Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>', '<?php echo $extension_data->core_title->value; ?>')"><span class="icon-checkmark"></span> <?php echo Text::_('COM_APPS_INSTALL') . "&hellip;"; ?></a>
+					<a class="install btn btn-success" href="#" onclick="return Joomla.installfromweb('<?php echo $extension_data->downloadurl; ?>', '<?php echo $extension_data->core_title->value; ?>')"><span class="icon-checkmark" aria-hidden="true" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL') . "&hellip;"; ?></a>
 				<?php elseif ($extension_data->download_type == 2): ?>
-					<button class="install btn btn-success" id="appssubmitbutton" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>');" type="submit"><span class="icon-pencil"></span> <?php echo Text::_('COM_APPS_INSTALL_REGISTER') . "&hellip;"; ?></button>
+					<button class="install btn btn-success" id="appssubmitbutton" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>');" type="submit"><span class="icon-pencil" aria-hidden="true" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_REGISTER') . "&hellip;"; ?></button>
 				<?php elseif ($extension_data->download_type == 3): ?>
-					<button class="install btn btn-success" id="appssubmitbutton" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>');" type="submit"><span class="icon-cart"></span> <?php echo Text::_('COM_APPS_INSTALL_PURCHASE') . "&hellip;"; ?></button>
+					<button class="install btn btn-success" id="appssubmitbutton" onclick="return Joomla.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>');" type="submit"><span class="icon-cart" aria-hidden="true" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_PURCHASE') . "&hellip;"; ?></button>
 				<?php endif; ?>&nbsp;&nbsp;&nbsp;
 			<?php elseif ($extension_data->download_link->value) : ?>
 				<?php if ((is_numeric($extension_data->download_type) && $extension_data->download_type == 0) || $extension_data->download_type == 1 || (strtolower($extension_data->download_type->value) == "free" && !$extension_data->requires_registration->value)): ?>
-					<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-download"></span> <?php echo Text::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
+					<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-download" aria-hidden="true" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
 				<?php elseif ($extension_data->download_type == 2 || (strtolower($extension_data->download_type->value) == "free" && $extension_data->requires_registration->value)): ?>
-					<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-pencil"></span> <?php echo Text::_('COM_APPS_INSTALL_REGISTER_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
+					<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-pencil" aria-hidden="true" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_REGISTER_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
 				<?php elseif ($extension_data->download_type == 3 || (strtolower($extension_data->download_type->value) != "free")): ?>
-					<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-cart"></span> <?php echo Text::_('COM_APPS_INSTALL_PURCHASE_EXTERNAL') . "&hellip;"; ?></a>
+					<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-cart" aria-hidden="true" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_PURCHASE_EXTERNAL') . "&hellip;"; ?></a>
 				<?php endif; ?>&nbsp;&nbsp;&nbsp;
 			<?php endif; ?>
-			<a target="_blank" class="btn btn-primary" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><span class="icon-list"></span> <?php echo Text::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
+			<a target="_blank" class="btn btn-primary" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><span class="icon-list" aria-hidden="true" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
 			<?php if ($extension_data->homepage_link->value) : ?>
-				&nbsp;&nbsp;&nbsp;<a target="_blank" class="btn btn-primary" href="<?php echo $extension_data->homepage_link->text; ?>"><span class="icon-share-alt"></span> <?php echo Text::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
+				&nbsp;&nbsp;&nbsp;<a target="_blank" class="btn btn-primary" href="<?php echo $extension_data->homepage_link->text; ?>"><span class="icon-share-alt" aria-hidden="true" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
 			<?php endif; ?>
 		</div>
 		<div class="item-desc">
