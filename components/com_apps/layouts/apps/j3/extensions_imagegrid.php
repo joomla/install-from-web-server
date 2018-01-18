@@ -14,6 +14,8 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\FileLayout;
 
+/** @var Joomla\CMS\Layout\FileLayout $this */
+
 $app = Factory::getApplication();
 
 /** @var array $breadcrumbs */
@@ -96,7 +98,7 @@ $layouts = ['grid', 'list'];
 							<ul class="thumbnails">
 						<?php endif; ?>
 
-						<?php echo (new FileLayout('apps.extensions_singlegrid_' . $layout))->render(['spanclass' => $spanclass, 'extension' => $extension]); ?>
+						<?php echo $this->sublayout($layout, ['spanclass' => $spanclass, 'extension' => $extension]); ?>
 
 						<?php $i++; ?>
 					<?php endforeach; ?>
