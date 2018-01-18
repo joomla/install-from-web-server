@@ -38,6 +38,12 @@ class AppsViewExtension extends HtmlView
 	protected $extension;
 
 	/**
+	 * @var    string
+	 * @since  1.0
+	 */
+	protected $release = '';
+
+	/**
 	 * Execute and display a template script.
 	 *
 	 * @param   string $tpl The name of the template file to parse; automatically searches through the template paths.
@@ -59,6 +65,7 @@ class AppsViewExtension extends HtmlView
 		$this->extension   = $this->get('Extension');
 		$this->categories  = $this->get('Categories');
 		$this->breadcrumbs = $this->get('Breadcrumbs');
+		$this->release     = $this->getModel()->getState('filter.release');
 
 		$json = new JsonResponse(
 			[

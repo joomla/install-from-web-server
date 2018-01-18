@@ -44,6 +44,12 @@ class AppsViewDashboard extends HtmlView
 	protected $orderby = '';
 
 	/**
+	 * @var    string
+	 * @since  1.0
+	 */
+	protected $release = '';
+
+	/**
 	 * Execute and display a template script.
 	 *
 	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
@@ -66,6 +72,7 @@ class AppsViewDashboard extends HtmlView
 		$this->extensions  = $this->get('Extensions');
 		$this->breadcrumbs = $this->get('Breadcrumbs');
 		$this->orderby     = $this->get('OrderBy');
+		$this->release     = $this->getModel()->getState('filter.release');
 
 		$json = new JsonResponse(
 			[
