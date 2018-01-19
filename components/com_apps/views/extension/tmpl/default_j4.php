@@ -19,12 +19,7 @@ use Joomla\CMS\Layout\FileLayout;
 			<?php echo (new FileLayout('apps.j4.category_sidebar'))->render($this->categories); ?>
 		</div>
 		<div class="col-sm-8 col-md-9">
-			<div class="row">
-				<div class="col">
-					<?php echo (new FileLayout('apps.j4.simple_search'))->render(); ?>
-				</div>
-			</div>
-
+			<?php echo (new FileLayout('apps.j4.simple_search'))->render(); ?>
 			<?php echo (new FileLayout('apps.j4.extensions_full'))->render(['extension' => $this->extension, 'breadcrumbs' => $this->breadcrumbs]); ?>
 		</div>
 	</div>

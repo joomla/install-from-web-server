@@ -30,24 +30,29 @@ $orderingOptions = [
 
 $selectedOrdering = $app->input->get('ordering', $orderby);
 ?>
-<div id="filter-bar" class="btn-toolbar">
-	<div class="filter-search btn-group pull-left">
-		<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="Search" value="<?php echo $search; ?>" class="hasTooltip">
-	</div>
-	<div class="btn-group pull-left search">
-		<button type="button" class="btn hasTooltip" onclick="Joomla.apps.initiateSearch();" data-original-title="Search"><span class="icon-search"></span></button>
-		<button type="button" class="btn hasTooltip" data-original-title="Clear" id="search-reset"><span class="icon-remove"></span></button>
-	</div>
-	<div class="btn-group pull-right select">
-		<?php if ($view != 'extension') : ?>
-			<?php echo HTMLHelper::_('select.genericlist', $orderingOptions, 'ordering', null, 'value', 'text', $selectedOrdering, 'com-apps-ordering'); ?>
-		<?php endif; ?>
-	</div>
-
-	<?php if ($view != 'extension') : ?>
-		<div class="btn-group pull-right">
-			<button type="button" class="btn grid-view<?php echo ($list == 'grid') ? ' active' : ''; ?>" id="btn-grid-view"><span class="icon-grid-view"></span></button>
-			<button type="button" class="btn list-view<?php echo ($list == 'list') ? ' active' : ''; ?>" id="btn-list-view"><span class="icon-list-view"></span></button>
+<div class="row">
+	<div id="filter-bar" class="col mb-3">
+		<div class="form-row">
+			<div class="col">
+				<div class="input-group">
+					<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="Search" value="<?php echo $search; ?>" class="hasTooltip form-control">
+					<div class="input-group-append">
+						<button type="button" class="btn btn-outline-secondary hasTooltip" onclick="Joomla.apps.initiateSearch();" data-original-title="Search"><span class="icon-search"></span></button>
+						<button type="button" class="btn btn-outline-secondary hasTooltip" data-original-title="Clear" id="search-reset"><span class="icon-remove"></span></button>
+					</div>
+				</div>
+			</div>
+			<?php if ($view != 'extension') : ?>
+				<div class="col">
+					<?php echo HTMLHelper::_('select.genericlist', $orderingOptions, 'ordering', 'class="custom-select"', 'value', 'text', $selectedOrdering, 'com-apps-ordering'); ?>
+				</div>
+				<div class="col">
+					<div class="btn-group float-md-right">
+						<button type="button" class="btn btn-light grid-view<?php echo ($list == 'grid') ? ' active' : ''; ?>" id="btn-grid-view"><span class="icon-grid-view"></span></button>
+						<button type="button" class="btn btn-light list-view<?php echo ($list == 'list') ? ' active' : ''; ?>" id="btn-list-view"><span class="icon-list-view"></span></button>
+					</div>
+				</div>
+			<?php endif; ?>
 		</div>
-	<?php endif; ?>
+	</div>
 </div>
