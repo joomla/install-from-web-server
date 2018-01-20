@@ -8,24 +8,15 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Layout\FileLayout;
-
 /** @var AppsViewCategory $this */
 
-?>
-<div class="com-apps-container">
-	<div class="row-fluid">
-		<div class="span3">
-			<?php echo (new FileLayout('apps.category_sidebar'))->render($this->categories); ?>
-		</div>
-		<div class="span9">
-			<div class="row-fluid">
-				<div class="span12">
-					<?php echo (new FileLayout('apps.simple_search'))->render(['orderby' => $this->orderby]); ?>
-				</div>
-			</div>
+$majorVersion = version_compare($this->release, '4.0', 'ge') ? 'j4' : 'j3';
 
-			<?php echo (new FileLayout('apps.extensions_imagegrid'))->render(['extensions' => $this->extensions, 'breadcrumbs' => $this->breadcrumbs]); ?>
-		</div>
-	</div>
-</div>
+if ($majorVersion === 'j3')
+{
+	echo $this->loadTemplate('j3');
+}
+else
+{
+	echo $this->loadTemplate('j4');
+}

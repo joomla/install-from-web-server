@@ -8,9 +8,8 @@
 
 defined('JPATH_BASE') or die;
 
-use Joomla\CMS\Layout\FileLayout;
+/** @var Joomla\CMS\Layout\FileLayout $this */
 
-$category_sidebar = new FileLayout('apps.category_sidebar_ul');
 ?>
 <?php foreach ($displayData as $category) : ?>
 	<ul class="nav nav-list">
@@ -18,7 +17,7 @@ $category_sidebar = new FileLayout('apps.category_sidebar_ul');
 			<a class="transcode<?php echo $category->selected ? ' selected' : ''; ?>" href="<?php echo AppsHelper::getAJAXUrl(['view' => 'category', 'id' => $category->id]); ?>"><?php echo $category->name; ?></a>
 
 			<?php if (count($category->children) && $category->active) : ?>
-				<?php echo $category_sidebar->render($category->children); ?>
+				<?php echo $this->render($category->children); ?>
 			<?php endif; ?>
 		</li>
 	</ul>

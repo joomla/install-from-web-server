@@ -235,8 +235,5 @@ class AppsModelExtension extends AppsModelBase
 		$app = Factory::getApplication();
 
 		$this->setState('filter.id', $app->input->getUint('id'));
-		$this->setState('filter.product', $app->input->getBase64('product', ''));
-		$this->setState('filter.release', $app->input->getBase64('release', ''));
-		$this->setState('filter.dev_level', $app->input->getBase64('dev_level', ''));
 	}
 }

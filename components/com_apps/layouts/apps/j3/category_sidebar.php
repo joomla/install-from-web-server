@@ -8,9 +8,8 @@
 
 defined('JPATH_BASE') or die;
 
-use Joomla\CMS\Layout\FileLayout;
+/** @var Joomla\CMS\Layout\FileLayout $this */
 
-$category_sidebar = new FileLayout('apps.category_sidebar_ul');
 ?>
 <div class="com-apps-sidebar">
 	<div class="scroll-pane well">
@@ -34,7 +33,7 @@ $category_sidebar = new FileLayout('apps.category_sidebar_ul');
 					<a class="transcode<?php echo $category->selected ? ' selected' : ''; ?>" href="<?php echo AppsHelper::getAJAXUrl($ajaxUrlSegments); ?>"><?php echo $category->name; ?></a>
 
 					<?php if ($category->active && count($category->children)) : ?>
-						<?php echo $category_sidebar->render($category->children); ?>
+						<?php echo $this->sublayout('category_sidebar_ul', $category->children); ?>
 					<?php endif; ?>
 				</li>
 			<?php endforeach; ?>

@@ -14,12 +14,13 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Layout\FileLayout;
 
+/** @var Joomla\CMS\Layout\FileLayout $this */
+
 $app = Factory::getApplication();
 
 /** @var array $breadcrumbs */
-$breadcrumbs       = $displayData['breadcrumbs'];
-$extensions_perrow = ComponentHelper::getParams('com_apps')->get('extensions_perrow', 4);
-$spanclass         = 'span' . (12 / $extensions_perrow);
+$breadcrumbs = $displayData['breadcrumbs'];
+$spanclass   = 'span3';
 
 $view = $app->input->getCmd('view');
 
@@ -88,15 +89,15 @@ $layouts = ['grid', 'list'];
 				</ul>
 
 				<ul class="thumbnails">
-					<?php // Looping thru all the extensions, closing and starting a new row after every $extensions_perrow items. The single extension box is loaded using the JLayout ?>
+					<?php // Looping thru all the extensions, closing and starting a new row after every 4 items. The single extension box is loaded using the JLayout ?>
 					<?php $i = 0; ?>
 					<?php foreach ($displayData['extensions'] as $extension) : ?>
-						<?php if ($i != 0 && $i % $extensions_perrow == 0 && $layout != 'list') : ?>
+						<?php if ($i != 0 && $i % 4 == 0 && $layout != 'list') : ?>
 							</ul>
 							<ul class="thumbnails">
 						<?php endif; ?>
 
-						<?php echo (new FileLayout('apps.extensions_singlegrid_' . $layout))->render(['spanclass' => $spanclass, 'extension' => $extension]); ?>
+						<?php echo $this->sublayout($layout, ['spanclass' => $spanclass, 'extension' => $extension]); ?>
 
 						<?php $i++; ?>
 					<?php endforeach; ?>
