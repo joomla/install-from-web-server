@@ -10,7 +10,7 @@ defined('_JEXEC') or die;
 
 /** @var AppsViewCategory $this */
 
-$majorVersion = version_compare($this->release, '4.0', 'ge') ? 'j3' : 'j4';
+$majorVersion = version_compare($this->release, '4.0', 'ge') ? 'j4' : 'j3';
 
 if ($majorVersion === 'j3')
 {
