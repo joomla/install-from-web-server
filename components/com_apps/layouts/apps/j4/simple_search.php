@@ -48,8 +48,8 @@ $selectedOrdering = $app->input->get('ordering', $orderby);
 				</div>
 				<div class="col">
 					<div class="btn-group float-md-right">
-						<button type="button" class="btn btn-light grid-view<?php echo $list === 'grid' ? ' active' : ''; ?>" id="btn-grid-view"><span class="icon-grid-view"></span></button>
-						<button type="button" class="btn btn-light list-view<?php echo $list === 'list' ? ' active' : ''; ?>" id="btn-list-view"><span class="icon-list-view"></span></button>
+						<button type="button" class="btn btn-secondary grid-view<?php echo $list === 'grid' ? ' active' : ''; ?>" id="btn-grid-view"><span class="icon-grid-view"></span></button>
+						<button type="button" class="btn btn-secondary list-view<?php echo $list === 'list' ? ' active' : ''; ?>" id="btn-list-view"><span class="icon-list-view"></span></button>
 					</div>
 				</div>
 			<?php endif; ?>
