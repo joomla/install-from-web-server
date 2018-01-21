@@ -37,8 +37,8 @@ $selectedOrdering = $app->input->get('ordering', $orderby);
 				<div class="input-group">
 					<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="Search" value="<?php echo $search; ?>" class="hasTooltip form-control">
 					<div class="input-group-append">
-						<button type="button" class="btn btn-outline-secondary hasTooltip" onclick="Joomla.apps.initiateSearch();" data-original-title="Search"><span class="icon-search"></span></button>
-						<button type="button" class="btn btn-outline-secondary hasTooltip" data-original-title="Clear" id="search-reset"><span class="icon-remove"></span></button>
+						<button type="button" class="btn btn-outline hasTooltip" onclick="Joomla.apps.initiateSearch();" data-original-title="Search"><span class="fa fa-search" aria-hidden="true"></span></button>
+						<button type="button" class="btn btn-outline hasTooltip" data-original-title="Clear" id="search-reset"><span class="fa fa-times" aria-hidden="true"></span></button>
 					</div>
 				</div>
 			</div>
@@ -48,8 +48,8 @@ $selectedOrdering = $app->input->get('ordering', $orderby);
 				</div>
 				<div class="col">
 					<div class="btn-group float-md-right">
-						<button type="button" class="btn btn-light grid-view<?php echo ($list == 'grid') ? ' active' : ''; ?>" id="btn-grid-view"><span class="icon-grid-view"></span></button>
-						<button type="button" class="btn btn-light list-view<?php echo ($list == 'list') ? ' active' : ''; ?>" id="btn-list-view"><span class="icon-list-view"></span></button>
+						<button type="button" class="btn btn-light grid-view<?php echo $list === 'grid' ? ' active' : ''; ?>" id="btn-grid-view"><span class="icon-grid-view"></span></button>
+						<button type="button" class="btn btn-light list-view<?php echo $list === 'list' ? ' active' : ''; ?>" id="btn-list-view"><span class="icon-list-view"></span></button>
 					</div>
 				</div>
 			<?php endif; ?>
