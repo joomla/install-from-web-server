@@ -11,8 +11,8 @@ defined('JPATH_BASE') or die;
 /** @var Joomla\CMS\Layout\FileLayout $this */
 
 ?>
-<?php foreach ($displayData as $category) : ?>
-	<ul class="nav nav-list">
+<ul class="nav nav-list">
+	<?php foreach ($displayData as $category) : ?>
 		<li<?php echo ($category->selected) ? ' class="active"' : ''; ?>>
 			<a class="transcode<?php echo $category->selected ? ' selected' : ''; ?>" href="<?php echo AppsHelper::getAJAXUrl(['view' => 'category', 'id' => $category->id]); ?>"><?php echo $category->name; ?></a>
 
@@ -20,5 +20,5 @@ defined('JPATH_BASE') or die;
 				<?php echo $this->render($category->children); ?>
 			<?php endif; ?>
 		</li>
-	</ul>
-<?php endforeach; ?>
+	<?php endforeach; ?>
+</ul>
