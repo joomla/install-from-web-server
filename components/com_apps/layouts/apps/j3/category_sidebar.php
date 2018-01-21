@@ -33,7 +33,7 @@ defined('JPATH_BASE') or die;
 					<a class="transcode<?php echo $category->selected ? ' selected' : ''; ?>" href="<?php echo AppsHelper::getAJAXUrl($ajaxUrlSegments); ?>"><?php echo $category->name; ?></a>
 
 					<?php if ($category->active && count($category->children)) : ?>
-						<?php echo $this->sublayout('category_sidebar_ul', $category->children); ?>
+						<?php echo $this->sublayout('children', $category->children); ?>
 					<?php endif; ?>
 				</li>
 			<?php endforeach; ?>
