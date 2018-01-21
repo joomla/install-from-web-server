@@ -8,6 +8,9 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Language;
+use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
@@ -31,6 +34,21 @@ class AppsController extends BaseController
 	{
 		JLoader::register('AppsHelper', __DIR__ . '/helpers/helper.php');
 
+		$lang = Factory::getLanguage();
+
+		// Get the language code from the request and change the active language for the component
+		$clientLangCode = base64_decode($this->input->getBase64('lang', base64_encode($lang->getTag())));
+
+		$clientLang = $lang;
+
+		if (!empty($clientLangCode) && LanguageHelper::exists($clientLangCode))
+		{
+			$clientLang = Language::getInstance($clientLangCode, (bool) Factory::getConfig()->get('debug_lang', false));
+			$clientLang->load('com_apps', JPATH_BASE, null, false, true) || $clientLang->load('com_apps', JPATH_COMPONENT, null, false, true);
+		}
+
+		Factory::$language = $clientLang;
+
 		$cachable   = true;
 		$noforceraw = [];
 
@@ -44,6 +62,11 @@ class AppsController extends BaseController
 			$this->input->set('format', 'raw');
 		}
 
-		return parent::display($cachable, $urlparams);
+		parent::display($cachable, $urlparams);
+
+		// Restore to the global language object
+		Factory::$language = $lang;
+
+		return $this;
 	}
 }
