@@ -32,11 +32,11 @@ $selectedOrdering = $app->input->get('ordering', $orderby);
 ?>
 <div id="filter-bar" class="btn-toolbar">
 	<div class="filter-search btn-group pull-left">
-		<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="Search" value="<?php echo $search; ?>" class="hasTooltip">
+		<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="<?php echo Text::_('JSEARCH_FILTER'); ?>" value="<?php echo $search; ?>" class="hasTooltip">
 	</div>
 	<div class="btn-group pull-left search">
-		<button type="button" class="btn hasTooltip" onclick="Joomla.apps.initiateSearch();" data-original-title="Search"><span class="icon-search"></span></button>
-		<button type="button" class="btn hasTooltip" data-original-title="Clear" id="search-reset"><span class="icon-remove"></span></button>
+		<button type="button" class="btn hasTooltip" onclick="Joomla.apps.initiateSearch();" data-original-title="<?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?>"><span class="icon-search"></span></button>
+		<button type="button" class="btn hasTooltip" data-original-title="<?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>" id="search-reset"><span class="icon-remove"></span></button>
 	</div>
 	<div class="btn-group pull-right select">
 		<?php if ($view != 'extension') : ?>

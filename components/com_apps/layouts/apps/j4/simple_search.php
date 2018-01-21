@@ -35,10 +35,10 @@ $selectedOrdering = $app->input->get('ordering', $orderby);
 		<div class="form-row">
 			<div class="col">
 				<div class="input-group">
-					<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="Search" value="<?php echo $search; ?>" class="hasTooltip form-control">
+					<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="<?php echo Text::_('JSEARCH_FILTER'); ?>" value="<?php echo $search; ?>" class="hasTooltip form-control">
 					<div class="input-group-append">
-						<button type="button" class="btn btn-outline-secondary hasTooltip" onclick="Joomla.apps.initiateSearch();" data-original-title="Search"><span class="fa fa-search" aria-hidden="true"></span></button>
-						<button type="button" class="btn btn-outline-secondary hasTooltip" data-original-title="Clear" id="search-reset"><span class="fa fa-times" aria-hidden="true"></span></button>
+						<button type="button" class="btn btn-outline-secondary hasTooltip" onclick="Joomla.apps.initiateSearch();" data-original-title="<?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?>"><span class="fa fa-search" aria-hidden="true"></span></button>
+						<button type="button" class="btn btn-outline-secondary hasTooltip" data-original-title="<?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>" id="search-reset"><span class="fa fa-times" aria-hidden="true"></span></button>
 					</div>
 				</div>
 			</div>
