@@ -13,7 +13,7 @@ use Joomla\CMS\Language\Text;
 
 $extension_data = $displayData['extension'];
 $tags = $extension_data->includes->value;
-$commercial = $extension_data->type->value != "free" ? true : false;
+$commercial = $extension_data->type->value !== 'free' ? true : false;
 ?>
 <div class="item list-group-item">
 	<div class="text-center">
