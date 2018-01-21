@@ -13,18 +13,16 @@ use Joomla\CMS\Language\Text;
 
 $extension_data = $displayData['extension'];
 $tags = $extension_data->includes->value;
-$commercial = $extension_data->type->value != "free" ? true : false;
+$commercial = $extension_data->type->value !== 'free' ? true : false;
 ?>
-<div class="item list-group-item">
-	<div class="text-center">
-		<h4 class="mb-1"><?php echo trim($extension_data->core_title->value); ?></h4>
-	</div>
+<a href="#" class="list-group-item list-group-item-action" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl(['view' => 'extension', 'id' => $extension_data->id->value]); ?>');">
+	<h4 class="text-center mb-1"><?php echo trim($extension_data->core_title->value); ?></h4>
 	<div class="row">
-		<div class="col-lg-9" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl(['view' => 'extension', 'id' => $extension_data->id->value]); ?>');">
+		<div class="col-lg-9" >
 			<?php echo HTMLHelper::_('string.truncate', $extension_data->core_body->value, 400, false, true); ?>
 		</div>
 		<div class="col-lg-3">
-			<div class="item-type text-center">
+			<div class="text-center mb-2">
 				<?php if ($commercial) : ?>
 					<span title="<?php echo $extension_data->type->value; ?>" class="badge badge-warning">$</span>
 				<?php endif; ?>
@@ -47,9 +45,9 @@ $commercial = $extension_data->type->value != "free" ? true : false;
 					<span title="<?php echo Text::_('COM_APPS_TOOL'); ?>" class="badge badge-light">T</span>
 				<?php endif; ?>
 			</div>
-			<p class="text-center">
-				<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data) . '#reviews'; ?>"><?php echo Text::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS_LIST', $extension_data->score->value, $extension_data->num_reviews->value); ?></a>
+			<p class="text-center text-muted">
+				<?php echo Text::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS_LIST', $extension_data->score->value, $extension_data->num_reviews->value); ?>
 			</p>
 		</div>
 	</div>
-</div>
+</a>
