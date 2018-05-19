@@ -20,7 +20,7 @@ $commercial = $extension_data->type->value !== 'free' ? true : false;
 		<h4 class="mb-1"><?php echo trim($extension_data->core_title->value); ?></h4>
 	</div>
 	<div class="row">
-		<div class="col-lg-9" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl(['view' => 'extension', 'id' => $extension_data->id->value]); ?>');">
+		<div class="col-lg-9 load-extension" data-url="<?php echo AppsHelper::getAJAXUrl(['view' => 'extension', 'id' => $extension_data->id->value]); ?>">
 			<?php echo HTMLHelper::_('string.truncate', $extension_data->core_body->value, 400, false, true); ?>
 		</div>
 		<div class="col-lg-3">

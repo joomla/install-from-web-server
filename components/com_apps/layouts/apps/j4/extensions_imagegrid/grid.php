@@ -21,7 +21,7 @@ $commercial = $extension_data->type->value !== 'free' ? true : false;
 			<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data) . '#reviews'; ?>"><?php echo Text::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS_LIST', $extension_data->score->value, $extension_data->num_reviews->value); ?></a>
 		</div>
 		<img src="<?php echo $extension_data->image; ?>" class="card-img-top" />
-		<div class="card-body" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl(['view' => 'extension', 'id' => $extension_data->id->value]); ?>');">
+		<div class="card-body load-extension" data-url="<?php echo AppsHelper::getAJAXUrl(['view' => 'extension', 'id' => $extension_data->id->value]); ?>">
 			<h4 class="card-title text-center"><?php echo trim($extension_data->core_title->value); ?></h4>
 			<div class="card-text">
 				<div class="item-type text-center">
