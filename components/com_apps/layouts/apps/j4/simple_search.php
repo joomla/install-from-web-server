@@ -37,7 +37,7 @@ $selectedOrdering = $app->input->get('ordering', $orderby);
 				<div class="input-group">
 					<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="<?php echo Text::_('COM_APPS_SEARCH_BTN'); ?>" value="<?php echo $search; ?>" class="hasTooltip form-control">
 					<div class="input-group-append">
-						<button type="button" class="btn btn-outline-secondary hasTooltip" onclick="Joomla.apps.initiateSearch();" data-original-title="<?php echo Text::_('COM_APPS_SEARCH_BTN'); ?>"><span class="fa fa-search" aria-hidden="true"></span></button>
+						<button type="button" class="btn btn-outline-secondary hasTooltip" data-original-title="<?php echo Text::_('COM_APPS_SEARCH_BTN'); ?>" id="search-extensions"><span class="fa fa-search" aria-hidden="true"></span></button>
 						<button type="button" class="btn btn-outline-secondary hasTooltip" data-original-title="<?php echo Text::_('COM_APPS_CANCEL_BTN'); ?>" id="search-reset"><span class="fa fa-times" aria-hidden="true"></span></button>
 					</div>
 				</div>
