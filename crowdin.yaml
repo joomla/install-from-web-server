@@ -7,7 +7,3 @@ files:
     source: /en-GB/en-GB.com_apps.ini
     dest: 'Install from Web/en-GB.com_apps.ini'
     translation: /%locale%/%locale%.com_apps.ini
-  -
-    source: /en-GB/en-GB.com_apps.sys.ini
-    dest: 'Install from Web/en-GB.com_apps.sys.ini'
-    translation: /%locale%/%locale%.com_apps.sys.ini
