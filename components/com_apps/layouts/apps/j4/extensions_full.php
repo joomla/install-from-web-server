@@ -101,9 +101,9 @@ $commercial     = $extension_data->type->value != "free" ? true : false;
 						<?php elseif ($extension_data->download_type == 1): ?>
 							<button class="install btn btn-success" id="install-extension" data-downloadurl="<?php echo $extension_data->downloadurl; ?>" data-name="<?php echo $extension_data->core_title->value; ?>" type="button"><span class="icon-checkmark" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL') . "&hellip;"; ?></button>
 						<?php elseif ($extension_data->download_type == 2): ?>
-							<button class="install btn btn-success" id="appssubmitbutton" onclick="return WebInstaller.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>');" type="submit"><span class="icon-pencil" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_REGISTER') . "&hellip;"; ?></button>
+							<button class="install btn btn-success" id="install-extension-from-external" data-downloadurl="<?php echo $extension_data->downloadurl; ?>" type="button"><span class="icon-pencil" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_REGISTER') . "&hellip;"; ?></button>
 						<?php elseif ($extension_data->download_type == 3): ?>
-							<button class="install btn btn-success" id="appssubmitbutton" onclick="return WebInstaller.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>');" type="submit"><span class="icon-cart" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_PURCHASE') . "&hellip;"; ?></button>
+							<button class="install btn btn-success" id="install-extension-from-external" data-downloadurl="<?php echo $extension_data->downloadurl; ?>" type="button"><span class="icon-cart" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_PURCHASE') . "&hellip;"; ?></button>
 						<?php endif; ?>&nbsp;&nbsp;&nbsp;
 					<?php elseif ($extension_data->download_link->value) : ?>
 						<?php if ((is_numeric($extension_data->download_type) && $extension_data->download_type == 0) || $extension_data->download_type == 1 || (strtolower($extension_data->download_type->value) == "free" && !$extension_data->requires_registration->value)): ?>
