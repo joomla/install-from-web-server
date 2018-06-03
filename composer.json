@@ -1,0 +1,14 @@
+{
+    "name": "joomla/install-from-web-server",
+    "type": "project",
+    "description": "Joomla! Install from Web Server",
+    "keywords": ["joomla", "cms"],
+    "homepage": "https://github.com/joomla-extensions/install-from-web-server",
+    "license": "GPL-2.0+",
+    "require": {
+        "php": "^7.1"
+    },
+    "require-dev": {
+        "joomla/crowdin-sync": "dev-master"
+    }
+}
