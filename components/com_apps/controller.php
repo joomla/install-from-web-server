@@ -41,10 +41,11 @@ class AppsController extends BaseController
 
 		$clientLang = $lang;
 
-		if (!empty($clientLangCode) && LanguageHelper::exists($clientLangCode))
+		if (!empty($clientLangCode) && LanguageHelper::exists($clientLangCode, __DIR__))
 		{
-			$clientLang = Language::getInstance($clientLangCode, (bool) Factory::getConfig()->get('debug_lang', false));
-			$clientLang->load('com_apps', JPATH_BASE, null, false, true) || $clientLang->load('com_apps', JPATH_COMPONENT, null, false, true);
+			$clientLang = Language::getInstance($clientLangCode, $lang->getDebug());
+			$clientLang->load('com_apps', JPATH_BASE, null, false, true)
+				|| $clientLang->load('com_apps', __DIR__, null, false, true);
 		}
 
 		Factory::$language = $clientLang;
