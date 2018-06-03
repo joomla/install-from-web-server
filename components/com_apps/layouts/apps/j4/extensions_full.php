@@ -99,7 +99,7 @@ $commercial     = $extension_data->type->value != "free" ? true : false;
 						<?php if ($extension_data->download_type == 0): ?>
 							<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->downloadurl; ?>"><span class="icon-download" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
 						<?php elseif ($extension_data->download_type == 1): ?>
-							<a class="install btn btn-success" href="#" onclick="return WebInstaller.installfromweb('<?php echo $extension_data->downloadurl; ?>', '<?php echo $extension_data->core_title->value; ?>')"><span class="icon-checkmark" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL') . "&hellip;"; ?></a>
+							<button class="install btn btn-success" id="install-extension" data-downloadurl="<?php echo $extension_data->downloadurl; ?>" data-name="<?php echo $extension_data->core_title->value; ?>" type="button"><span class="icon-checkmark" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL') . "&hellip;"; ?></button>
 						<?php elseif ($extension_data->download_type == 2): ?>
 							<button class="install btn btn-success" id="appssubmitbutton" onclick="return WebInstaller.installfromwebexternal('<?php echo $extension_data->downloadurl; ?>');" type="submit"><span class="icon-pencil" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_REGISTER') . "&hellip;"; ?></button>
 						<?php elseif ($extension_data->download_type == 3): ?>
