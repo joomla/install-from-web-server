@@ -8,15 +8,13 @@
 		<folder>installer</folder>
 		<version>1.0.5</version>
 		<client>site</client>
-
 		<infourl title="WebInstaller">http://docs.joomla.org/Install_from_Web</infourl>
 		<downloads>
 			<downloadurl type="full" format="zip">https://downloads.joomla.org/extensions/install-from-web/1-0-5/plg_webinstaller_3.2v1.0.5.zip</downloadurl>
 		</downloads>
-
-		<maintainer>Efthimios Mavrogeorgiadis</maintainer>
-		<maintainerurl>http://www.joomla.org/</maintainerurl>
-
+		<tags>
+			<tag>stable</tag>
+		</tags>
 		<targetplatform name="joomla" version="3.[23]" />
 	</update>
 	<update>
@@ -27,15 +25,31 @@
 		<folder>installer</folder>
 		<version>1.1.1</version>
 		<client>site</client>
-
 		<infourl title="WebInstaller">http://docs.joomla.org/Install_from_Web</infourl>
 		<downloads>
 			<downloadurl type="full" format="zip">https://downloads.joomla.org/extensions/install-from-web/1-1-1/plg_webinstaller_3.7v1.1.1.zip</downloadurl>
 		</downloads>
-
-		<maintainer>Efthimios Mavrogeorgiadis</maintainer>
-		<maintainerurl>http://www.joomla.org/</maintainerurl>
-
-		<targetplatform name="joomla" version="3.[456789]" />
+		<tags>
+			<tag>stable</tag>
+		</tags>
+		<targetplatform name="joomla" version="3.([456789]|10)" />
+	</update>
+	<update>
+		<name>Installer - Install from Web</name>
+		<description>This plugin offers functionality for the 'Install from Web' tab.</description>
+		<element>webinstaller</element>
+		<type>plugin</type>
+		<folder>installer</folder>
+		<version>2.0.0-beta</version>
+		<client>site</client>
+		<infourl title="WebInstaller">https://github.com/joomla-extensions/install-from-web-client/releases/tag/2.0.0-beta</infourl>
+		<downloads>
+			<downloadurl type="full" format="zip">https://github.com/joomla-extensions/install-from-web-client/releases/download/2.0.0-beta/plg_installer_webinstaller.zip</downloadurl>
+		</downloads>
+		<sha384>65475f0af9eb6a00a47e43f4f37c5b20ec14d16353c8ee1a116b6349b71a3cc359a09468fa8252f274a5a68060562d5e</sha384>
+		<tags>
+			<tag>beta</tag>
+		</tags>
+		<targetplatform name="joomla" version="3.(9|10)" />
 	</update>
 </updates>
