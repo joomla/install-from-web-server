@@ -312,7 +312,7 @@ abstract class AppsModelBase extends BaseDatabaseModel
 		$image = str_replace(['http://extensions.joomla.org/', 'https://extensions.joomla.org/'], $cdn, $image);
 
 		// Replace API Image path with resizeDown path
-		$image = preg_replace('#(logo|images)/(.*)\.#', '$2' . '_resizeDown302px133px16.', $image, 1);
+		// $image = preg_replace('#(logo|images)/(.*)\.#', '$2' . '_resizeDown302px133px16.', $image, 1);
 
 		return $image;
 	}
