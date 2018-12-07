@@ -336,13 +336,13 @@ abstract class AppsModelBase extends BaseDatabaseModel
 		// Otherwise: Get the first IFW extra image
 		if (!empty($item->images->value[0]->path_ifw))
 		{
-			return $item->logo->value[0]->path_ifw;
+			return $item->images->value[0]->path_ifw;
 		}
 
 		// Otherwise: Get the first normal extra image
 		if (!empty($item->images->value[0]->path))
 		{
-			return $item->logo->value[0]->path;
+			return $item->images->value[0]->path;
 		}
 
 		// Nothing found, return empty
