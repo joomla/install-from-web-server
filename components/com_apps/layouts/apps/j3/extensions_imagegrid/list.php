@@ -8,6 +8,7 @@
 
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 $extension_data = $displayData['extension'];
@@ -22,7 +23,7 @@ $commercial = $extension_data->type->value != "free" ? true : false;
 		</h4>
 	</div>
 	<div class="item-description" onclick="Joomla.loadweb(apps_base_url+'<?php echo AppsHelper::getAJAXUrl(['view' => 'extension', 'id' => $extension_data->id->value]); ?>');">
-		<?php echo mb_strlen(trim($extension_data->core_body->value)) > 400 ? mb_substr(trim($extension_data->core_body->value), 0, mb_stripos(trim($extension_data->core_body->value), ' ', 400)) . '...' : trim($extension_data->core_body->value); ?>
+		<?php echo HTMLHelper::_('string.truncate', $extension_data->core_body->value, 400, false, true); ?>
 		<div class="fader">&nbsp;</div>
 	</div>
 	<div class="item-icons">

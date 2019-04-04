@@ -8,6 +8,7 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView;
 
 /**
@@ -43,7 +44,7 @@ class AppsViewApps extends HtmlView
 	 */
 	protected function addToolbar()
 	{
-		JToolbarHelper::title(JText::_('COM_APPS_MANAGER_APPS'), 'joomla');
+		JToolbarHelper::title(Text::_('COM_APPS_MANAGER_APPS'), 'joomla');
 
 		JToolbarHelper::preferences('com_apps');
 	}

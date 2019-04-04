@@ -9,10 +9,8 @@
 //@TODO: Move the single extension grid into a reusable JLayout
 defined('JPATH_BASE') or die;
 
-use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Layout\FileLayout;
 
 /** @var Joomla\CMS\Layout\FileLayout $this */
 

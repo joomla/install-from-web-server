@@ -8,13 +8,15 @@
 
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\Language\Text;
+
 /** @var Joomla\CMS\Layout\FileLayout $this */
 
 ?>
 <div class="com-apps-sidebar">
 	<div class="card">
 		<div class="card-body">
-			<div class="card-title"><h3><?php echo JText::_('COM_APPS_CATEGORIES'); ?></h3></div>
+			<div class="card-title"><h3><?php echo Text::_('COM_APPS_CATEGORIES'); ?></h3></div>
 			<ul class="nav flex-column">
 				<?php foreach ($displayData as $category) : ?>
 					<?php

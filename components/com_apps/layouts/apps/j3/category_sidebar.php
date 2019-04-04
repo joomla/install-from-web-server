@@ -8,13 +8,15 @@
 
 defined('JPATH_BASE') or die;
 
+use Joomla\CMS\Language\Text;
+
 /** @var Joomla\CMS\Layout\FileLayout $this */
 
 ?>
 <div class="com-apps-sidebar">
 	<div class="scroll-pane well">
 		<ul class="nav nav-list">
-			<li class="nav-header"><h3><?php echo JText::_('COM_APPS_CATEGORIES'); ?></h3></li>
+			<li class="nav-header"><h3><?php echo Text::_('COM_APPS_CATEGORIES'); ?></h3></li>
 			<?php foreach ($displayData as $category) : ?>
 				<?php
 				$ajaxUrlSegments = [];
