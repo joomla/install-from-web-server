@@ -50,7 +50,7 @@ class AppsHelper
 	 *
 	 * @since   1.0
 	 */
-	public static function getJEDUrl($item)
+	public static function getJEDUrl($item): string
 	{
 		$url = 'https://extensions.joomla.org/';
 
@@ -73,7 +73,7 @@ class AppsHelper
 	 *
 	 * @since   1.0
 	 */
-	public static function getJEDCatUrl($catid = 0)
+	public static function getJEDCatUrl($catid = 0): string
 	{
 		$url = 'https://extensions.joomla.org/';
 

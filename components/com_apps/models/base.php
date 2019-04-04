@@ -26,6 +26,17 @@ use Joomla\CMS\Version;
 abstract class AppsModelBase extends BaseDatabaseModel
 {
 	/**
+	 * The client version data
+	 *
+	 * @var    array
+	 * @since  1.0
+	 */
+	private const PLUGIN_VERSIONS = [
+		'latest' => '2.0.0',
+		'works'  => '1.0.5',
+	];
+
+	/**
 	 * The breadcrumb tree
 	 *
 	 * @var    stdClass[]
@@ -40,17 +51,6 @@ abstract class AppsModelBase extends BaseDatabaseModel
 	 * @since  1.0
 	 */
 	private $categories = [];
-
-	/**
-	 * The client version data
-	 *
-	 * @var    array
-	 * @since  1.0
-	 */
-	private $versions = [
-		'latest' => '2.0.0',
-		'works'  => '1.0.5',
-	];
 
 	/**
 	 * Fetches the category data from the JED
@@ -359,13 +359,12 @@ abstract class AppsModelBase extends BaseDatabaseModel
 	public function getPluginUpToDate(): int
 	{
 		$remote = preg_replace('/[^\d\.]/', '', base64_decode(Factory::getApplication()->input->get('pv', '', 'base64')));
-		$local  = $this->versions;
 
-		if (version_compare($remote, $local['latest']) >= 0)
+		if (version_compare($remote, self::PLUGIN_VERSIONS['latest']) >= 0)
 		{
 			return 1;
 		}
-		elseif (version_compare($remote, $local['works']) >= 0)
+		elseif (version_compare($remote, self::PLUGIN_VERSIONS['works']) >= 0)
 		{
 			return 0;
 		}
