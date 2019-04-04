@@ -11,9 +11,9 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Controller\BaseController;
 
-if (!version_compare(PHP_VERSION, '7.0', 'ge'))
+if (!version_compare(PHP_VERSION, '7.2', 'ge'))
 {
-	throw new RuntimeException('The Install from Web server component requires PHP 7.0 or greater');
+	throw new RuntimeException('The Install from Web server component requires PHP 7.2 or greater');
 }
 
 $controller = BaseController::getInstance('Apps');
