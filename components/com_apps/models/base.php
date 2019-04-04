@@ -48,7 +48,7 @@ abstract class AppsModelBase extends BaseDatabaseModel
 	 * @since  1.0
 	 */
 	private $versions = [
-		'latest' => '1.1.1',
+		'latest' => '2.0.0',
 		'works'  => '1.0.5',
 	];
 
