@@ -297,24 +297,56 @@ abstract class AppsModelBase extends BaseDatabaseModel
 	{
 		$cdn = trim(ComponentHelper::getParams('com_apps')->get('cdn', 'https://extensions.joomla.org/'), '/') . "/";
 
-		$image = '';
+		$image = $this->getBestMainImageUrlFromItem($item);
 
-		if (isset($item->logo->value[0]->path) && $item->logo->value[0]->path)
+		if (!$image)
 		{
-			$image = $item->logo->value[0]->path;
-		}
-		elseif (isset($item->images->value[0]->path) && $item->images->value[0]->path)
-		{
-			$image = $item->images->value[0]->path;
+			return '';
 		}
 
 		// Replace legacy JED url with the CDN url
 		$image = str_replace(['http://extensions.joomla.org/', 'https://extensions.joomla.org/'], $cdn, $image);
 
-		// Replace API Image path with resizeDown path
-		$image = preg_replace('#(logo|images)/(.*)\.#', '$2' . '_resizeDown302px133px16.', $image, 1);
-
 		return $image;
+	}
+
+	/**
+	 * Get the best URL for an extension's main image from the item object
+	 *
+	 * @param   stdClass  $item  The item to process
+	 *
+	 * @return  string
+	 *
+	 * @since   1.0
+	 */
+	private function getBestMainImageUrlFromItem($item): string
+	{
+		// Get the IFW main image
+		if (!empty($item->logo->value[0]->path_ifw))
+		{
+			return $item->logo->value[0]->path_ifw;
+		}
+
+		// Otherwise: Get the normal main image
+		if (!empty($item->logo->value[0]->path))
+		{
+			return $item->logo->value[0]->path;
+		}
+
+		// Otherwise: Get the first IFW extra image
+		if (!empty($item->images->value[0]->path_ifw))
+		{
+			return $item->images->value[0]->path_ifw;
+		}
+
+		// Otherwise: Get the first normal extra image
+		if (!empty($item->images->value[0]->path))
+		{
+			return $item->images->value[0]->path;
+		}
+
+		// Nothing found, return empty
+		return '';
 	}
 
 	/**
