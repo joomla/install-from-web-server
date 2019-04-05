@@ -32,7 +32,7 @@ abstract class AppsModelBase extends BaseDatabaseModel
 	 * @since  1.0
 	 */
 	private const PLUGIN_VERSIONS = [
-		'latest' => '2.0.0',
+		'latest' => '2.0.1',
 		'works'  => '1.0.5',
 	];
 
