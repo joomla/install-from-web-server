@@ -289,6 +289,37 @@ abstract class AppsModelBase extends BaseDatabaseModel
 	 *
 	 * @param   stdClass  $item  The item to process
 	 *
+	 * @return  string[]
+	 *
+	 * @since   1.0
+	 */
+	public function getJoomlaVersionCompatibility($item): array
+	{
+		$compatibleVersions = [];
+
+		if (!isset($item->versions) || !isset($item->versions->value) || !is_array($item->versions->value))
+		{
+			return $compatibleVersions;
+		}
+
+		if (in_array('30', $item->versions->value, true))
+		{
+			$compatibleVersions[] = '3.x';
+		}
+
+		if (in_array('40', $item->versions->value, true))
+		{
+			$compatibleVersions[] = '4.x';
+		}
+
+		return $compatibleVersions;
+	}
+
+	/**
+	 * Get the URL for an extension's main image
+	 *
+	 * @param   stdClass  $item  The item to process
+	 *
 	 * @return  string
 	 *
 	 * @since   1.0

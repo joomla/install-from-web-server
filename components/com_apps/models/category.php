@@ -160,7 +160,8 @@ class AppsModelCategory extends AppsModelBase
 
 		foreach ($items as $item)
 		{
-			$item->image = $this->getMainImageUrl($item);
+			$item->image               = $this->getMainImageUrl($item);
+			$item->compatible_versions = $this->getJoomlaVersionCompatibility($item);
 
 			if ($search)
 			{

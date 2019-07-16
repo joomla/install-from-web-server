@@ -165,10 +165,11 @@ class AppsModelExtension extends AppsModelBase
 		}
 
 		// Create item
-		$item              = $items->data[0];
-		$this->catid       = $item->core_catid->value;
-		$item->image       = $this->getMainImageUrl($item);
-		$item->downloadurl = $item->download_integration_url->value;
+		$item                      = $items->data[0];
+		$this->catid               = $item->core_catid->value;
+		$item->image               = $this->getMainImageUrl($item);
+		$item->compatible_versions = $this->getJoomlaVersionCompatibility($item);
+		$item->downloadurl         = $item->download_integration_url->value;
 
 		if (preg_match('/\.xml\s*$/', $item->downloadurl))
 		{
