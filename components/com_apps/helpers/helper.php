@@ -54,12 +54,15 @@ class AppsHelper
 	{
 		$url = 'https://extensions.joomla.org/';
 
-		if (!isset($item->id->value))
+		if (isset($item->_links) && isset($item->_links->view) && isset($item->_links->view->sef))
 		{
-			return $url;
+			return $url . $item->_links->view->sef;
 		}
 
-		$url .= 'index.php?option=com_jed&view=extension&layout=default&id=' . $item->id->value;
+		if (isset($item->id->value))
+		{
+			return $url . 'index.php?option=com_jed&view=extension&layout=default&id=' . $item->id->value;
+		}
 
 		return $url;
 	}
