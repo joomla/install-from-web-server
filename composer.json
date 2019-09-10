@@ -4,7 +4,7 @@
     "description": "Joomla! Install from Web Server",
     "keywords": ["joomla", "cms"],
     "homepage": "https://github.com/joomla-extensions/install-from-web-server",
-    "license": "GPL-2.0+",
+    "license": "GPL-2.0-or-later",
     "require": {
         "php": "^7.2"
     },
