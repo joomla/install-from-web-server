@@ -58,8 +58,8 @@ $selectedOrdering = $app->input->get('ordering', $orderby);
 				</div>
 				<div class="col-md">
 					<div class="btn-group float-md-right">
-						<button type="button" class="btn btn-secondary <?php echo $list === 'grid' ? 'active' : ''; ?>" id="btn-grid-view" aria-label="<?php echo Text::_('COM_APPS_GRID_VIEW'); ?>"><span class="fas fa-th" aria-hidden="true"></span></button>
-						<button type="button" class="btn btn-secondary <?php echo $list === 'list' ? 'active' : ''; ?>" id="btn-list-view" aria-label="<?php echo Text::_('COM_APPS_LIST_VIEW'); ?>"><span class="fas fa-list" aria-hidden="true"></span></button>
+						<button type="button" class="btn btn-secondary grid-view<?php echo $list === 'grid' ? ' active' : ''; ?>" id="btn-grid-view" aria-label="<?php echo Text::_('COM_APPS_GRID_VIEW'); ?>"><span class="fas fa-th" aria-hidden="true"></span></button>
+						<button type="button" class="btn btn-secondary list-view<?php echo $list === 'list' ? ' active' : ''; ?>" id="btn-list-view" aria-label="<?php echo Text::_('COM_APPS_LIST_VIEW'); ?>"><span class="fas fa-list" aria-hidden="true"></span></button>
 					</div>
 				</div>
 			<?php endif; ?>
