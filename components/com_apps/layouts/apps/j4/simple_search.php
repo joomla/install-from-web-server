@@ -35,21 +35,31 @@ $selectedOrdering = $app->input->get('ordering', $orderby);
 		<div class="form-row">
 			<div class="col-md">
 				<div class="input-group">
-					<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="<?php echo Text::_('COM_APPS_SEARCH_BTN'); ?>" value="<?php echo $search; ?>" class="hasTooltip form-control">
+					<label for="filter_search" class="sr-only">
+						<?php echo Text::_('COM_APPS_SEARCH_BTN'); ?>
+					</label>
+					<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="<?php echo Text::_('COM_APPS_SEARCH_BTN'); ?>" value="<?php echo $search; ?>" class="form-control" inputmode="search">
 					<div class="input-group-append">
-						<button type="button" class="btn btn-outline-secondary hasTooltip" data-original-title="<?php echo Text::_('COM_APPS_SEARCH_BTN'); ?>" id="search-extensions"><span class="fa fa-search" aria-hidden="true"></span></button>
-						<button type="button" class="btn btn-outline-secondary hasTooltip" data-original-title="<?php echo Text::_('COM_APPS_CANCEL_BTN'); ?>" id="search-reset"><span class="fa fa-times" aria-hidden="true"></span></button>
+						<button type="button" class="btn btn-primary" aria-label="<?php echo Text::_('COM_APPS_SEARCH_BTN'); ?>" id="search-extensions">
+							<span class="fa fa-search" aria-hidden="true"></span>
+						</button>
+						<button type="button" class="btn btn-cancel" aria-label="<?php echo Text::_('COM_APPS_CANCEL_BTN'); ?>" id="search-reset">
+							<span class="fa fa-times" aria-hidden="true"></span>
+						</button>
 					</div>
 				</div>
 			</div>
 			<?php if ($view != 'extension') : ?>
 				<div class="col-md">
+					<span class="sr-only">
+						<label for="com-apps-ordering"><?php echo Text::_('JGLOBAL_SORT_BY'); ?></label>
+					</span>
 					<?php echo HTMLHelper::_('select.genericlist', $orderingOptions, 'ordering', 'class="custom-select"', 'value', 'text', $selectedOrdering, 'com-apps-ordering'); ?>
 				</div>
 				<div class="col-md">
 					<div class="btn-group float-md-right">
-						<button type="button" class="btn btn-secondary grid-view<?php echo $list === 'grid' ? ' active' : ''; ?>" id="btn-grid-view"><span class="fa fa-th" aria-hidden="true"></span></button>
-						<button type="button" class="btn btn-secondary list-view<?php echo $list === 'list' ? ' active' : ''; ?>" id="btn-list-view"><span class="fa fa-list" aria-hidden="true"></span></button>
+						<button type="button" class="btn btn-secondary grid-view<?php echo $list === 'grid' ? ' active' : ''; ?>" id="btn-grid-view" aria-label="<?php echo Text::_('COM_APPS_GRID_VIEW'); ?>"><span class="fas fa-th" aria-hidden="true"></span></button>
+						<button type="button" class="btn btn-secondary list-view<?php echo $list === 'list' ? ' active' : ''; ?>" id="btn-list-view" aria-label="<?php echo Text::_('COM_APPS_LIST_VIEW'); ?>"><span class="fas fa-list" aria-hidden="true"></span></button>
 					</div>
 				</div>
 			<?php endif; ?>
