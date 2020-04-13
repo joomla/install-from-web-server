@@ -12,6 +12,7 @@ use Joomla\CMS\Cache\Exception\CacheExceptionInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Log\Log;
 use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\Updater\Update;
 
 JLoader::register('AppsModelBase', __DIR__ . '/base.php');
 
@@ -173,27 +174,16 @@ class AppsModelExtension extends AppsModelBase
 
 		if (preg_match('/\.xml\s*$/', $item->downloadurl))
 		{
-			$product   = addslashes(base64_decode($this->getState('filter.product')));
-			$dev_level = (int) base64_decode($this->getState('filter.dev_level'));
+			$devLevel = (int) base64_decode($this->getState('filter.dev_level'));
 
-			$updatefile = dirname(__DIR__) . '/helpers/update.php';
-			$fh         = fopen($updatefile, 'r');
-			$theData    = fread($fh, filesize($updatefile));
-			fclose($fh);
-
-			$theData = str_replace('<?php', '', $theData);
-			$theData = str_replace('JVersion::PRODUCT', "'" . $product . "'", $theData);
-			$theData = str_replace('JVersion::DEV_LEVEL', "'" . $dev_level . "'", $theData);
-
-			eval($theData);
-
-			$update = new JUpdate;
+			$update = new Update;
+			$update->set('jversion.dev_level', $devLevel);
 			$update->loadFromXML($item->downloadurl);
-			$package_url_node = $update->get('downloadurl', false);
+			$packageUrlNode = $update->get('downloadurl', false);
 
-			if (isset($package_url_node->_data))
+			if (isset($packageUrlNode->_data))
 			{
-				$item->downloadurl = $package_url_node->_data;
+				$item->downloadurl = $packageUrlNode->_data;
 			}
 		}
 
