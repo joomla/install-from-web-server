@@ -116,7 +116,7 @@ $commercial     = $extension_data->type->value != "free" ? true : false;
 					<?php endif; ?>
 					<a target="_blank" class="btn btn-primary" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><span class="icon-list" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
 					<?php if ($extension_data->homepage_link->value) : ?>
-						&nbsp;&nbsp;&nbsp;<a target="_blank" class="btn btn-primary" href="<?php echo $extension_data->homepage_link->text; ?>"><span class="icon-share-alt" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
+						&nbsp;&nbsp;&nbsp;<a target="_blank" rel="noopener noreferrer" class="btn btn-primary" href="<?php echo $extension_data->homepage_link->text; ?>"><span class="icon-share-alt" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_DEVELOPER_WEBSITE'); ?></a>
 					<?php endif; ?>
 				</div>
 			</div>
