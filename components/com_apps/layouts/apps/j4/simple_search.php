@@ -36,14 +36,14 @@ $selectedOrdering = $app->input->get('ordering', $orderby);
 			<div class="col-md">
 				<div class="input-group">
 					<label for="filter_search" class="sr-only">
-						<?php echo Text::_('COM_APPS_SEARCH_BTN'); ?>
+						<?php echo Text::_('JSEARCH_FILTER'); ?>
 					</label>
-					<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="<?php echo Text::_('COM_APPS_SEARCH_BTN'); ?>" value="<?php echo $search; ?>" class="form-control" inputmode="search">
+					<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="<?php echo Text::_('JSEARCH_FILTER'); ?>" value="<?php echo $search; ?>" class="form-control" inputmode="search">
 					<div class="input-group-append">
-						<button type="button" class="btn btn-primary" aria-label="<?php echo Text::_('COM_APPS_SEARCH_BTN'); ?>" id="search-extensions">
+						<button type="button" class="btn btn-primary" aria-label="<?php echo Text::_('JSEARCH_FILTER'); ?>" id="search-extensions">
 							<span class="fa fa-search" aria-hidden="true"></span>
 						</button>
-						<button type="button" class="btn btn-cancel" aria-label="<?php echo Text::_('COM_APPS_CANCEL_BTN'); ?>" id="search-reset">
+						<button type="button" class="btn btn-cancel" aria-label="<?php echo Text::_('JCANCEL'); ?>" id="search-reset">
 							<span class="fa fa-times" aria-hidden="true"></span>
 						</button>
 					</div>

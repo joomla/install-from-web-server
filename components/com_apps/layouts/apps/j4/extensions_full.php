@@ -40,26 +40,49 @@ $commercial     = $extension_data->type->value != "free" ? true : false;
 	</div>
 	<div class="row">
 		<div class="col-md-4 col-lg-3">
-			<img class="img-fluid" src="<?php echo $extension_data->image; ?>">
+			<img class="img-fluid" src="<?php echo $extension_data->image; ?>" alt="">
 		</div>
 		<div class="col-md-8 col-lg-9">
-			<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data) . '#reviews'; ?>"><?php echo strip_tags(Text::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS_LIST', $extension_data->score->value, $extension_data->num_reviews->value)); ?></a>
+			<a target="_blank" href="<?php echo AppsHelper::getJEDUrl($extension_data) . '#reviews'; ?>"><?php echo Text::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS_LIST', $extension_data->score->value, $extension_data->num_reviews->value); ?></a>
 			<dl>
-				<dt><?php echo Text::_('COM_APPS_EXTENSION_VERSION'); ?></dt>
-				<dd>
-					<?php echo $extension_data->version->value; ?>
-					<?php if ($extension_data->core_modified_time->value != '0000-00-00 00:00:00') : ?>
-						<?php echo ' ' . Text::sprintf('COM_APPS_EXTENSION_LAST_UPDATE', HTMLHelper::_('date', $extension_data->core_modified_time->value)); ?>
-					<?php endif; ?>
-				</dd>
-				<?php if ($extension_data->license->value): ?>
-					<dt><?php echo Text::_('COM_APPS_EXTENSION_LICENSE', $extension_data->license->text); ?></dt>
-					<dd><?php echo $extension_data->license->text; ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $extension_data->type->text; ?></dd>
+				<?php if ($extension_data->version->value) : ?>
+					<dt><?php echo Text::_('COM_APPS_EXTENSION_VERSION'); ?></dt>
+					<dd>
+						<?php if ($extension_data->core_modified_time->value != '0000-00-00 00:00:00') : ?>
+							<?php echo Text::sprintf('COM_APPS_EXTENSION_VERSION_WITH_LAST_UPDATE_TIMESTAMP', $extension_data->version->value, HTMLHelper::_('date', $extension_data->core_modified_time->value, 'DATE_FORMAT_LC3')); ?>
+						<?php else : ?>
+							<?php echo $extension_data->version->value; ?>
+						<?php endif; ?>
+					</dd>
 				<?php endif; ?>
-				<dt><?php echo Text::_('COM_APPS_EXTENSION_ADDEDON'); ?></dt>
-				<dd>
-					<?php echo HTMLHelper::_('date', $extension_data->core_created_time->value); ?>
-				</dd>
+
+				<?php if ($extension_data->license->value) : ?>
+					<dt><?php echo Text::_('COM_APPS_EXTENSION_LICENSE'); ?></dt>
+					<dd>
+						<?php echo $extension_data->license->text; ?>
+					</dd>
+				<?php endif; ?>
+
+				<?php if ($extension_data->type->value) : ?>
+					<dt><?php echo Text::_('COM_APPS_EXTENSION_DOWNLOAD_TYPE'); ?></dt>
+					<dd>
+						<?php echo $extension_data->type->text; ?>
+					</dd>
+				<?php endif; ?>
+
+				<?php if ($extension_data->core_created_time->value) : ?>
+					<dt><?php echo Text::_('COM_APPS_EXTENSION_ADDED_ON'); ?></dt>
+					<dd>
+						<?php echo HTMLHelper::_('date', $extension_data->core_created_time->value, 'DATE_FORMAT_LC3'); ?>
+					</dd>
+				<?php endif; ?>
+
+				<?php if (!empty($extension_data->compatible_versions)) : ?>
+					<dt><?php echo Text::_('COM_APPS_EXTENSION_COMPATIBLE_VERSIONS'); ?></dt>
+					<dd>
+						<?php echo implode(', ', $extension_data->compatible_versions); ?>
+					</dd>
+				<?php endif; ?>
 			</dl>
 			<div class="item-badge-container">
 				<?php if ($commercial) : ?>
@@ -97,21 +120,21 @@ $commercial     = $extension_data->type->value != "free" ? true : false;
 				<div class="card-body">
 					<?php if ($extension_data->downloadurl && is_numeric($extension_data->download_type)): ?>
 						<?php if ($extension_data->download_type == 0): ?>
-							<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->downloadurl; ?>"><span class="icon-download" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
+							<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->downloadurl; ?>"><span class="icon-download" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL'); ?></a>
 						<?php elseif ($extension_data->download_type == 1): ?>
-							<button class="install btn btn-success" id="install-extension" data-downloadurl="<?php echo $extension_data->downloadurl; ?>" data-name="<?php echo $extension_data->core_title->value; ?>" type="button"><span class="icon-checkmark" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL') . "&hellip;"; ?></button>
+							<button class="install btn btn-success" id="install-extension" data-downloadurl="<?php echo $extension_data->downloadurl; ?>" data-name="<?php echo $extension_data->core_title->value; ?>" type="button"><span class="icon-checkmark" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL'); ?></button>
 						<?php elseif ($extension_data->download_type == 2): ?>
-							<button class="install btn btn-success" id="install-extension-from-external" data-downloadurl="<?php echo $extension_data->downloadurl; ?>" type="button"><span class="icon-pencil" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_REGISTER') . "&hellip;"; ?></button>
+							<button class="install btn btn-success" id="install-extension-from-external" data-downloadurl="<?php echo $extension_data->downloadurl; ?>" type="button"><span class="icon-pencil" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_REGISTER'); ?></button>
 						<?php elseif ($extension_data->download_type == 3): ?>
-							<button class="install btn btn-success" id="install-extension-from-external" data-downloadurl="<?php echo $extension_data->downloadurl; ?>" type="button"><span class="icon-cart" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_PURCHASE') . "&hellip;"; ?></button>
+							<button class="install btn btn-success" id="install-extension-from-external" data-downloadurl="<?php echo $extension_data->downloadurl; ?>" type="button"><span class="icon-cart" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_PURCHASE'); ?></button>
 						<?php endif; ?>&nbsp;&nbsp;&nbsp;
 					<?php elseif ($extension_data->download_type !== false && $extension_data->download_link->value) : ?>
 						<?php if ((is_numeric($extension_data->download_type) && $extension_data->download_type == 0) || $extension_data->download_type == 1 || (strtolower($extension_data->download_type->value) == "free" && !$extension_data->requires_registration->value)): ?>
-							<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-download" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
+							<a target="_blank" class="transcode install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-download" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_DOWNLOAD_EXTERNAL'); ?></a>
 						<?php elseif ($extension_data->download_type == 2 || (strtolower($extension_data->download_type->value) == "free" && $extension_data->requires_registration->value)): ?>
-							<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-pencil" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_REGISTER_DOWNLOAD_EXTERNAL') . "&hellip;"; ?></a>
+							<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-pencil" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_REGISTER_DOWNLOAD_EXTERNAL'); ?></a>
 						<?php elseif ($extension_data->download_type == 3 || (strtolower($extension_data->download_type->value) != "free")): ?>
-							<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-cart" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_PURCHASE_EXTERNAL') . "&hellip;"; ?></a>
+							<a target="_blank" class="install btn btn-success" href="<?php echo $extension_data->download_link->value; ?>"><span class="icon-cart" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_INSTALL_PURCHASE_EXTERNAL'); ?></a>
 						<?php endif; ?>&nbsp;&nbsp;&nbsp;
 					<?php endif; ?>
 					<a target="_blank" class="btn btn-primary" href="<?php echo AppsHelper::getJEDUrl($extension_data); ?>"><span class="icon-list" aria-hidden="true"></span> <?php echo Text::_('COM_APPS_DIRECTORY_LISTING'); ?></a>
