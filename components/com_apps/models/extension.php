@@ -174,7 +174,7 @@ class AppsModelExtension extends AppsModelBase
 
 		if (preg_match('/\.xml\s*$/', $item->downloadurl))
 		{
-			$devLevel = (int) base64_decode($this->getState('filter.dev_level'));
+			$devLevel = $this->getState('filter.dev_level');
 
 			$update = new Update;
 			$update->set('jversion.dev_level', $devLevel);

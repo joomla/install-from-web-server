@@ -10,6 +10,7 @@
 defined('JPATH_BASE') or die;
 
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 
 /** @var Joomla\CMS\Layout\FileLayout $this */
@@ -24,11 +25,29 @@ $view = $app->input->getCmd('view');
 
 if ($view != 'dashboard')
 {
-	$firstcrumb = '<a class="transcode" href="' . AppsHelper::getAJAXUrl(['view' => 'dashboard']) . '">' . Text::_('COM_APPS_EXTENSIONS') . '</a>';
+	$firstcrumb = HTMLHelper::_(
+		'link',
+		AppsHelper::getAJAXUrl(['view' => 'dashboard']),
+		Text::_('COM_APPS_EXTENSIONS'),
+		[
+			'class' => 'transcode',
+		]
+	);
 }
 else
 {
-	$firstcrumb = Text::_('COM_APPS_EXTENSIONS_DASHBOARD');
+	$firstcrumb = Text::sprintf(
+		'COM_APPS_POPULAR_EXTENSIONS_FROM_JED',
+		HTMLHelper::_(
+			'link',
+			'https://extensions.joomla.org',
+			Text::_('COM_APPS_JOOMLA_EXTENSIONS_DIRECTORY'),
+			[
+				'target' => '_blank',
+				'rel'    => 'nofollow noopener',
+			]
+		)
+	);
 }
 $lastc   = '';
 $layouts = ['grid', 'list'];

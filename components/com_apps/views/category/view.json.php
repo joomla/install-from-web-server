@@ -50,6 +50,12 @@ class AppsViewCategory extends HtmlView
 	protected $release = '';
 
 	/**
+	 * @var    string
+	 * @since  1.0
+	 */
+	protected $pluginVersion = '';
+
+	/**
 	 * Execute and display a template script.
 	 *
 	 * @param   string $tpl The name of the template file to parse; automatically searches through the template paths.
@@ -68,11 +74,12 @@ class AppsViewCategory extends HtmlView
 			$this->document->setMimeEncoding('application/javascript');
 		}
 
-		$this->categories  = $this->get('Categories');
-		$this->extensions  = $this->get('Extensions');
-		$this->breadcrumbs = $this->get('Breadcrumbs');
-		$this->orderby     = $this->get('OrderBy');
-		$this->release     = $this->getModel()->getState('filter.release');
+		$this->categories    = $this->get('Categories');
+		$this->extensions    = $this->get('Extensions');
+		$this->breadcrumbs   = $this->get('Breadcrumbs');
+		$this->orderby       = $this->get('OrderBy');
+		$this->release       = $this->getModel()->getState('filter.release');
+		$this->pluginVersion = $this->getModel()->getState('plugin_version');
 
 		$json = new JsonResponse(
 			[

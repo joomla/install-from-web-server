@@ -130,6 +130,21 @@ class AppsModelCategory extends AppsModelBase
 			$url->setVar('searchall', urlencode($search));
 		}
 
+		if ($this->getState('filter.joomla_version') === 'current')
+		{
+			$joomlaRelease = $this->getState('filter.release');
+
+			// Check for each major version branch, default to 3.x as the oldest version supported by the client is Joomla 3.2
+			if (version_compare($joomlaRelease, '4.0', '>='))
+			{
+				$url->setVar('filter[versions]', '40');
+			}
+			else
+			{
+				$url->setVar('filter[versions]', '30');
+			}
+		}
+
 		try
 		{
 			// We explicitly define our own ID to keep the cache API from calculating it separately

@@ -11,6 +11,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Cache\Exception\CacheExceptionInterface;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Http\Http;
 use Joomla\CMS\Http\HttpFactory;
 use Joomla\CMS\Language\Text;
@@ -32,7 +33,7 @@ abstract class AppsModelBase extends BaseDatabaseModel
 	 * @since  1.0
 	 */
 	private const PLUGIN_VERSIONS = [
-		'latest' => '2.0.1',
+		'latest' => '2.1.2',
 		'works'  => '1.0.5',
 	];
 
@@ -258,7 +259,18 @@ abstract class AppsModelBase extends BaseDatabaseModel
 		$home->id          = 0;
 		$home->name        = Text::_('COM_APPS_HOME');
 		$home->alias       = 'home';
-		$home->description = Text::_('COM_APPS_EXTENSIONS_DASHBOARD');
+		$home->description = Text::sprintf(
+			'COM_APPS_POPULAR_EXTENSIONS_FROM_JED',
+			HTMLHelper::_(
+				'link',
+				'https://extensions.joomla.org',
+				Text::_('COM_APPS_JOOMLA_EXTENSIONS_DIRECTORY'),
+				[
+					'target' => '_blank',
+					'rel'    => 'nofollow noopener',
+				]
+			)
+		);
 		$home->parent      = 0;
 		$home->selected    = $view == 'dashboard';
 		$home->children    = [];
@@ -389,7 +401,7 @@ abstract class AppsModelBase extends BaseDatabaseModel
 	 */
 	public function getPluginUpToDate(): int
 	{
-		$remote = preg_replace('/[^\d\.]/', '', base64_decode(Factory::getApplication()->input->get('pv', '', 'base64')));
+		$remote = preg_replace('/[^\d\.]/', '', $this->getState('plugin_version'));
 
 		if (version_compare($remote, self::PLUGIN_VERSIONS['latest']) >= 0)
 		{
@@ -415,8 +427,10 @@ abstract class AppsModelBase extends BaseDatabaseModel
 		$app = Factory::getApplication();
 
 		$this->setState('view', $app->input->getCmd('view'));
-		$this->setState('filter.product', $app->input->getBase64('product', ''));
+		$this->setState('plugin_version', base64_decode($app->input->getBase64('pv', '')));
+		$this->setState('filter.joomla_version', $app->input->getString('filter_version', 'current'));
+		$this->setState('filter.product', base64_decode($app->input->getBase64('product', '')));
 		$this->setState('filter.release', base64_decode($app->input->getBase64('release', '')));
-		$this->setState('filter.dev_level', $app->input->getBase64('dev_level', ''));
+		$this->setState('filter.dev_level', (int) base64_decode($app->input->getBase64('dev_level', '')));
 	}
 }

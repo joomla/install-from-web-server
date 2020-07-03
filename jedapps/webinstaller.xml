@@ -40,13 +40,13 @@
 		<element>webinstaller</element>
 		<type>plugin</type>
 		<folder>installer</folder>
-		<version>2.0.1</version>
+		<version>2.1.2</version>
 		<client>site</client>
 		<infourl title="WebInstaller">http://docs.joomla.org/Install_from_Web</infourl>
 		<downloads>
-			<downloadurl type="full" format="zip">https://downloads.joomla.org/extensions/install-from-web/2-0-1/plg_installer_webinstaller_2.0.1.zip</downloadurl>
+			<downloadurl type="full" format="zip">https://downloads.joomla.org/extensions/install-from-web/2-1-2/plg_installer_webinstaller_2.1.2.zip</downloadurl>
 		</downloads>
-		<sha384>23b492a904cb1a8ad92246a8c010ce9c3e88ab595bc5a0d7824f1bbd28a362146c0a83a097e2f086bb27716b5e62be7e</sha384>
+		<sha384>3e542bc4b930f1b96c3bc4d42fe548f77f2085969d54ac8fd06d729c37eec58b9e734f3cd5b347ae0f580018cce3150f</sha384>
 		<tags>
 			<tag>stable</tag>
 		</tags>
