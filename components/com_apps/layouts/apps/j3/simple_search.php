@@ -34,20 +34,18 @@ $selectedOrdering = $app->input->get('ordering', $orderby);
 	<div class="filter-search btn-group pull-left">
 		<div class="input-append">
 			<input type="text" name="filter_search" id="com-apps-searchbox" placeholder="<?php echo Text::_('JSEARCH_FILTER'); ?>" value="<?php echo $search; ?>" class="hasTooltip">
-			<button type="button" class="btn hasTooltip" onclick="Joomla.apps.initiateSearch();" data-original-title="<?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?>"><span class="icon-search"></span></button>
-			<button type="button" class="btn hasTooltip" data-original-title="<?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>" id="search-reset"><span class="icon-remove"></span></button>
+			<button type="button" class="btn hasTooltip" onclick="Joomla.apps.initiateSearch();" data-original-title="<?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?>" aria-label="<?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?>"><span class="icon-search" aria-hidden="true"></span></button>
+			<button type="button" class="btn hasTooltip" data-original-title="<?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>" aria-label="<?php echo Text::_('JSEARCH_FILTER_CLEAR'); ?>" id="search-reset"><span class="icon-remove" aria-hidden="true"></span></button>
 		</div>
-	</div>
-	<div class="btn-group pull-right select">
-		<?php if ($view != 'extension') : ?>
-			<?php echo HTMLHelper::_('select.genericlist', $orderingOptions, 'ordering', null, 'value', 'text', $selectedOrdering, 'com-apps-ordering'); ?>
-		<?php endif; ?>
 	</div>
 
 	<?php if ($view != 'extension') : ?>
 		<div class="btn-group pull-right">
-			<button type="button" class="btn grid-view<?php echo ($list == 'grid') ? ' active' : ''; ?>" id="btn-grid-view"><span class="icon-grid-view"></span></button>
-			<button type="button" class="btn list-view<?php echo ($list == 'list') ? ' active' : ''; ?>" id="btn-list-view"><span class="icon-list-view"></span></button>
+			<button type="button" class="btn grid-view<?php echo ($list == 'grid') ? ' active' : ''; ?>" id="btn-grid-view" aria-label="<?php echo Text::_('COM_APPS_GRID_VIEW'); ?>"><span class="icon-grid-view" aria-hidden="true"></span></button>
+			<button type="button" class="btn list-view<?php echo ($list == 'list') ? ' active' : ''; ?>" id="btn-list-view" aria-label="<?php echo Text::_('COM_APPS_LIST_VIEW'); ?>"><span class="icon-list-view" aria-hidden="true"></span></button>
+		</div>
+		<div class="btn-group pull-right select">
+			<?php echo HTMLHelper::_('select.genericlist', $orderingOptions, 'ordering', null, 'value', 'text', $selectedOrdering, 'com-apps-ordering'); ?>
 		</div>
 	<?php endif; ?>
 </div>
