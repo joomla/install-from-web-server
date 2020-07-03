@@ -21,7 +21,7 @@ use Joomla\CMS\Layout\FileLayout;
 		<div class="span9">
 			<div class="row-fluid">
 				<div class="span12">
-					<?php echo (new FileLayout('apps.j3.simple_search'))->render(); ?>
+					<?php echo (new FileLayout('apps.j3.simple_search'))->render(['pluginVersion' => $this->pluginVersion]); ?>
 				</div>
 			</div>
 
