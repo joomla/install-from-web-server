@@ -25,7 +25,14 @@ $view = $app->input->getCmd('view');
 
 if ($view != 'dashboard')
 {
-	$firstcrumb = '<a class="transcode" href="' . AppsHelper::getAJAXUrl(['view' => 'dashboard']) . '">' . Text::_('COM_APPS_EXTENSIONS') . '</a>';
+	$firstcrumb = HTMLHelper::_(
+		'link',
+		AppsHelper::getAJAXUrl(['view' => 'dashboard']),
+		Text::_('COM_APPS_EXTENSIONS'),
+		[
+			'class' => 'transcode',
+		]
+	);
 }
 else
 {
@@ -42,6 +49,7 @@ else
 		)
 	);
 }
+
 $lastc   = '';
 $layouts = ['grid', 'list'];
 ?>
