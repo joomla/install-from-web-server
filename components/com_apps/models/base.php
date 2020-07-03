@@ -389,7 +389,7 @@ abstract class AppsModelBase extends BaseDatabaseModel
 	 */
 	public function getPluginUpToDate(): int
 	{
-		$remote = preg_replace('/[^\d\.]/', '', base64_decode(Factory::getApplication()->input->get('pv', '', 'base64')));
+		$remote = preg_replace('/[^\d\.]/', '', $this->getState('plugin_version'));
 
 		if (version_compare($remote, self::PLUGIN_VERSIONS['latest']) >= 0)
 		{
@@ -415,6 +415,7 @@ abstract class AppsModelBase extends BaseDatabaseModel
 		$app = Factory::getApplication();
 
 		$this->setState('view', $app->input->getCmd('view'));
+		$this->setState('plugin_version', base64_decode($app->input->getBase64('pv', '')));
 		$this->setState('filter.product', $app->input->getBase64('product', ''));
 		$this->setState('filter.release', base64_decode($app->input->getBase64('release', '')));
 		$this->setState('filter.dev_level', $app->input->getBase64('dev_level', ''));
