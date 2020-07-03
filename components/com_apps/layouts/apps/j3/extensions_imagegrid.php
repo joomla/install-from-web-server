@@ -44,7 +44,7 @@ else
 			Text::_('COM_APPS_JOOMLA_EXTENSIONS_DIRECTORY'),
 			[
 				'target' => '_blank',
-				'rel'    => 'nofollow noopener',
+				'rel'    => 'noopener noreferrer',
 			]
 		)
 	);
