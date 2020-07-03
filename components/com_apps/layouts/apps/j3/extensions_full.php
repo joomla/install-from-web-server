@@ -47,37 +47,48 @@ $tags           = $extension_data->includes->value;
 					<?php echo strip_tags(Text::sprintf('COM_APPS_EXTENSION_VOTES_REVIEWS_LIST', $extension_data->score->value, $extension_data->num_reviews->value)); ?>
 				</a>
 			</div>
-			<div class="item-version control-group">
-				<div class="control-label">
-					<?php echo Text::_('COM_APPS_EXTENSION_VERSION'); ?>
-				</div>
-				<div class="controls">
-					<?php echo $extension_data->version->value; ?>
-					<?php if ($extension_data->core_modified_time->value != '0000-00-00 00:00:00') : ?>
-						<?php echo ' ' . Text::sprintf('COM_APPS_EXTENSION_LAST_UPDATE', HTMLHelper::_('date', $extension_data->core_modified_time->value)); ?>
-					<?php endif; ?>
-				</div>
-			</div>
-			<?php if ($extension_data->license->value): ?>
-				<div class="item-license control-group">
-					<div class="control-label">
-						<?php echo Text::_('COM_APPS_EXTENSION_LICENSE', $extension_data->license->text); ?>
-					</div>
-					<div class="controls">
+
+			<dl class="dl-horizontal">
+				<?php if ($extension_data->version->value) : ?>
+					<dt><?php echo Text::_('COM_APPS_EXTENSION_VERSION'); ?></dt>
+					<dd>
+						<?php if ($extension_data->core_modified_time->value != '0000-00-00 00:00:00') : ?>
+							<?php echo Text::sprintf('COM_APPS_EXTENSION_VERSION_WITH_LAST_UPDATE_TIMESTAMP', $extension_data->version->value, HTMLHelper::_('date', $extension_data->core_modified_time->value, 'DATE_FORMAT_LC3')); ?>
+						<?php else : ?>
+							<?php echo $extension_data->version->value; ?>
+						<?php endif; ?>
+					</dd>
+				<?php endif; ?>
+
+				<?php if ($extension_data->license->value) : ?>
+					<dt><?php echo Text::_('COM_APPS_EXTENSION_LICENSE'); ?></dt>
+					<dd>
 						<?php echo $extension_data->license->text; ?>
-						&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-						<span><?php echo $extension_data->type->text; ?></span>
-					</div>
-				</div>
-			<?php endif; ?>
-			<div class="item-addedon control-group">
-				<div class="control-label">
-					<?php echo Text::_('COM_APPS_EXTENSION_ADDEDON'); ?>
-				</div>
-				<div class="controls">
-					<?php echo HTMLHelper::date($extension_data->core_created_time->value); ?>
-				</div>
-			</div>
+					</dd>
+				<?php endif; ?>
+
+				<?php if ($extension_data->type->value) : ?>
+					<dt><?php echo Text::_('COM_APPS_EXTENSION_DOWNLOAD_TYPE'); ?></dt>
+					<dd>
+						<?php echo $extension_data->type->text; ?>
+					</dd>
+				<?php endif; ?>
+
+				<?php if ($extension_data->core_created_time->value) : ?>
+					<dt><?php echo Text::_('COM_APPS_EXTENSION_ADDED_ON'); ?></dt>
+					<dd>
+						<?php echo HTMLHelper::_('date', $extension_data->core_created_time->value, 'DATE_FORMAT_LC3'); ?>
+					</dd>
+				<?php endif; ?>
+
+				<?php if (!empty($extension_data->compatible_versions)) : ?>
+					<dt><?php echo Text::_('COM_APPS_EXTENSION_COMPATIBLE_VERSIONS'); ?></dt>
+					<dd>
+						<?php echo implode(', ', $extension_data->compatible_versions); ?>
+					</dd>
+				<?php endif; ?>
+			</dl>
+
 			<div class="item-badge-container">
 				<?php if (in_array('com', $tags)) : ?>
 					<span title="<?php echo Text::_('COM_APPS_COMPONENT'); ?>" class="badge jbadge badge-jcomponent"><?php echo Text::_('COM_APPS_COMPONENT'); ?></span>&nbsp;
