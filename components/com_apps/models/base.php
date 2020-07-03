@@ -428,8 +428,9 @@ abstract class AppsModelBase extends BaseDatabaseModel
 
 		$this->setState('view', $app->input->getCmd('view'));
 		$this->setState('plugin_version', base64_decode($app->input->getBase64('pv', '')));
-		$this->setState('filter.product', $app->input->getBase64('product', ''));
+		$this->setState('filter.joomla_version', $app->input->getString('filter_version', 'current'));
+		$this->setState('filter.product', base64_decode($app->input->getBase64('product', '')));
 		$this->setState('filter.release', base64_decode($app->input->getBase64('release', '')));
-		$this->setState('filter.dev_level', $app->input->getBase64('dev_level', ''));
+		$this->setState('filter.dev_level', (int) base64_decode($app->input->getBase64('dev_level', '')));
 	}
 }
