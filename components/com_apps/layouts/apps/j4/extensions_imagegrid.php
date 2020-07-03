@@ -28,7 +28,18 @@ if ($view != 'dashboard')
 }
 else
 {
-	$firstcrumb = Text::_('COM_APPS_EXTENSIONS_DASHBOARD');
+	$firstcrumb = Text::sprintf(
+		'COM_APPS_POPULAR_EXTENSIONS_FROM_JED',
+		HTMLHelper::_(
+			'link',
+			'https://extensions.joomla.org',
+			Text::_('COM_APPS_JOOMLA_EXTENSIONS_DIRECTORY'),
+			[
+				'target' => '_blank',
+				'rel'    => 'nofollow noopener',
+			]
+		)
+	);
 }
 $lastc   = '';
 $layouts = ['grid', 'list'];
