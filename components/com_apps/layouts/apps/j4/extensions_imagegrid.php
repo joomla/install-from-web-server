@@ -68,7 +68,7 @@ $layouts = ['grid', 'list'];
 					</nav>
 				</div>
 				<div class="row">
-					<blockquote><h4><?php echo Text::_('COM_APPS_NO_RESULTS_DESCRIPTION'); ?></h4></blockquote>
+					<div class="col"><h4><?php echo Text::_('COM_APPS_NO_RESULTS_DESCRIPTION'); ?></h4></div>
 				</div>
 			</div>
 		</div>
