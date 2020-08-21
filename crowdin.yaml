@@ -1,9 +1,5 @@
-project_identifier: joomla-ifw-extension
-api_key_env: 'CROWDIN_API_IFW_KEY'
-base_path: ./components/com_apps/language
-
+base_path: /components/com_apps/language
 files:
-  -
-    source: /en-GB/en-GB.com_apps.ini
-    dest: 'en-GB.com_apps.ini'
+  - source: /en-GB/en-GB.com_apps.ini
     translation: /%locale%/%locale%.com_apps.ini
+    update_option: update_as_unapproved
