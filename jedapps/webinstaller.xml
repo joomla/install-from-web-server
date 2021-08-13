@@ -53,4 +53,23 @@
 		<targetplatform name="joomla" version="3.(9|10)" />
 		<php_minimum>5.3.10</php_minimum>
 	</update>
+	<update>
+		<name>Installer - Install from Web</name>
+		<description>This plugin offers functionality for the 'Install from Web' tab.</description>
+		<element>webinstaller</element>
+		<type>plugin</type>
+		<folder>installer</folder>
+		<version>2.1.2</version>
+		<client>site</client>
+		<infourl title="WebInstaller">http://docs.joomla.org/Install_from_Web</infourl>
+		<downloads>
+			<downloadurl type="full" format="zip">https://downloads.joomla.org/extensions/install-from-web/2-1-2/plg_installer_webinstaller_2.1.2.zip</downloadurl>
+		</downloads>
+		<sha384>3e542bc4b930f1b96c3bc4d42fe548f77f2085969d54ac8fd06d729c37eec58b9e734f3cd5b347ae0f580018cce3150f</sha384>
+		<tags>
+			<tag>stable</tag>
+		</tags>
+		<targetplatform name="joomla" version="4.*" />
+		<php_minimum>5.3.10</php_minimum>
+	</update>
 </updates>
