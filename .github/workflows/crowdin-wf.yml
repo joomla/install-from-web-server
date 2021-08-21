@@ -1,7 +1,8 @@
 name: Crowdin Action
 # Controls when the action will run. 
 on:
-  
+  schedule:
+    - cron: '57 * * * *'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
@@ -27,7 +28,7 @@ jobs:
         # Upload translations to Crowdin, only use true at initial run
         upload_translations: false
         # Make pull request of Crowdin translations
-        download_translations: false
+        download_translations: true
         # Only download translated strings
         skip_untranslated_strings: false
         # Download translations with pushing to branch
