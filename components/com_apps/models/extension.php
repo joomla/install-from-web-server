@@ -171,23 +171,7 @@ class AppsModelExtension extends AppsModelBase
 		$item->image               = $this->getMainImageUrl($item);
 		$item->compatible_versions = $this->getJoomlaVersionCompatibility($item);
 		$item->downloadurl         = $item->download_integration_url->value;
-
-		if (preg_match('/\.xml\s*$/', $item->downloadurl))
-		{
-			$devLevel = $this->getState('filter.dev_level');
-
-			$update = new Update;
-			$update->set('jversion.dev_level', $devLevel);
-			$update->loadFromXML($item->downloadurl);
-			$packageUrlNode = $update->get('downloadurl', false);
-
-			if (isset($packageUrlNode->_data))
-			{
-				$item->downloadurl = $packageUrlNode->_data;
-			}
-		}
-
-		$item->download_type = $this->getTypeEnum($item->download_integration_type->value);
+		$item->download_type       = $this->getTypeEnum($item->download_integration_type->value);
 
 		return $item;
 	}
