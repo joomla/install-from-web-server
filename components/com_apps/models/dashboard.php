@@ -105,14 +105,14 @@ class AppsModelDashboard extends AppsModelBase
 		{
 			$joomlaRelease = $this->getState('filter.release');
 
-			// Check for each major version branch, default to 3.x as the oldest version supported by the client is Joomla 3.2
-			if (version_compare($joomlaRelease, '4.0', '>='))
+			// Check for each major version branch, default to 4.x as the oldest version supported by the client is Joomla 4.0
+			if (version_compare($joomlaRelease, '5.0', '>='))
 			{
-				$url->setVar('filter[versions]', '40');
+				$url->setVar('filter[versions]', '50');
 			}
 			else
 			{
-				$url->setVar('filter[versions]', '30');
+				$url->setVar('filter[versions]', '40');
 			}
 		}
 
