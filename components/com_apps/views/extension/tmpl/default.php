@@ -35,16 +35,3 @@ if ($majorVersion === 'j3') {
     // Handle unexpected Joomla versions here
     // todo
 }
-
-
-
-
-
-if ($majorVersion === 'j3')
-{
-	echo $this->loadTemplate('j3');
-}
-else
-{
-	echo $this->loadTemplate('j4');
-}
