@@ -33,8 +33,9 @@ abstract class AppsModelBase extends BaseDatabaseModel
 	 * @since  1.0
 	 */
 	private const PLUGIN_VERSIONS = [
-		'latest' => '2.1.2',
-		'works'  => '1.0.5',
+		'latest'  => '3.0.0',
+		'works'   => '2.1.2',
+		'oldest'  => '1.0.5',
 	];
 
 	/**
@@ -322,6 +323,11 @@ abstract class AppsModelBase extends BaseDatabaseModel
 		if (in_array('40', $item->versions->value, true))
 		{
 			$compatibleVersions[] = '4.x';
+		}
+
+		if (in_array('50', $item->versions->value, true))
+		{
+			$compatibleVersions[] = '5.x';
 		}
 
 		return $compatibleVersions;
