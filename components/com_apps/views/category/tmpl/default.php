@@ -2,21 +2,36 @@
 /**
  * Joomla! Install From Web Server
  *
- * @copyright  Copyright (C) 2013 - 2017 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2013 - 2023 Open Source Matters, Inc. All rights reserved.
  * @license    GNU General Public License version 2 or later
  */
 
 defined('_JEXEC') or die;
 
-/** @var AppsViewCategory $this */
+/** @var AppsViewExtension $this */
 
-$majorVersion = version_compare($this->release, '4.0', 'ge') ? 'j4' : 'j3';
+// Get the Joomla version
+$joomlaVersion = Version::getShortVersion();
 
-if ($majorVersion === 'j3')
-{
-	echo $this->loadTemplate('j3');
+// Compare the version to determine the major version
+if (version_compare($joomlaVersion, '5.0', 'ge')) {
+    $majorVersion = 'j5'; // Handle Joomla 5.0 or newer
+} elseif (version_compare($joomlaVersion, '4.0', 'ge')) {
+    $majorVersion = 'j4'; // Handle Joomla 4.x
+} else {
+    $majorVersion = 'j3'; // Handle Joomla 3.x or older
 }
-else
-{
-	echo $this->loadTemplate('j4');
+
+if ($majorVersion === 'j3') {
+    // Load the Joomla 3 template
+    echo $this->loadTemplate('j3');
+} elseif ($majorVersion === 'j4') {
+    // Load the Joomla 4 template
+    echo $this->loadTemplate('j4');
+} elseif ($majorVersion === 'j5') {
+    // Handle Joomla 5.0 or newer here
+    echo $this->loadTemplate('j5');
+} else {
+    // Handle unexpected Joomla versions here
+    // todo
 }
