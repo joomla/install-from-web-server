@@ -108,11 +108,11 @@ class AppsModelDashboard extends AppsModelBase
 			// Check for each major version branch, default to 3.x as the oldest version supported by the client is Joomla 3.2
 			if (version_compare($joomlaRelease, '6.0', '>='))
 			{
-				$url->setVar('filter[versions]', '60');
+				$url->setVar('filter[versions]', '6');  /* So we find 60 and 61 to cover b/c extensions */
 			}
 			elseif (version_compare($joomlaRelease, '5.0', '>='))
 			{
-				$url->setVar('filter[versions]', '50');
+				$url->setVar('filter[versions]', '5'); /* So we find 50 and 51 to cover b/c extensions */
 			}
 			elseif (version_compare($joomlaRelease, '4.0', '>='))
 			{

@@ -338,6 +338,11 @@ abstract class AppsModelBase extends BaseDatabaseModel
 		{
 			$compatibleVersions[] = '6.x';
 		}
+
+        if (in_array('61', $item->versions->value, true))
+        {
+            $compatibleVersions[] = '6.x (with b/c plugin)';
+        }
 		return $compatibleVersions;
 	}
 
