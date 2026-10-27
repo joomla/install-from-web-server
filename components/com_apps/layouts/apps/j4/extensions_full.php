@@ -116,7 +116,7 @@ $commercial     = $extension_data->type->value != "free" ? true : false;
 				<input id="joomlaapsinstallfrominput" type="hidden" name="installfrom" value="<?php echo $extension_data->downloadurl; ?>"/>
 				<input type="hidden" name="installapp" value="<?php echo $extension_data->link_id ?? null; ?>"/>
 			<?php endif; ?>
-			<div class="card bg-light mb-3">
+			<div class="card mb-3 mt-3">
 				<div class="card-body">
 					<?php if ($extension_data->downloadurl && is_numeric($extension_data->download_type)): ?>
 						<?php if ($extension_data->download_type == 0): ?>
